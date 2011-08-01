@@ -47,6 +47,14 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 			<input type="submit" class="button" value="Go">
 		</form>
 	</div>
+	<div id="socialtop">
+		
+		
+		<a href="http://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+		<g:plusone size="medium" count="false"></g:plusone>
+		<img src="img/l/facebook.gif" />
+
+	</div>
 	<div id="log">
 		<b>Real-time Disabled:  </b>
 		<span id="fps"></span>
@@ -55,6 +63,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 
 <?php
 
+/*
 if (isset($schedule) && $schedule == "show" && !$daterange) {
 	include 'views/static_html/schedule.html';
 	//include 'views/schedule.php';
@@ -67,11 +76,22 @@ if (isset($schedule) && $schedule == "show" && !$daterange) {
 } else {
 	include 'views/main.php'; 
 }
+*/
+
+include 'views/main.php'; 
 
 ?>
 
 
-<footer role="contentinfo" class="clearfix">
+<footer id="footer" role="contentinfo" class="clearfix">
+	<div id="socialbottom">
+		
+		
+		<a href="http://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+		<g:plusone size="medium" count="false"></g:plusone>
+		<img src="img/l/facebook.gif" />
+
+	</div>
 </footer>
 
 <!-- Scripts & Analytics -->

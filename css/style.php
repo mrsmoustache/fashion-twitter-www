@@ -77,7 +77,7 @@ margin : 0 auto;
 padding : 16px 0 24px;
 width : 90% /* 252px */;
 font : 100%/1.4 Georgia,"Times New Roman", Times, serif ;
-color : rgb(40,40,40); 
+color: #282828; 
 background-color : transparent; }
 
 /* 2.HEADINGS */
@@ -219,6 +219,10 @@ a:focus {
 outline : none;
 color : rgb(0,0,0); }
 
+a.twitter-share-button {
+	color: white;
+}
+
 /* 5.FIGURES & IMAGES */
 
 figure {
@@ -289,6 +293,7 @@ h1 .logo {
 	position: absolute;
 	right: 0px;
 	top: 0px;
+	display: none;
 }
 
 #banner .search h2 {
@@ -317,6 +322,7 @@ h1 .logo {
 	top: -14px;
 	width: 100%;
 	line-height: .8em;
+	display: none;
 }
 
 #banner b {
@@ -347,12 +353,23 @@ p.sub-title {
 	font-size: .9em;
 }
 
+#socialtop {
+	display: none;
+	overflow: hidden;
+}
+
 
 /* 9.NAVIGATION */
 
+#nav {
+	position: relative;
+	margin-top: 140px;
+	display: none;
+}
+
 #viewnav, #detailnav {
 	position: relative;
-	margin: 1em 0;
+	margin: 0 0 1em;
 	border-bottom: solid 1px #ccc;
 	overflow: visible;
 	line-height: 1.8em;
@@ -403,15 +420,21 @@ p.sub-title {
 	font-family : "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 1em;
 	color: #333;
-	font-weight: bold;
+	font-weight: normal;
 }
+
+#detailnav li a {
+	font-size: .8em;
+}
+
 
 #viewnav li.selected, #detailnav li.selected {
 	height: 28px;
 }
 
 #viewnav li.selected a, #detailnav li.selected a {
-	color: #777;
+	color: #000;
+	font-weight: bold;
 }
 
 #detailnav ul {
@@ -420,6 +443,12 @@ p.sub-title {
 	left: 5%;
 	width: 100%;
 	float: left;
+}
+
+#modules #detailnav ul {
+	width: auto;
+	float: none;
+	overflow: hidden;
 }
 
 #detailnav li {
@@ -440,6 +469,92 @@ p.sub-title {
 .schedule #viewnav .backlink {
 	float: right;
 }
+
+/* days navigation */
+
+#dayslist {
+	width: 8em;
+	overflow: auto;
+	position: absolute;
+	z-index: 999;
+	border-top: solid 1px #ccc;
+	border-bottom: solid 1px #ccc;
+	border-right: solid 1px #ccc;
+	background: white;
+	-webkit-box-shadow: 0px 0px 20px rgba(0,0,0,.75);
+	-moz-box-shadow: 0px 0px 20px rgba(0,0,0,.75);
+	-o-box-shadow: 0px 0px 20px rgba(0,0,0,.75);
+	box-shadow: 0px 0px 20px rgba(0,0,0,.75);
+	display: none;
+}
+
+.ie7 #dayslist, .ie8 #dayslist {
+	border-top: solid 6px #444;
+	border-bottom: solid 6px #444;
+	border-right: solid 6px #444;
+}
+
+#dayslist h3 {
+	display: none;
+}
+
+#dayslist ul {
+	padding-right: 1em;
+	list-style: none;
+	font-family : "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#dayslist li {
+	text-align: right;
+}
+
+#dayslist a {
+	color: #222;
+	display: block;
+}
+
+#dayslist a:hover {
+	text-decoration: none;
+}
+
+#dayslist span {
+	float: right;
+	font-size: 3em;
+	line-height: 1.06em;
+}
+
+#dayslist span b + b {
+	position: relative;
+	left: -.1em;
+}
+
+.ie7 #dayslist span b + b, .iem7 #dayslist span b + b {
+	position: static;
+}
+
+#dayslist em {
+	float: right;
+	font-size: 1.0em;
+	font-style: normal;
+	text-transform: uppercase;
+	color: #555;
+	letter-spacing: 1px;
+	padding-top: .3em;
+	
+	-webkit-transform: rotate(-90deg) translate(-.5em, -1.6em);
+	-moz-transform: rotate(-90deg) translate(-.5em, -1.6em);
+	-o-transform: rotate(-90deg) translate(-.5em, -1.6em);
+	-ms-transform: rotate(-90deg) translate(-.5em, -1.6em);
+	transform: rotate(-90deg) translate(-.5em, -1.6em);
+	
+	-webkit-transform-origin: right top;
+	-moz-transform-origin: right top;
+	-o-transform-origin: right top;
+	-ms-transform-origin: right top;
+	transform-origin: right top;
+	
+}
+
 
 /* dynamic javascript popup */
 #schedule-popup {
@@ -480,6 +595,24 @@ p.sub-title {
 .content {
 	margin: 1em 0;
 	position: relative;
+}
+
+h2.page-title {
+	font-size: 1.1em;
+	font-weight: bold;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	margin-bottom: .25em;
+	text-align: center;
+}
+
+#map {
+	border: solid 1px #ccc;
+	margin: 0 0 1em;
+}
+
+div.minimap {
+	height: 125px;
+	
 }
 
 #stats {
@@ -580,6 +713,7 @@ p.sub-title {
 	position: absolute;
 	right: 12px;
 	top: 3.7em;
+	display: none;
 }
 
 .designers #leftright {
@@ -632,45 +766,104 @@ p.sub-title {
 	margin: 0 0 .5em 0;
 }
 
-div.nav {
+div.nav, div.list {
 	margin: 0em 0 1em;
 	padding-left: 0em;
 	font-family : "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+div.list {
+	overflow: hidden;
+}
+
 div.nav b {
 	display: block;
 	float: left;
-	width: 1.2em;
-	padding-right: .3em;
+	width: 3.3em;
+	padding: .92em .75em 0 0;
 	text-align: right;
-	font-size: 2.6em;
+	font-size: .9em;
 	line-height: 1em;
 	color: #aaa;
-	font-weight: normal;
+	font-weight: bold;
 }
 
-div.nav .listitem {
+div.nav .listitem, div.list .listitem {
 	border-bottom: solid 1px #ddd;
 	padding: .75em 0 .8em;
 	position: relative;
 	background: url(../img/l/nav-arrow-right.gif) no-repeat center right;
 }
 
-.designers div.nav .listitem {
+div.nav .listitem {
+	cursor: pointer;
+}
+
+div.nav .listitem.selected {
+	background: #eee;
+}
+
+div.nav #all-designers-item {
+	text-transform: uppercase;
+	font-weight: bold;
+	padding: 1em 0;
+	border-top: solid 1px #ccc;
+}
+
+div.schedule .listitem {
+	border: none;
+	padding: 0;
+}
+
+div.schedule b.timegroup {
+	border-top: solid 1px #444;
+}
+
+div.schedule b.timegroup span {
+	font-size: .5em;
+	display: block;
+	line-height: .9em;
+}
+
+div.schedule .itemcontent {
+	margin-left: 3.5em;
+	border-left: dotted 1px #ccc;
+	padding: .9em 0 .9em .5em;
+	border-top: solid 1px #ddd;
+}
+
+div.schedule b.timegroup + .itemcontent {
+	border-top: solid 1px #444;
+}
+
+#modules div.list .listitem {
 	background: none;
 }
 
-div.nav .listitem h3 {
+div.nav .listitem h3, div.list .listitem h3 {
 	font-size: 1em;
 }
 
-.designers .listitem h3 {
-	margin: .3em 0;
+div.list .listitem h3 {
+	margin: 0 0 0 0;
+}
+
+div.list.tweets .listitem h3 {
+	margin: 0 0 .4em;
+	font-size: .9em;
+	line-height: .8em;
 }
 
 div.nav .listitem a {
 	color: #282828;
+}
+
+div.nav .listitem a:hover {
+	text-decoration: none;
+}
+
+div.nav .listitem a.listname {
+	display: block;
 }
 
 div.nav .selected, #schedule-popup div.nav .selected {
@@ -691,9 +884,9 @@ div.nav .starttime {
 	font-size: .9em;
 }
 
-div.nav .tweetcount, div.nav .trendcount {
+div.nav .tweetcount, div.list .trendcount {
 	position: absolute; 
-	top: 1.35em; 
+	top: 1em; 
 	right: 2em; 
 	background: #aaa;
 	color: #fff;
@@ -701,16 +894,40 @@ div.nav .tweetcount, div.nav .trendcount {
 	font-size: .9em;
 }
 
-div.nav .trendcount {
-	top: 1em;
+div.list .trendcount {
+	top: .8em;
 }
 
-div.nav .tweettime {
+.tweets .listthumb {
+	width: 50px;
+	height: 50px;
+	float: left;
+	background-color: #ddd;
+	border: solid 1px #ccc;
+}
+
+.tweets .listcontent {
+	margin-left: 55px;
+	position: relative;
+}
+
+.tweets .tweettext {
+	display: block;
 	font-size: .9em;
+	line-height: 1.3em;
+}
+
+.tweets .listthumb img {
+	display: block;
+}
+
+.tweets .tweettime {
+	font-size: .8em;
 	color: #aaa;
 	position: absolute;
-	top: 1.2em;
+	top: 0;
 	right: 0;
+	line-height: .8em;
 }
 
 
@@ -723,26 +940,88 @@ ul li {
 	overflow: hidden;
 }
 
-.schedule div.nav .listcat {
+div.nav .listcat {
 	font-weight: bold;
 	border-bottom: solid 1px #ccc;
 	border-top: solid 3px #333;
 }
 
-.schedule div.nav .listcat:first-child {
-	border-top: none;
-}
-
-.schedule div.nav .designers {
-	display: block;
-	margin-right: 2em;
-	font-size: .8em;
-	color: #777;
-}
 
 /* 11.MAIN */
+h3.designer {
+	font-size: .9em;
+	margin: 0;
+	position: absolute;
+	top: 160px;
+	text-transform: uppercase;
+	font-weight: normal;
+	letter-spacing: 1px;
+	text-align: center;
+	width: 100%;
+}
+
+h3.designer span.breadcrumb {
+	text-decoration: underline;
+}
+
+
+#modules {
+	margin-top: 2.5em;
+}
+
+.trends .controlcontainer {
+	border-bottom: solid 1px #eee;
+	overflow: visible;
+	height: 15px;
+	margin-bottom: 1em;
+}
+
+ul.switchcontrol {
+	padding: 1px 0;
+	width: 12.2em;
+	margin: 0 auto;
+}
+
+
+ul.switchcontrol li {
+	float: left;
+	padding: .25em 1.5em;
+	border: solid 1px #ccc;
+	font-size: .8em;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	background: white;
+	cursor: pointer;
+	color: #aaa;
+}
+
+ul.switchcontrol li.selected {
+	font-weight: bold;
+	color: #000;
+}
+
 /* 12.COMPLIMENTARY */
+
+#trendingcolors {
+	display: none;
+}
+
+.photos img {
+	max-width: 100%;
+}
 /* 13.CONTENTINFO */
+#footer {
+	text-align: center;
+	border-top: solid 2px #ccc;
+	padding-top: 1em;
+	margin-bottom: 4em;
+}
+
+#socialbottom {
+	width: 120px;
+	margin: 0 auto;
+	overflow: hidden;
+}
 
 /* 14.GLOBAL OBJECTS */
 
@@ -758,6 +1037,10 @@ overflow : hidden; }
 
 .clearfix:after { 
 clear : both; }
+
+.col {
+	float: left;
+}
 
 /* 15.VENDOR-SPECIFIC */
 
@@ -782,6 +1065,46 @@ text-shadow : none; }
 background : rgb(23,119,175); 
 color : rgb(250,250,250); 
 text-shadow : none; }
+
+.scroll::-webkit-scrollbar {
+	width: 15px;
+}
+
+.scroll::-webkit-scrollbar-track-piece {
+	background-color: white;
+}
+
+.scroll::-webkit-scrollbar-button:vertical {
+	background-color:transparent;
+	height:5px;
+}
+.scroll::-webkit-scrollbar-thumb:vertical {
+	background-color: rgba(0,0,0,0.2);
+	height: 50px;
+	border-right: 4px solid white;
+	border-left: 4px solid white;
+}
+.scroll::-webkit-scrollbar-corner:vertical {
+	background-color:white;
+}
+.scroll::-webkit-scrollbar-resizer:vertical {
+	background-color:red;
+}
+.scroll::-webkit-scrollbar-button:end:increment {
+	display:block;
+}
+.scroll::-webkit-scrollbar-button:start:decrement {
+	display:block;
+}
+.scroll::-webkit-scrollbar-thumb:vertical:hover {
+	background-color:rgba(0,0,0,0.4);
+}
+.scroll::-webkit-scrollbar-button:vertical:end:decrement {
+	display:none;
+}
+.scroll::-webkit-scrollbar-button:vertical:start:increment {
+	display:none;
+}
 
 /* input[type=search] {
 -webkit-appearance : none; }
@@ -1049,10 +1372,95 @@ page-break-after : avoid; }
 /* 6.TABLES */
 /* 7.FORMS */
 /* 8.BANNER */
+
+#banner {
+	border-bottom: solid 2px #000;
+	padding-bottom: .5em;
+}
+
+h1 .logo {
+	width: 152px;
+	height: 23px;
+	float: none;
+	position: absolute;
+	bottom: .5em;
+	padding: 0;
+	background: white url(../img/l/nytlogo152x23.gif) no-repeat 0 0;
+}
+
+h1 span {
+	display: block;
+	text-align: center;
+	padding: 0;
+	width: 100%;
+}
+
+p.sub-title {
+	width: 100%;
+	text-align: center;
+	margin: 0;
+}
+
+#socialtop {
+	display: block;
+	position: absolute;
+	bottom: .5em;
+	right: 0;
+}
+
 /* 9.NAVIGATION */
+
+#nav {
+	margin-top: 335px;
+}
+
+#dayslist {
+	display: block;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	-o-box-shadow: none;
+	box-shadow: none;
+	position: ;
+	float: left;
+	border-top: none;
+	border-bottom: none;
+	
+}
+
+.ie7 #dayslist, .ie8 #dayslist {
+	border-top: none;
+	border-bottom: none;
+	border-right: solid 1px #ccc;
+	position: static;
+}
+
+#dayslist h3 {
+	display: block;
+	font-size: 1.8em;
+	text-transform: uppercase;
+	text-align: right;	
+	padding-right: .7em;
+	line-height: 1em;
+	letter-spacing: 1px;
+	margin: 0 0 -.1em;
+}
+
+
+#viewnav .daystab {
+	display: none;
+}
+
+#detailnav li a {
+	font-size: 1em;
+}
+
 /* 10.CONTENT */
-#chart {
-	height: <?php echo ($max_height+20)*2; ?>px;
+h2.page-title {
+	font-size: 1.8em;
+	font-weight: normal;
+	text-transform: none;
+	margin-bottom: .7em;
+	text-align: center;
 }
 
 #chart .event .listname {
@@ -1065,9 +1473,34 @@ page-break-after : avoid; }
 	width : auto;
 	border : 0;
 }
+
+div.schedule {
+	margin-left: 9.25em;
+	overflow: auto;
+}
+
+.ie7 div.nav {
+	position: relative;
+}
+
+div.minimap {
+	height: 300px;
+}
+
 /* 11.MAIN */
+#main {
+	top: 3.3em;
+}
+
+h3.designer {
+	top: 365px;
+}
+
 /* 12.COMPLIMENTARY */
 /* 13.CONTENTINFO */
+#socialbottom {
+	display: none;
+}
 /* 14.GLOBAL OBJECTS */
 /* 15.VENDOR-SPECIFIC */
 /* 16.TEMPLATE SPECIFICS */
@@ -1088,6 +1521,18 @@ page-break-after : avoid; }
 @media only screen and (min-width: 992px) {
 
 /* 1.ROOT */
+html {
+	overflow: hidden;
+	height: 100%;
+	max-height: 100%;
+}
+
+body {
+	overflow: hidden;
+	height: 100%;
+	max-height: 100%;
+}
+
 /* 2.HEADINGS */
 /* 3.TYPOGRAPHY */
 /* 4.LINKS */
@@ -1096,6 +1541,43 @@ page-break-after : avoid; }
 /* 7.FORMS */
 /* 8.BANNER */
 /* 9.NAVIGATION */
+
+#nav {
+	display: block;
+	margin-top: 0;
+	float: left;
+	width: 45%;
+	height: 100%;
+}
+
+h2.secondary {
+	position: absolute; 
+	z-index: 9999; 
+	font-weight: normal; 
+	width: 10em; 
+	text-align: left; 
+	font-size: 1em; 
+	letter-spacing: 1px; 
+	text-transform: uppercase;
+}
+
+#viewnav {
+	margin-top: 1.4em;
+}
+
+.ie7 #viewnav {
+	top: 1.4em;
+}
+
+#contentnav {
+	height: 100%;
+	padding-bottom: 68px;
+}
+
+.ie7 #contentnav {
+	margin-top: 2.4em;
+}
+
 #viewnav .backlink {
 	display: none;
 }
@@ -1103,6 +1585,12 @@ page-break-after : avoid; }
 .designers #viewnav .backlink {
 	display: block;
 }
+
+div.schedule {
+	overflow-y: scroll;
+	height: 100%;
+}
+
 /* dynamic javascript popup */
 #schedule-popup {
 	top: 0;
@@ -1116,61 +1604,25 @@ page-break-after : avoid; }
 	border-right: solid 1px #ccc;
 }
 /* 10.CONTENT */
-
-div.nav {
-	overflow: auto;
-	margin: 0 0 2em;
+.content {
+	height: 100%;
+	padding-bottom: 89px;
 }
 
-#navgroup1, #navgroup2 {
-	float: left;	 
-}
-
-#navgroup1 {
-	width: <?php echo ((($tr_width + $margin) * round($event_length/2)) - $margin);  ?>%;
-}
-
-#navgroup2 {
-	width: <?php echo ((($tr_width + $margin) * round(($event_length/2), 0 , PHP_ROUND_HALF_DOWN)) - $margin);  ?>%;
-	margin-left: <?php echo $margin;?>%;
-}
 
 /* 11.MAIN */
 
+h2.page-title {
+	margin-bottom: 0em;
+}
+
 #main {
-	margin-left: 20em;
-}
-
-.designers #main {
-	margin-left: 0;
-}
-
-#detailnav li#phototab {
-	display: none;
-}
-
-.designers #modules #mainsection {
-	float: left;
-	width: <?php echo ((($tr_width + $margin) * round(($event_length/2), 0 , PHP_ROUND_HALF_DOWN)) - $margin);  ?>%;
-	border-right: solid 1px #ccc;
-	
-}
-
-.designers #modules #photosection {
-	float: left;
-	width: <?php echo ((($tr_width + $margin) * round($event_length/2)) - $margin);  ?>%;
-	margin-left: <?php echo $margin;?>%;
-}
-
-.designers #modules #photosection .visuallyhidden, .designers #modules #photosection h2 {
-	display: block;
-	clip: auto;
-	overflow: visible;
-	position: relative;
-	width: auto;
-	height: auto;
-	margin: 1em 0;
-	font-size: 1.2em;
+	margin-left: 50%;
+	position: static;
+	top: auto;
+	width: 50%;
+	height: 100%;
+	overflow-y: scroll;
 }
 
 div.nav .tweettext {
@@ -1180,6 +1632,21 @@ div.nav .tweettext {
 
 div.nav .tweettime {
 	right: 1em;
+}
+
+h3.designer {
+	position: static;
+	top: 0;
+	width: auto;
+	margin-bottom: 1em;
+}
+
+h3.designer span.breadcrumb {
+	display: none;
+}
+
+h3.designer b {
+	display: none;
 }
 
 /* 12.COMPLIMENTARY */
@@ -1204,11 +1671,17 @@ div.nav .tweettime {
 /* 7.FORMS */
 /* 8.BANNER */
 /* 9.NAVIGATION */
+#nav {
+	width: 35em;
+}
 /* 10.CONTENT */
 #chart {
 	height: <?php echo ($max_height+20)*2.5; ?>px;
 }
 /* 11.MAIN */
+#main {
+	margin-left: 39em;
+}
 /* 12.COMPLIMENTARY */
 /* 13.CONTENTINFO */
 /* 14.GLOBAL OBJECTS */

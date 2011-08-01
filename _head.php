@@ -14,7 +14,8 @@
 <link rel="stylesheet" media="handheld" href="css/handheld.css?v=1">  -->
 
 <!-- For all browsers -->
-<?php echo '<link rel="stylesheet" href="css/style.php?v=10&margin='.$margin.'&tr_width='.$tr_width.'&event_length='.$event_length.'&max_height='.$max_height.'">'; ?>
+<?php //echo '<link rel="stylesheet" href="css/style.php?v=10&margin='.$margin.'&tr_width='.$tr_width.'&event_length='.$event_length.'&max_height='.$max_height.'">'; ?>
+<link rel="stylesheet" href="css/style.php?v=12">
 
 <!-- JavaScript at bottom except for Modernizr -->
 <script src="js/libs/modernizr-1.7.min.js"></script>

@@ -1,5 +1,7 @@
+<div class="content clearfix">
+	<h2 class="page-title">On Location News via Twitter</h2>
 	<div id="nav" role="navigation">
-		<h2 class="secondary">NY Fashion Week Fall 2011</h2>
+		
 		<nav id="viewnav">
 			<ul class="clearfix">
 				<li id="charttab" class="selected"><a href="#">Schedule</a></li>
@@ -24,9 +26,8 @@
 				</ul>
 			</div>
 			
-			<div class="schedule nav scroll">
+			<div class="schedule nav">
 				
-				<div id="all-designers-item" class="listitem">All Designers</div>
 				
 				<?php 
 				$index = 0;
@@ -43,12 +44,12 @@
 						
 						foreach ($time_arr as $event) {
 						
-							echo '<div id="'.$event["keyword"].'" class="listitem clearfix">';
+							echo '<div id="event'.($index).'" class="listitem clearfix">';
 							
 							if ($time_index == 0) {
-								echo '<b class="timegroup">'.date('g:i', $event['start_time']).' <span>'.date('A', $event['start_time']).'</span></b> <div class="itemcontent"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount" style="background-color: '.$event['color'].';">'.$event['tweet_count'].'</span></div>';
+								echo '<b class="timegroup">'.date('g:i', $event['start_time']).' <span>'.date('A', $event['start_time']).'</span></b> <div class="itemcontent"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount">'.$event['tweet_count'].'</span></div>';
 							} else {
-								echo '<b>&nbsp;</b> <div class="itemcontent"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount" style="background-color: '.$event['color'].';">'.$event['tweet_count'].'</span></div>';
+								echo '<b>&nbsp;</b> <div class="itemcontent"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount">'.$event['tweet_count'].'</span></div>';
 							}
 							
 							echo '</div>';
@@ -81,3 +82,12 @@
 		<!-- temporary real-time tweets list -->
 		<ul></ul>
 	</div>
+	<div id="main" role="main">
+		<div id="map" class="minimap" style="overflow: hidden; background-image: url(img/l/map-temp.png); background-repeat: no-repeat; background-position: 25% 0;">
+			
+		</div>	
+	</div>
+		
+	
+
+</div>

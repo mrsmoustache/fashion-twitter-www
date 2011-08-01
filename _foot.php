@@ -1,56 +1,13 @@
 <!-- mathiasbynens.be/notes/async-analytics-snippet Change UA-XXXXX-X to be your site's ID -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js"></script>
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
+-->
 <script>
-window.jQuery || document.write('<script src="js/libs/jquery-1.5.1.min.js">\x3C/script>');
+//window.jQuery || document.write('<script src="js/libs/jquery-1.5.1.min.js">\x3C/script>');
 var nodeDomain = "<?php echo $NODE_DOMAIN; ?>";
-</script>
-<!-- Scripts -->
-<script src="js/plugins.js"></script>
-
-<script>
-DDE.maxCount = <?php echo $max_count; ?>;
-DDE.maxHeight = <?php echo $max_height; ?>;
-DDE.onScreenEventIndexes = {};
-DDE.onScreenEvents = [];
-DDE.allEventIndexes = {};
-DDE.allEvents = [];
-	
-<?php
-	$index = 0;
-	foreach ($event_list as $event) {
-		echo 'DDE.allEventIndexes["'.$event['keyword'].'"] = {"index": '.$index.' };';
-		echo 'DDE.allEvents['.$index.'] = { "keyword": "'.$event['keyword'].'", "startTime": "'.$event['start_time'].'", "duration": '.$event['duration'].', "tweetCount": '.$event['tweet_count'].', "color": "'.$event['color'].'", "rainIndex": 0 };';
-		$index++;
-	}
-	
-	$index = 0;
-	foreach ($limited_event_list as $event) {
-		echo 'DDE.onScreenEventIndexes["'.$event['keyword'].'"] = {"index": '.$index.' };';
-		echo 'DDE.onScreenEvents['.$index.'] = { "keyword": "'.$event['keyword'].'", "startTime": "'.$event['start_time'].'", "duration": '.$event['duration'].', "tweetCount": '.$event['tweet_count'].', "color": "'.$event['color'].'", "rainIndex": 0 };';
-		$index++;
-	}
-	
-
-
-if (isset($url_list)) {	
-?>
-
-	
-DDE.externalLinks = [];
-	
-<?php
-	$count = count($url_list);
-	for ($i=0; $i<$count; $i++) {
-		echo 'DDE.externalLinks['.$i.'] = { "id" : "'.$url_list[$i]["id"].'", "tweet" : '.json_encode($url_list[$i]["tweet"]).', "img_urls" : '.json_encode($url_list[$i]["img_urls"]).'};';
-	}
-	
-}
-?>
-	
-
-</script>
-<script src="js/script.js"></script>
+</script> 
+<script src="js/libs/jquery-1.5.1.min.js"></script>
+<script src="js/libs/jquery-ui-1.8.14.min.js"></script>
 
 <!--[if (lt IE 9) & (!IEMobile)]>
 <script src="js/libs/DOMAssistantCompressed-2.8.js"></script>
@@ -66,6 +23,67 @@ DDE.externalLinks = [];
 
 <!-- for blackberry testing -->
 <!-- <script src="js/libs/json2.js"></script> -->
+
+<!-- Scripts -->
+<script src="js/plugins.js"></script>
+
+<script>
+
+DDE.onScreenEventIndexes = {};
+DDE.onScreenEvents = [];
+DDE.allEventIndexes = {};
+//DDE.allEvents = [];
+//Todo: might not needs this for 
+DDE.allEventsSchedule = <?php echo json_encode($event_list); ?>;
+	
+<?php
+	/*
+	$index = 0;
+	foreach ($event_list as $event) {
+		echo 'DDE.allEventIndexes["'.$event['keyword'].'"] = {"index": '.$index.' };';
+		echo 'DDE.allEvents['.$index.'] = { "keyword": "'.$event['keyword'].'", "startTime": "'.$event['start_time'].'", "duration": '.$event['duration'].', "tweetCount": '.$event['tweet_count'].', "color": "'.$event['color'].'", "rainIndex": 0 };';
+		$index++;
+	}
+	*/
+	
+	/*
+	$index = 0;
+	foreach ($limited_event_list as $event) {
+		echo 'DDE.onScreenEventIndexes["'.$event['keyword'].'"] = {"index": '.$index.' };';
+		echo 'DDE.onScreenEvents['.$index.'] = { "keyword": "'.$event['keyword'].'", "startTime": "'.$event['start_time'].'", "duration": '.$event['duration'].', "tweetCount": '.$event['tweet_count'].', "color": "'.$event['color'].'", "rainIndex": 0 };';
+		$index++;
+	}
+	*/
+	
+if (isset($url_list)) {	
+?>
+
+	
+DDE.externalLinks = [];
+
+
+	
+<?php
+	$count = count($url_list);
+	for ($i=0; $i<$count; $i++) {
+		echo 'DDE.externalLinks['.$i.'] = { "id" : "'.$url_list[$i]["id"].'", "tweet" : '.json_encode($url_list[$i]["tweet"]).', "img_urls" : '.json_encode($url_list[$i]["img_urls"]).'};';
+	}
+	
+}
+?>
+	
+
+</script>
+<script src="js/script.js"></script>
+
+<!--  Place this tag after the last plusone tag -->
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
 
 <?php
 

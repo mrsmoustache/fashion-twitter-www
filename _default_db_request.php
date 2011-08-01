@@ -9,7 +9,7 @@ try {
 	$db = $conn->{'tweet-event'};
 						
 	//get list of all collections
-	$list = $db->listCollections();
+	//$list = $db->listCollections();
 	
 	$max_height = 150;
 	
@@ -18,28 +18,74 @@ try {
 	$cursor = $events->find()->sort(array('startTime'=>1)); //we can use limit here in the future
 	
 	$event_list = array();
+	$index = 0;
 		
-	?>
-	
-	<?php
-	
+	//build $event_list array and group by day of the week
 	foreach ($cursor as $obj) {
-		$event_list[] = array(
-			'keyword'=>$obj['keyword'],
-			'name'=>$obj['name'],
-			'start_time'=>$obj['startTime']->sec,
-			'duration'=>$obj['duration'],
-			'location'=>$obj['location'],
-			'latlng'=>$obj['latlng'],
-			'tweet_count'=>$obj['tweetCount'],
-			'color'=>$obj['color']
-		);
+	
+		$day = date('l, M j', $obj['startTime']->sec);
+		$day = strtotime($day);
+	
+		if ( isset($event_list[$day]) ) {
+		
+			if ( isset($event_list[$day][$obj['startTime']->sec]) ) {
+				$event_list[$day][$obj['startTime']->sec][] = array(
+					'keyword'=>$obj['keyword'],
+					'name'=>$obj['name'],
+					'start_time'=>$obj['startTime']->sec,
+					'duration'=>$obj['duration'],
+					'location'=>$obj['location'],
+					'latlng'=>$obj['latlng'],
+					'tweet_count'=>$obj['tweetCount'],
+					'color'=>$obj['color'],
+					'index'=>$index
+				);
+				
+			} else {
+				$event_list[$day][$obj['startTime']->sec] = array();
+				$event_list[$day][$obj['startTime']->sec][] = array(
+					'keyword'=>$obj['keyword'],
+					'name'=>$obj['name'],
+					'start_time'=>$obj['startTime']->sec,
+					'duration'=>$obj['duration'],
+					'location'=>$obj['location'],
+					'latlng'=>$obj['latlng'],
+					'tweet_count'=>$obj['tweetCount'],
+					'color'=>$obj['color'],
+					'index'=>$index
+				);
+			}
+		
+		} else {
+			$event_list[$day] = array();
+			$event_list[$day][$obj['startTime']->sec] = array();
+			$event_list[$day][$obj['startTime']->sec][] = array(
+				'keyword'=>$obj['keyword'],
+				'name'=>$obj['name'],
+				'start_time'=>$obj['startTime']->sec,
+				'duration'=>$obj['duration'],
+				'location'=>$obj['location'],
+				'latlng'=>$obj['latlng'],
+				'tweet_count'=>$obj['tweetCount'],
+				'color'=>$obj['color'],
+				'index'=>$index
+			);
+			
+		}
+		
+		$index++;
+		
 	}
 	
-	require_once('_time_slots.php');
+	//Old: Group events time slots
+	//require_once('_time_slots.php');
 	
 	//$daterange
 	//$time_slots
+	
+	
+	//For only showing one time slot on the front page
+	/*
 	$view_slots;
 	$limited_event_list = array();
 	
@@ -54,21 +100,24 @@ try {
 			$limited_event_list[] = $event_list[$arr["key_index"]];
 		}
 	}
-	 
-		
-	$biggest_first = subval_sort($limited_event_list, 'tweet_count', 'desc');
+	*/
+	
+	
+	//Todo: may not need this in the future
+	/*
+	$biggest_first = subval_sort($event_list, 'tweet_count', 'desc');
 	$highest_count = $biggest_first[key($biggest_first)]['tweet_count'];
 	
 	$max_count = $highest_count/.95;
 	if ($max_count == 0) $max_count = 1;
 	$scale = $max_height/$max_count;
 	$index = 0;
-	$event_length = count($limited_event_list);
+	$event_length = count($event_list);
 	$margin = 2;
 	$margin_total = $margin*($event_length-1);
 	$tr_width = (100-$margin_total)/($event_length);
 	$tr_spaced = $tr_width * .70;
-		
+	*/
 	
 	?>
 

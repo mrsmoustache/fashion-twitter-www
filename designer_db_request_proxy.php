@@ -1,5 +1,7 @@
 <?php
+
 //Build data lists and variables
+$designers = $_GET["designers"];
 $tweet_list = array();
 $url_list = array();
 $trends_list = array();
@@ -7,17 +9,22 @@ $colors_list = array();
 
 try {
 	// open connection to MongoDB server
-	$conn = new Mongo($NODE_HOST);
-	
+	$conn = new Mongo('localhost');
+		
 	// access database
 	$db = $conn->{'tweet-event'};
+	
 	
 	//get the designers collection of tweets
 	if (isset($designers) && $designers != "all") {
 	
+		$collection = $db->$designers;
+		
+	
 		$tweets_cursor = $collection->find()->sort(array('created_at'=>-1))->limit(10);
 		
 		foreach ($tweets_cursor as $key=>$value) {
+			
 			$tweet_list[] = array("id"=>$key, "tweet"=>$value);
 			
 		}
@@ -106,7 +113,7 @@ try {
 		$words = $db->words;
 		
 		$designer_counts = 'counts.total';
-		$words_cursor = $words->find(array( $designer_counts=>array( '$exists'=> true ) ))->sort(array($designer_counts=>-1))->limit(10);
+		$words_cursor = $words->find(array( $designer_counts=>array( '$exists'=> true ) ))->sort(array($designer_counts=>-1))->limit(20);
 			
 		
 		foreach ($words_cursor as $key=>$arr) {
@@ -137,6 +144,14 @@ try {
 	}
 	
 	
+	$response = array(
+		"tweetList"=>$tweet_list,
+		"urlList"=>$url_list,
+		"trendsList"=>$trends_list,
+		"colorsList"=>$colors_list
+	);
+	
+	echo json_encode($response);
 	
 	// disconnect from server
 	$conn->close();

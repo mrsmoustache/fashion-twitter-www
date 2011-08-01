@@ -1,6 +1,6 @@
 <?php
 
-$url = $_GET["url"];
+$url = urldecode($_GET["url"]);
 $allowedurls = array(
 'http:\/\/yfrog.com',
 'http:\/\/lockerz.com',
