@@ -1552,6 +1552,7 @@ body {
 	float: left;
 	width: 45%;
 	height: 100%;
+	margin-right: 2em;
 }
 
 h2.secondary {
@@ -1621,10 +1622,9 @@ h2.page-title {
 }
 
 #main {
-	margin-left: 50%;
+	margin-left: ;
 	position: static;
 	top: auto;
-	width: 50%;
 	height: 100%;
 	overflow-y: scroll;
 }
@@ -1688,9 +1688,6 @@ h3.designer b {
 	height: <?php echo ($max_height+20)*2.5; ?>px;
 }
 /* 11.MAIN */
-#main {
-	margin-left: 39em;
-}
 /* 12.COMPLIMENTARY */
 /* 13.CONTENTINFO */
 /* 14.GLOBAL OBJECTS */
