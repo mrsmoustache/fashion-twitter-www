@@ -447,7 +447,6 @@ p.sub-title {
 
 #modules #detailnav ul {
 	width: auto;
-	float: none;
 	overflow: hidden;
 }
 
@@ -978,7 +977,7 @@ h3.designer span.breadcrumb {
 
 ul.switchcontrol {
 	padding: 1px 0;
-	width: 12.2em;
+	width: 12.3em;
 	margin: 0 auto;
 }
 
@@ -1015,6 +1014,7 @@ ul.switchcontrol li.selected {
 	border-top: solid 2px #ccc;
 	padding-top: 1em;
 	margin-bottom: 4em;
+	display: none;
 }
 
 #socialbottom {
@@ -1065,6 +1065,10 @@ text-shadow : none; }
 background : rgb(23,119,175); 
 color : rgb(250,250,250); 
 text-shadow : none; }
+
+.scroll {
+	-webkit-overflow-scrolling: touch;
+}
 
 .scroll::-webkit-scrollbar {
 	width: 15px;
@@ -1623,6 +1627,11 @@ h2.page-title {
 	width: 50%;
 	height: 100%;
 	overflow-y: scroll;
+}
+
+.ie7 #main {
+	position: relative;
+	
 }
 
 div.nav .tweettext {

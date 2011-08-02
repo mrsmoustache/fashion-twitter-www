@@ -114,6 +114,7 @@ DDE.TweetYvent.prototype = {
 		tg.$body = $('body');
 		tg.$tweetsTab = $('div.tweets');
 		tg.$scheduleNav = $('div.schedule.nav');
+		tg.$contentNav = $('#contentnav');
 		
 		if($('.ie7 body')[0]) tg.ie7 = true;
 		
@@ -121,6 +122,7 @@ DDE.TweetYvent.prototype = {
 		
 		//Modernizr Feature Detection
 		if (Modernizr.cssanimations) tg.cssAnimationOn = true;
+		if (Modernizr.touch) tg.touch = true;
 		
 		//cache global selectors
 		tg.$headerB = $('header b');
@@ -165,8 +167,9 @@ DDE.TweetYvent.prototype = {
 			}
 			
 			if (tg.ie7) {
-				var height = tg.lastWindowHeight - 157;
+				var height = tg.lastWindowHeight - 90;
 				DDE.setMaxHeight(tg.$body[0], height);
+				DDE.setMaxHeight(tg.$contentNav[0], height - 68);
 			}
 		
 		//768	
@@ -240,6 +243,7 @@ DDE.TweetYvent.prototype = {
 				
 				var data = JSON.parse(json);
 				tg.currView.updateScreen(data, that);
+				if (tg.touch) tg.mainScroll.refresh();
 				
 			});
 			
@@ -447,10 +451,10 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			//insert data based on which designer is toggled
 			//filter data based on toggle
 			var pathname = location.pathname.replace(/\/node-projects\/tweet-event-map\/fashion-twitter-www\//, '/');
+			
 			var hashBase = location.hash ? location.hash.match(/\/[A-Za-z1-9-]*\//)[0] : '';
 			var pointerPattern = new RegExp('#'+hashBase);
 			var pointer = location.hash.replace(pointerPattern, '').replace(/\//, '');
-			
 			switch(hashBase){
 				
 				case "/schedule/":
@@ -529,23 +533,41 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		
 		//this.loadScheduleView(tg); //Change this to active Days menu for small screens
 		
+		if (tg.touch) {
+			tg.scheduleScroll = new iScroll('schedulenav');
+			tg.mainScroll = new iScroll('main');
+		}
+		
 		this.enableScheduleLinks(tg);
 		
 			
 	},
 	
 	enableScheduleLinks: function ( globals ) {
+		
 		var tg = globals;
 		var that = this;
 		
 		//change all link href to use hash links
 		var links = $('a', tg.$scheduleNav);
 		var count = links.length;
+		var baseURI;
 				
 		for (var i=0; i<links.length; i++) {
-			var baseURI = links[i].baseURI;
+			var baseURI = 'http://'+links[i].hostname+'/';
 			var pathname = links[i].pathname;
-			links[i].href = baseURI + '#' + pathname;
+			
+			//fix consistency between pathname structure across browsers
+			pathname = pathname.replace(/^\//, '');
+			
+			//todo: remove for production
+			var extra = '';
+			if (pathname.match(/node-projects\/tweet-event-map\/fashion-twitter-www/)) {
+				extra = 'node-projects/tweet-event-map/fashion-twitter-www/';
+				pathname = pathname.replace(/node-projects\/tweet-event-map\/fashion-twitter-www\//, '');
+			}
+			
+			links[i].href = baseURI + extra + '#/' + pathname;
 		}
 		
 		//enable listitem click events
@@ -554,7 +576,7 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		$(this.$scheduleNavItems[0]).click(function(e){
 			$('.tweets').html('');
 			$('h3.designer').html('All Designers');
-			window.location.href = '/';
+			window.location.href = window.location.pathname;
 			
 		});
 		
@@ -850,6 +872,7 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 		$extraHeaders.addClass("visuallyhidden");
 		
 		$trendsContent[0].style.display = "none";
+		$photosContent[0].style.display = "none";
 		
 		$trendTab.click(function(e){
 			e.preventDefault();

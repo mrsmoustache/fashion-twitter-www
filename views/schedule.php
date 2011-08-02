@@ -24,46 +24,48 @@
 				</ul>
 			</div>
 			
-			<div class="schedule nav scroll">
+			<div id="schedulenav" class="schedule nav scroll">
+			
+				<div>
 				
-				<div id="all-designers-item" class="listitem">All Designers</div>
-				
-				<?php 
-				$index = 0;
-				$day_index = 1;
-				$halfway = false;
-				foreach ($event_list as $day=>$day_arr) { 
-					$day_str = date('l, M j', $day);
-					echo '<div id="day'.$day_index.'" class="listcat">'.$day_str.'</div>';
-					//$event = $event_list[$arr["key_index"]];
-					$day_index++;
-					foreach ($day_arr as $time=>$time_arr) {
-						
-						$time_index = 0;
-						
-						foreach ($time_arr as $event) {
-						
-							echo '<div id="'.$event["keyword"].'" class="listitem clearfix">';
+					<div id="all-designers-item" class="listitem">All Designers</div>
+					
+					<?php 
+					$index = 0;
+					$day_index = 1;
+					$halfway = false;
+					foreach ($event_list as $day=>$day_arr) { 
+						$day_str = date('l, M j', $day);
+						echo '<div id="day'.$day_index.'" class="listcat">'.$day_str.'</div>';
+						//$event = $event_list[$arr["key_index"]];
+						$day_index++;
+						foreach ($day_arr as $time=>$time_arr) {
 							
-							if ($time_index == 0) {
-								echo '<b class="timegroup">'.date('g:i', $event['start_time']).' <span>'.date('A', $event['start_time']).'</span></b> <div class="itemcontent"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount" style="background-color: '.$event['color'].';">'.$event['tweet_count'].'</span></div>';
-							} else {
-								echo '<b>&nbsp;</b> <div class="itemcontent"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount" style="background-color: '.$event['color'].';">'.$event['tweet_count'].'</span></div>';
+							$time_index = 0;
+							
+							foreach ($time_arr as $event) {
+							
+								echo '<div id="'.$event["keyword"].'" class="listitem clearfix">';
+								
+								if ($time_index == 0) {
+									echo '<b class="timegroup">'.date('g:i', $event['start_time']).' <span>'.date('A', $event['start_time']).'</span></b> <div class="itemcontent"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount" style="background-color: '.$event['color'].';">'.$event['tweet_count'].'</span></div>';
+								} else {
+									echo '<b>&nbsp;</b> <div class="itemcontent"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount" style="background-color: '.$event['color'].';">'.$event['tweet_count'].'</span></div>';
+								}
+								
+								echo '</div>';
+								
+						
+								$time_index++;
+								$index++;
 							}
-							
-							echo '</div>';
-							
-					
-							$time_index++;
-							$index++;
+						
 						}
-					
+						
 					}
 					
-				}
-				
-				?>
-				
+					?>
+				</div>
 				
 			</div>
 			

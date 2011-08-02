@@ -22,15 +22,16 @@
 	?>
 	
 	<div id="main" role="main" class="scroll">
+		<div>
 		
-		<h2 class="page-title">On Location News via Twitter</h2>
-		<h3 class="designer"><span class="breadcrumb">Schedule</span> <b>/ </b>All Designers</h3>
+			<h2 class="page-title">On Location News via Twitter</h2>
+			<h3 class="designer"><span class="breadcrumb">Schedule</span> <b>/ </b>All Designers</h3>
+			
+			<div id="map" class="minimap" style="overflow: hidden; background-image: url(img/l/map-temp.png); background-repeat: no-repeat; background-position: 25% 0;"></div>
+			
+			<?php include 'views/designers.php' ?>
 		
-		<div id="map" class="minimap" style="overflow: hidden; background-image: url(img/l/map-temp.png); background-repeat: no-repeat; background-position: 25% 0;"></div>
-		
-		<?php include 'views/designers.php' ?>
-		
-		
+		</div>
 	</div>
 		
 	

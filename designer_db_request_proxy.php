@@ -1,5 +1,6 @@
 <?php
 
+include('_config.php');
 //Build data lists and variables
 $designers = $_GET["designers"];
 $tweet_list = array();
@@ -9,7 +10,7 @@ $colors_list = array();
 
 try {
 	// open connection to MongoDB server
-	$conn = new Mongo('localhost');
+	$conn = new Mongo($NODE_HOST);
 		
 	// access database
 	$db = $conn->{'tweet-event'};
