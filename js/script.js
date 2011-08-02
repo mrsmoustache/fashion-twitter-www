@@ -621,7 +621,7 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		$(this.$scheduleNavItems[0]).click(function(e){
 			$('.tweets').html('');
 			$('h3.designer').html('All Designers');
-			window.location.href = window.location.pathname;
+			window.location.href = window.location.pathname + '#';
 			
 		});
 		
