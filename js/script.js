@@ -31,7 +31,7 @@ $(document).ready(function(){
 	tweetYvent.setScreenSizes();
 	
 	tweetYvent.loadView();
-	
+		
 });
 
 $.ajaxSetup ({
@@ -127,6 +127,40 @@ DDE.TweetYvent.prototype = {
 		//cache global selectors
 		tg.$headerB = $('header b');
 		
+	},
+	
+	activeUserCheck: function() {
+		var tg = this.globals;
+		tg.$body.bind(DDE.touchMove, function(){
+			tg.stillActive = true;
+		});
+		
+		var check = false;
+		
+		var activeUserInterval = setInterval(function(){
+			if (!check) {
+				tg.stillActive = false;
+				check = !check;
+			} else {
+				if (!tg.stillActive) {
+					console.log("user is not active. disconnecting socket");
+					tg.socket.disconnect();
+					tg.forceDisconnect = true;
+					clearInterval(activeUserInterval);
+					activeUserInterval = null;
+					
+					//todo: create button and use this to reconnect user
+					/*
+					setTimeout(function(){
+						tg.socket.connect();
+					}, 10000);
+					*/
+				} else {
+					check = !check;
+				}
+			}
+			
+		}, 60000); //wait for one minute of activity before forcing clients to disconnect
 	},
 	
 	setScreenSizes: function() {
@@ -229,9 +263,12 @@ DDE.TweetYvent.prototype = {
 		
 		$.getScript (tg.nodeServer+"/socket.io/socket.io.js", function(){
 			
-			var socket = new io.Socket(nodeDomain, {"port": 8124});
+			tg.socket = new io.Socket(nodeDomain, {"port": 8124});
 			
-			socket.on('connect', function() {
+			
+			
+			tg.socket.on('connect', function() {
+				that.activeUserCheck();
 				tg.connected = true;
 				clearInterval(tg.socketInterval);
 				tg.socketInterval = null;
@@ -239,7 +276,7 @@ DDE.TweetYvent.prototype = {
 				tg.$headerB.html("Connected:  ");
 			});
 			 
-			socket.on('message', function (json) {
+			tg.socket.on('message', function (json) {
 				
 				var data = JSON.parse(json);
 				tg.currView.updateScreen(data, that);
@@ -247,17 +284,18 @@ DDE.TweetYvent.prototype = {
 				
 			});
 			
-			socket.on('disconnect', function() {
+			tg.socket.on('disconnect', function() {
 				tg.connected = false;
 				console.log('disconnected');
-				tg.$headerB.html("reconnecting..." +                   
-				            tg.RETRY_INTERVAL/1000 + " seconds.");
+				tg.$headerB.html("reconnecting..." + tg.RETRY_INTERVAL/1000 + " seconds.");
 				retryConnectOnFailure(tg.RETRY_INTERVAL);
+				tg.disconnectCycles = 0;
 			});
 			
 			var retryConnectOnFailure = function(retryInMilliseconds) {
 				tg.socketInterval = setInterval(function() {
-					if (!tg.connected) {
+					if (!tg.connected && !tg.forceDisconnect) {
+						tg.disconnectCycles++;
 						console.log("pinging server. waiting for response");
 						$.get(tg.nodeServer+'/ping', function(data) {
 							tg.connected = true;
@@ -265,10 +303,17 @@ DDE.TweetYvent.prototype = {
 							console.log("server responded. reconnecting...");
 						});
 					}
+					if (tg.disconnectCycles >= 10) {
+						clearInterval(tg.socketInterval);
+						tg.socketInterval = null;
+						console.log("gave up trying to connect. Come back later.")
+					}
 				}, retryInMilliseconds);
+				
+				
 			}
 			
-			socket.connect();
+			tg.socket.connect();
 		}); 
 	},
 	
