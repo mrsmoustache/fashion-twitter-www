@@ -78,7 +78,9 @@ padding : 16px 0 24px;
 width : 90% /* 252px */;
 font : 100%/1.4 Georgia,"Times New Roman", Times, serif ;
 color: #282828; 
-background-color : transparent; }
+background-color : transparent; 
+position: relative;
+}
 
 /* 2.HEADINGS */
 
@@ -322,7 +324,7 @@ h1 .logo {
 	top: -14px;
 	width: 100%;
 	line-height: .8em;
-	display: none;
+	display: block;
 }
 
 #banner b {
@@ -791,7 +793,7 @@ div.nav .listitem, div.list .listitem {
 	border-bottom: solid 1px #ddd;
 	padding: .75em 0 .8em;
 	position: relative;
-	background: url(../img/l/nav-arrow-right.gif) no-repeat center right;
+	background: url(../img/l/nav-arrow-right.gif) no-repeat 97% 50%;
 }
 
 div.nav .listitem {
@@ -807,6 +809,10 @@ div.nav #all-designers-item {
 	font-weight: bold;
 	padding: 1em 0;
 	border-top: solid 1px #ccc;
+}
+
+.ie7 div.nav #all-designers-item {
+	border-top: solid 2px #eee;
 }
 
 div.schedule .listitem {
@@ -885,8 +891,9 @@ div.nav .starttime {
 
 div.nav .tweetcount, div.list .trendcount {
 	position: absolute; 
-	top: 1em; 
-	right: 2em; 
+	top: 50%;
+	margin-top: -.75em; 
+	right: 2.7em; 
 	background: #aaa;
 	color: #fff;
 	padding: .2em .3em;
@@ -894,7 +901,7 @@ div.nav .tweetcount, div.list .trendcount {
 }
 
 div.list .trendcount {
-	top: .8em;
+	margin-top: -.8em;
 }
 
 .tweets .listthumb {
@@ -1011,10 +1018,12 @@ ul.switchcontrol li.selected {
 /* 13.CONTENTINFO */
 #footer {
 	text-align: center;
-	border-top: solid 2px #ccc;
+	border-top: solid 2px #2a2a2a;
 	padding-top: 1em;
-	margin-bottom: 4em;
-	display: none;
+	background: white;
+	height: 20px; 
+	width: 100%; 
+	margin: 0;
 }
 
 #socialbottom {
@@ -1066,7 +1075,12 @@ background : rgb(23,119,175);
 color : rgb(250,250,250); 
 text-shadow : none; }
 
+.no-js .scroll {
+	overflow-y: scroll;
+}
+
 .scroll {
+	overflow-y: hidden;
 	-webkit-overflow-scrolling: touch;
 }
 
@@ -1480,7 +1494,6 @@ h2.page-title {
 
 div.schedule {
 	margin-left: 9.25em;
-	overflow: auto;
 }
 
 .ie7 div.nav {
@@ -1532,7 +1545,7 @@ html {
 }
 
 body {
-	overflow: hidden;
+	overflow: visible;
 	height: 100%;
 	max-height: 100%;
 }
@@ -1552,7 +1565,55 @@ body {
 	float: left;
 	width: 45%;
 	height: 100%;
-	margin-right: 2em;
+	margin-right: 1.5em;
+	overflow-x: visible;
+}
+
+.scroller {
+	width: 14px;
+	bottom: 0px;
+	top: 0px;
+	overflow: hidden;
+	right: -15px;
+	position: absolute;
+	z-index: 999;
+}
+
+.scroller .track {
+	background-color: white;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.scroller .thumb {
+	background-color: #ccc;
+	position: absolute;
+	left: 6px;
+	width: 8px;
+	height: 40px;
+}
+
+.scroller .thumb:hover {
+	background-color: #777;
+}
+
+#schedulenavscroller {
+	bottom: 69px;
+}
+
+.ie7 #schedulenavscroller {
+	bottom: 69px;
+}
+
+#mainscroller {
+	bottom: 125px;
+}
+
+.ie7 #mainscroller {
+	bottom: 0px;
 }
 
 h2.secondary {
@@ -1577,10 +1638,12 @@ h2.secondary {
 #contentnav {
 	height: 100%;
 	padding-bottom: 68px;
+	position: relative;
 }
 
 .ie7 #contentnav {
 	margin-top: 2.4em;
+	padding-bottom: 0px;
 }
 
 #viewnav .backlink {
@@ -1592,7 +1655,6 @@ h2.secondary {
 }
 
 div.schedule {
-	overflow-y: scroll;
 	height: 100%;
 }
 
@@ -1611,9 +1673,12 @@ div.schedule {
 /* 10.CONTENT */
 .content {
 	height: 100%;
-	padding-bottom: 89px;
+	padding-bottom: 125px;
 }
 
+.ie7 .content {
+	padding-bottom: 0px;
+}
 
 /* 11.MAIN */
 
@@ -1622,11 +1687,12 @@ h2.page-title {
 }
 
 #main {
-	margin-left: ;
 	position: static;
 	top: auto;
 	height: 100%;
-	overflow-y: scroll;
+	border-left: solid 1px #ccc;
+	padding-left: 1.5em;
+	
 }
 
 .ie7 #main {
@@ -1660,6 +1726,11 @@ h3.designer b {
 
 /* 12.COMPLIMENTARY */
 /* 13.CONTENTINFO */
+#footer {
+	position: absolute; 
+	bottom: 40px; 
+	z-index: 9999; 
+}
 /* 14.GLOBAL OBJECTS */
 /* 15.VENDOR-SPECIFIC */
 /* 16.TEMPLATE SPECIFICS */

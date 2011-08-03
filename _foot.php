@@ -104,4 +104,6 @@ s.parentNode.insertBefore(g,s)}(document,'script'));
 
 ?>
 
-<noscript>Your browser does not support JavaScript! Only basic features available.</noscript>
+<noscript>
+	<p>Your browser does not support JavaScript! Only basic features available.</p>
+</noscript>

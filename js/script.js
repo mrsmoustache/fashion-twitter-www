@@ -91,6 +91,7 @@ DDE.TweetYvent = function(){
 	},
 	
 	this.browserCheck = function(){
+		var tg = this.globals;
 		if (navigator.userAgent.match(/Blackberry/i)) {
 			if(navigator.userAgent.match(/\/6\./i)) {
 				$body.addClass('bb6');
@@ -99,6 +100,24 @@ DDE.TweetYvent = function(){
 				
 			}
 		}
+		
+		if (navigator.userAgent.match(/Windows/i)) {
+			tg.Windows = true
+			
+			if (navigator.userAgent.match(/MSIE/i)) {
+				tg.MSIE = true;
+			}
+			
+		}
+		
+		if (navigator.userAgent.match(/webkit/i)) {
+			tg.Webkit = true;
+		}
+		
+		if (navigator.userAgent.match(/chrome/i)) {
+			tg.Chrome = true;
+		} 
+		
 	},
 	
 	this.compareBiggest = function(a,b) {
@@ -113,7 +132,9 @@ DDE.TweetYvent.prototype = {
 		var tg = this.globals;
 		tg.$body = $('body');
 		tg.$tweetsTab = $('div.tweets');
-		tg.$scheduleNav = $('div.schedule.nav');
+		tg.$scheduleNav = $('#schedulenav');
+		tg.$main = $('#main');
+		tg.$content = $('div.content');
 		tg.$contentNav = $('#contentnav');
 		
 		if($('.ie7 body')[0]) tg.ie7 = true;
@@ -168,8 +189,14 @@ DDE.TweetYvent.prototype = {
 		
 		this.watchWindowSizes();
 		
-		//Default
-		tg.chartHeight = (DDE.maxHeight+20);
+		if (tg.mainScroll) {
+			tg.mainScroll.refresh();
+		}
+		
+		if (tg.scheduleScroll) {
+			tg.scheduleScroll.refresh();
+		}
+		
 		if (tg.$schedulePopup) {
 			tg.$schedulePopup[0].style.display = '';
 			tg.$schedulePopup.click(function(e){
@@ -182,36 +209,44 @@ DDE.TweetYvent.prototype = {
 				}
 			});
 		}
+		//768
+		if (tg.lastWindowWidth >= 768) { 
 		
-		//1802
-		if (tg.lastWindowWidth >= 1802) { 
-		
-			tg.chartHeight = (DDE.maxHeight+20)*3.5; 
-		
-		//1382	
-		} else if (tg.lastWindowWidth >= 1382) { 
-		
-			tg.chartHeight = (DDE.maxHeight+20)*2.5;
+			tg.chartHeight = (DDE.maxHeight+20)*2;
+			
+		}
 		
 		//992
-		} else if (tg.lastWindowWidth >= 992) {
+		if (tg.lastWindowWidth >= 992) {
 			
 			if (tg.$schedulePopup) {
 				tg.$schedulePopup.unbind();
 			}
 			
 			if (tg.ie7) {
-				var height = tg.lastWindowHeight - 90;
-				DDE.setMaxHeight(tg.$body[0], height);
-				DDE.setMaxHeight(tg.$contentNav[0], height - 68);
+				//DDE.setMaxHeight(tg.$body[0], height);
+				DDE.setMaxHeight(tg.$content[0], tg.lastWindowHeight - 125);
+				DDE.setMaxHeight(tg.$scheduleNav[0], tg.lastWindowHeight - 195);
 			}
+		} 
 		
-		//768	
-		} else if (tg.lastWindowWidth >= 768) { 
+		//1382	
+		if (tg.lastWindowWidth >= 1382) { 
 		
-			tg.chartHeight = (DDE.maxHeight+20)*2;
-			
-		}
+			tg.chartHeight = (DDE.maxHeight+20)*2.5;
+		
+		} 
+		
+		//1802
+		if (tg.lastWindowWidth >= 1802) { 
+		
+			tg.chartHeight = (DDE.maxHeight+20)*3.5; 
+		
+		
+		} 
+		
+		
+		
 	},
 	
 	loadView: function() {
@@ -240,6 +275,7 @@ DDE.TweetYvent.prototype = {
 	},
 	
 	makeRainClouds: function() {
+		return false;
 		var tg = this.globals;
 		var length = tg.$tableRows.length;
 		for (var i=0; i<length; i++) {
@@ -280,7 +316,8 @@ DDE.TweetYvent.prototype = {
 				
 				var data = JSON.parse(json);
 				tg.currView.updateScreen(data, that);
-				if (tg.touch) tg.mainScroll.refresh();
+				
+				tg.mainScroll.refresh();
 				
 			});
 			
@@ -364,17 +401,15 @@ DDE.TweetYvent.prototype.MainView = function( parent ) {
 		var that = parent;
 		var tg = that.globals;
 		
-		tg.$chartDiv = $('#chart');
-		tg.$content = $('div.content');
-		this.$chartCountNodes = $('.tweetcount', tg.$chartDiv[0]);
-		tg.$tableRows = $('.tablerow', tg.$chartDiv[0]);
+		//todo: move these to proper view
 		this.$scheduleNavItems = $('div.schedule .listitem');
-		
 		this.listCountNodes = []; //cache references to tweetcount nodes in the nav list
 		
 		this.saveOnScreenRefs();
-		this.redrawChart(tg);
-		this.enhanceUI(tg);
+		
+		//this.redrawChart(tg);
+		
+		this.enhanceUI(that);
 	
 		DDE.fpsCounter();
 		
@@ -393,8 +428,6 @@ DDE.TweetYvent.prototype.MainView = function( parent ) {
 				console.log("smartresize");
 								
 				that.setScreenSizes();
-				
-				tg.currView.redrawChart(tg);
 				
 			}
 			
@@ -572,19 +605,25 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		}
 	},
 	
-	enhanceUI: function( globals ) {
-		
-		var tg = globals;
+	enhanceUI: function( parent ) {
+		var that = parent;
+		var tg = that.globals;
 		
 		//this.loadScheduleView(tg); //Change this to active Days menu for small screens
 		
-		if (tg.touch) {
+		
+		if (tg.touch) { 
+			//webkit mobile touch scroll panels
+			tg.$scheduleNav[0].style['margin-right'] = '0px';
 			tg.scheduleScroll = new iScroll('schedulenav');
 			tg.mainScroll = new iScroll('main');
+		} else {
+			//custom desktop scroll panels
+			tg.scheduleScroll = new that.CustomScroll(tg.$scheduleNav, tg);
+			tg.mainScroll = new that.CustomScroll(tg.$main, tg)
 		}
 		
 		this.enableScheduleLinks(tg);
-		
 			
 	},
 	
@@ -616,12 +655,12 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		}
 		
 		//enable listitem click events
-		console.log(this.$scheduleNavItems);
 		//change this back to $scheduleNavItems.click
 		$(this.$scheduleNavItems[0]).click(function(e){
 			$('.tweets').html('');
 			$('h3.designer').html('All Designers');
 			window.location.href = window.location.pathname + '#';
+			tg.mainScroll.refresh();
 			
 		});
 		
@@ -643,8 +682,6 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 				data: {"designers": designer},
 				dataType: "json",
 				success: function ( data ) {
-					
-					console.log(data);
 					
 					//insert archived tweets
 					//data.tweetList = []
@@ -688,6 +725,8 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 					//insert archived photos
 					//data.urlList = []
 					that.fetchImgUrls(data.urlList);
+					
+					tg.mainScroll.refresh();
 					
 				},
 				error: function ( data ) {
@@ -845,6 +884,119 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 
 /*//////////////////////////////////
 //
+//			Custom Scrollbars
+//
+///////////////////////////////////*/
+
+DDE.TweetYvent.prototype.CustomScroll = function ( $elem, globals ) {
+	console.log("New CustomScroll Object");
+	var tg = globals;
+	
+	this.id = $elem[0].id;
+	this.scrollPane = $elem[0];
+	
+	this.buildScrollbars();
+	
+	//init scrollbar
+	this.scrollbar = $elem[0].nextSibling;
+	this.scrollTop = 0;
+	
+	this.track = this.scrollbar.childNodes[0];
+	this.thumb = this.scrollbar.childNodes[1];
+	
+	this.refresh();
+	
+	this.enableScrollbars(tg);
+	
+		
+};
+
+DDE.TweetYvent.prototype.CustomScroll.prototype = {
+	buildScrollbars: function () {
+		
+		var that = this;
+		var scrollID = that.scrollPane.id ? that.scrollPane.id : '';
+		
+		var HTML = '<div id="'+scrollID+'scroller" class="scroller scroll-vertical">';
+				HTML += '<div class="track"></div>';
+				HTML += '<div class="thumb"></div>';
+			HTML += '</div>';
+			
+		$(that.scrollPane).after(HTML);
+		
+	},
+	
+	enableScrollbars: function ( globals ) {
+		var that = this;
+		var tg = globals;
+		var eventType = 'onmousewheel' in that.scrollPane ? 'mousewheel' : 'DOMMouseScroll';
+		
+		var scrollPanel = function(e) {
+			e = e ? e : window.event;
+  			var wheelData = e.detail ? -e.detail : e.wheelDelta;
+  			
+  			if (tg.Webkit) {
+  				if (tg.Chrome) {
+  					wheelData = wheelData/2;
+  				} else {
+  					wheelData = wheelData/120;
+  				}
+  			} else if (tg.MSIE) {
+  				wheelData = wheelData/3;
+  			} else {
+  				wheelData = wheelData * 5;
+  			}
+  			
+  			this.scrollTop += -wheelData;
+  			
+  			that.scrollTop = this.scrollTop;
+  			that.save = this.scrollTop;
+  			
+  			//move thumb
+  			if (that.scrollDistance > 0) {
+	  			var percentageMoved = this.scrollTop/that.scrollDistance;
+	  			that.thumb.style.top = Math.round((that.distanceForThumb * percentageMoved)) + "px";
+	  		}
+  			
+		};
+		
+		$(that.scrollPane).bind(eventType, scrollPanel);
+	},
+	
+	refresh: function () {
+		var that = this;
+		
+		//Firefox is having trouble retaining this info on the element
+		if (that.save) {
+			that.scrollTop = that.save;
+			that.scrollPane.scrollTop = that.save;
+		}
+		
+		that.panelHeight = that.scrollPane.offsetHeight;
+		that.scrollDistance = that.scrollPane.scrollHeight - that.panelHeight;
+		
+		//size thumb
+		that.thumbHeight = (that.panelHeight/that.scrollPane.scrollHeight) * that.panelHeight;
+		
+		if (that.thumbHeight < 30) that.thumbHeight = 30;
+		if (that.scrollDistance == 0) that.thumb.style.display = "none";
+		else that.thumb.style.display = "block";
+		
+		that.thumb.style.height = that.thumbHeight + "px";
+		that.distanceForThumb = that.panelHeight - that.thumbHeight;
+		
+		//move thumb
+		if (that.scrollDistance > 0) {
+			var percentageMoved = that.scrollTop/that.scrollDistance;
+			that.thumb.style.top = Math.round((that.distanceForThumb * percentageMoved)) + "px";
+		}
+		
+	}
+};
+
+
+/*//////////////////////////////////
+//
 //			Detail View
 //
 ///////////////////////////////////*/
@@ -857,7 +1009,7 @@ DDE.TweetYvent.prototype.DetailView = function( parent ) {
 		
 		//TODO: finish fetchImgURLs 
 		
-		this.makeTabs();
+		this.makeTabs(tg);
 		
 		/*
 		that.initSocketListening();
@@ -882,20 +1034,10 @@ DDE.TweetYvent.prototype.DetailView = function( parent ) {
 
 DDE.TweetYvent.prototype.DetailView.prototype = {
 		
-	saveOnScreenRefs: function( parent ) {
-		//store onScreenEvents in order
-		var that = parent;
-		var tg = that.globals;
-		var count = tg.$scheduleNavItems.length;
-		for (var i=0; i<count; i++) {
-			var listItem = tg.$scheduleNavItems[i],
-				$listCountNode = $('.tweetcount', listItem);
-				
-			tg.listCountNodes[i] = $listCountNode; 
-		}
-	},
+	makeTabs: function( globals ) {
 	
-	makeTabs: function() {
+		var tg = globals;
+		
 		//Todo: make more efficient code
 		var $extraHeaders = $('h2.no-tab');
 		var $detailNavMenu = $('#detailnav ul');
@@ -929,6 +1071,8 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 			$photoTab.removeClass("selected");
 			$tabSubTitle.html('Top Trending Words');
 			
+			tg.mainScroll.refresh();
+			
 		});
 		
 		$tweetTab.click(function(e){
@@ -941,6 +1085,8 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 			$tweetTab.addClass("selected");
 			$tabSubTitle.html('Most Recent Tweets');
 			
+			tg.mainScroll.refresh();
+			
 		});
 		
 		$photoTab.click(function(e){
@@ -952,6 +1098,8 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 			$tweetTab.removeClass("selected");
 			$photoTab.addClass("selected");
 			
+			tg.mainScroll.refresh();
+			
 		});
 		
 		$wordSwitch.click(function(e){
@@ -959,6 +1107,9 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 			$wordContent[0].style.display = "block";
 			$colorSwitch.removeClass("selected");
 			$wordSwitch.addClass("selected");
+			
+			tg.mainScroll.refresh();
+			
 		});
 		
 		$colorSwitch.click(function(e){
@@ -966,6 +1117,9 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 			$wordContent[0].style.display = "none";
 			$colorSwitch.addClass("selected");
 			$wordSwitch.removeClass("selected");
+			
+			tg.mainScroll.refresh();
+			
 		});
 		
 		
