@@ -324,7 +324,7 @@ h1 .logo {
 	top: -14px;
 	width: 100%;
 	line-height: .8em;
-	display: block;
+	display: none;
 }
 
 #banner b {
