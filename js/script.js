@@ -24,6 +24,13 @@ $(window).load(function(){
 		
 });
 
+$(window).resize(function(){
+	if (navigator.userAgent.match(/Firefox/i) && tweetYvent.globals.mainScroll) {
+		tweetYvent.globals.mainScroll.scrollTop = tweetYvent.globals.mainScroll.save;
+		tweetYvent.globals.mainScroll.scrollPane.scrollTop = tweetYvent.globals.mainScroll.save;
+	}
+});
+
 $(document).ready(function(){
 	
 	tweetYvent.initSelectors();
@@ -136,6 +143,7 @@ DDE.TweetYvent.prototype = {
 		tg.$main = $('#main');
 		tg.$content = $('div.content');
 		tg.$contentNav = $('#contentnav');
+		tg.$detailNavContainer = $('.tabnav.detailnav');
 		
 		if($('.ie7 body')[0]) tg.ie7 = true;
 		
@@ -209,15 +217,53 @@ DDE.TweetYvent.prototype = {
 				}
 			});
 		}
+		
+		
 		//768
 		if (tg.lastWindowWidth >= 768) { 
 		
-			tg.chartHeight = (DDE.maxHeight+20)*2;
 			
+		}
+		
+		if (tg.lastWindowWidth < 992) {
+		
+			if (tg.mainScroll) {
+				tg.mainScroll.disableScrollbars();
+				tg.mainScroll.destroy();
+				tg.mainScroll = null;
+			}
+			
+			if (tg.scheduleScroll) {
+				tg.scheduleScroll.disableScrollbars();
+				tg.scheduleScroll.destroy();
+				tg.scheduleScroll = null;
+			}
+			
+			//undo fixed header of main view
+			tg.$detailNavContainer[0].style.position = "static";
+			tg.$detailNavContainer[0].style.top = "";
+			tg.$detailNavContainer[0].style.width = "";
+			tg.$detailNavContainer[0].style.zIndex = "";
+			tg.$detailNavContainer[0].style.height = "";
+			tg.$detailNavContainer[0].style.paddingTop = "";
+			
+			if (tg.ie7) {
+				//DDE.setMaxHeight(tg.$body[0], height);
+				tg.$content[0].style.height = "auto";
+				tg.$scheduleNav[0].height = "auto";
+			}
 		}
 		
 		//992
 		if (tg.lastWindowWidth >= 992) {
+		
+			if (!tg.mainScroll && tg.initViewLoaded) {
+				tg.mainScroll = new this.CustomScroll(tg.$main, tg);
+			}
+			
+			if (!tg.scheduleScroll && tg.initViewLoaded) {
+				tg.scheduleScroll = new this.CustomScroll(tg.$scheduleNav, tg);
+			}
 			
 			if (tg.$schedulePopup) {
 				tg.$schedulePopup.unbind();
@@ -256,11 +302,13 @@ DDE.TweetYvent.prototype = {
 		var pathname = location.pathname.replace(/\/node-projects\/tweet-event-map\/fashion-twitter-www\//, '/');
 		
 		if (pathname.match(/designers/g)) pathname = '/designers/';
+		
+		//todo: with javascript we will need to check for the hash property instead of pathnmame;
 				
 		switch(pathname){
 			case "/":
-				tg.currView = new this.MainView(this);
-				tg.detailView = new this.DetailView(this);
+				tg.navView = new this.NavView(this);
+				tg.mainView = new this.MainView(this);
 				break;
 				
 			case "/schedule/":
@@ -268,10 +316,13 @@ DDE.TweetYvent.prototype = {
 				break;
 				
 			case "/designers/":
-				tg.currView = new this.DetailView(this);
+				//console.log("test");
+				//tg.navView = new this.MainView(this);
 				break;
 			
 		}
+		
+		tg.initViewLoaded = true;
 	},
 	
 	makeRainClouds: function() {
@@ -315,9 +366,9 @@ DDE.TweetYvent.prototype = {
 			tg.socket.on('message', function (json) {
 				
 				var data = JSON.parse(json);
-				tg.currView.updateScreen(data, that);
+				tg.navView.updateScreen(data, that);
 				
-				tg.mainScroll.refresh();
+				if (tg.mainScroll) tg.mainScroll.refresh();
 				
 			});
 			
@@ -369,9 +420,9 @@ DDE.TweetYvent.prototype = {
 			DDE.cssAnimation(rain, animationName, {speed: 800, easing: 'ease-in', complete: function(){
 					//periodically redraw charts
 					if (DDE.maxCount < tg.chartHeight) {
-						tg.currView.redrawChart(tg);
+						tg.navView.redrawChart(tg);
 					} else {
-						if (tg.tweetUpdates > 20) tg.currView.redrawChart(tg);
+						if (tg.tweetUpdates > 20) tg.navView.redrawChart(tg);
 					}
 				}
 			});
@@ -383,9 +434,9 @@ DDE.TweetYvent.prototype = {
 					$(this).css({top: -40});
 					//periodically redraw charts
 					if (DDE.maxCount < tg.chartHeight) {
-						tg.currView.redrawChart(tg);
+						tg.navView.redrawChart(tg);
 					} else {
-						if (tg.tweetUpdates > 20) tg.currView.redrawChart(tg);
+						if (tg.tweetUpdates > 20) tg.navView.redrawChart(tg);
 					}
 				}
 			});
@@ -395,8 +446,8 @@ DDE.TweetYvent.prototype = {
 	
 };
 
-DDE.TweetYvent.prototype.MainView = function( parent ) {
-		console.log("New Main View Object");
+DDE.TweetYvent.prototype.NavView = function( parent ) {
+		console.log("New Nav View Object");
 		console.log(this);
 		var that = parent;
 		var tg = that.globals;
@@ -442,7 +493,7 @@ DDE.TweetYvent.prototype.MainView = function( parent ) {
 ///////////////////////////////////*/
 
 
-DDE.TweetYvent.prototype.MainView.prototype = {
+DDE.TweetYvent.prototype.NavView.prototype = {
 		
 	saveOnScreenRefs: function() {
 		//store onScreenEvents in order
@@ -612,12 +663,12 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		//this.loadScheduleView(tg); //Change this to active Days menu for small screens
 		
 		
-		if (tg.touch) { 
+		if (tg.touch && tg.lastWindowWidth >= 992) { 
 			//webkit mobile touch scroll panels
 			tg.$scheduleNav[0].style['margin-right'] = '0px';
 			tg.scheduleScroll = new iScroll('schedulenav');
 			tg.mainScroll = new iScroll('main');
-		} else {
+		} else if (!tg.touch && tg.lastWindowWidth >= 992) {
 			//custom desktop scroll panels
 			tg.scheduleScroll = new that.CustomScroll(tg.$scheduleNav, tg);
 			tg.mainScroll = new that.CustomScroll(tg.$main, tg)
@@ -658,9 +709,9 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		//change this back to $scheduleNavItems.click
 		$(this.$scheduleNavItems[0]).click(function(e){
 			$('.tweets').html('');
-			$('h3.designer').html('All Designers');
+			$('h3.designer').html('<span class="breadcrumb">Schedule</span> <b>/ </b>All Designers');
 			window.location.href = window.location.pathname + '#';
-			tg.mainScroll.refresh();
+			if (tg.mainScroll) tg.mainScroll.refresh();
 			
 		});
 		
@@ -670,7 +721,7 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			$('.trends #trendingwords').html('');
 			$('.trends #trendingcolors').html('');
 			$('.photos').html('');
-			$('h3.designer').html(this.innerHTML);
+			$('h3.designer').html('<span class="breadcrumb">Schedule</span> <b>/ </b>'+this.innerHTML);
 			
 			var designer = this.parentNode.parentNode.id;
 			that.$scheduleNavItems.removeClass('selected');
@@ -726,7 +777,7 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 					//data.urlList = []
 					that.fetchImgUrls(data.urlList);
 					
-					tg.mainScroll.refresh();
+					if (tg.mainScroll) tg.mainScroll.refresh();
 					
 				},
 				error: function ( data ) {
@@ -926,6 +977,22 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 		
 	},
 	
+	disableScrollbars: function () {
+		var that = this;
+		var eventType = 'onmousewheel' in that.scrollPane ? 'mousewheel' : 'DOMMouseScroll';
+		$(that.scrollPane).unbind(eventType);
+	},
+	
+	destroy: function() {
+		var selector = '#'+this.id+'scroller';
+		$(selector).remove();
+		this.id = null;
+		this.scrollPane = null;
+		this.scrollbar = null;
+		this.track = null;
+		this.thumb = null;
+	},
+	
 	enableScrollbars: function ( globals ) {
 		var that = this;
 		var tg = globals;
@@ -957,7 +1024,36 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 	  			var percentageMoved = this.scrollTop/that.scrollDistance;
 	  			that.thumb.style.top = Math.round((that.distanceForThumb * percentageMoved)) + "px";
 	  		}
-  			
+	  		
+	  		//fix header nav at top for Main View
+	  		if (that.scrollPane.id == "main") {
+	  		
+	  			
+	  			if (this.scrollTop > 384) {
+	  				
+	  				tg.$detailNavContainer[0].style.position = "fixed";
+	  				tg.$detailNavContainer[0].style.top = "87px";
+	  				tg.$detailNavContainer[0].style.width = tg.$main.width() + "px";
+	  				tg.$detailNavContainer[0].style.zIndex = 9999999;
+	  				tg.$detailNavContainer[0].style.height = "4.2em";
+	  				tg.$detailNavContainer[0].style.paddingTop = "1.5em";
+	  				
+	  				//Firefox wants this to stop it from reseting the scrollTop after the style change
+	  				this.scrollTop = that.save;
+	  				
+	  			} else {
+	  				tg.$detailNavContainer[0].style.position = "static";
+	  				tg.$detailNavContainer[0].style.top = "";
+	  				tg.$detailNavContainer[0].style.width = "";
+	  				tg.$detailNavContainer[0].style.zIndex = "";
+	  				tg.$detailNavContainer[0].style.height = "";
+	  				tg.$detailNavContainer[0].style.paddingTop = "";
+	  				
+	  				//Firefox wants this to stop it from reseting the scrollTop after the style change
+	  				this.scrollTop = that.save;
+	  			}
+	  			
+	  		}
 		};
 		
 		$(that.scrollPane).bind(eventType, scrollPanel);
@@ -1001,45 +1097,24 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 //
 ///////////////////////////////////*/
 
-DDE.TweetYvent.prototype.DetailView = function( parent ) {
-		console.log("New Detail View Object");
+DDE.TweetYvent.prototype.MainView = function( parent ) {
+		console.log("New Main View Object");
 		console.log(this);
 		var that = parent;
 		var tg = that.globals;
 		
-		//TODO: finish fetchImgURLs 
-		
 		this.makeTabs(tg);
 		
-		/*
-		that.initSocketListening();
-		
-		//Smart Resize function to minimize resize function calls
-		$(window).bind('smartresize', function() {
-			
-			//IE6, IE7, IE8 fire resize events when the body.clientHeight changes after AJAX additions.
-			//A little check to prevent the smartresize code from executing in those circumstances
-			if (document.documentElement.clientWidth != tg.lastWindowWidth || document.documentElement.clientHeight != tg.lastWindowHeight) {
-				console.log("smartresize");
-								
-				that.setScreenSizes();
-				
-				//tg.currView.redrawChart(that);
-				
-			}
-			
-		});
-		*/
-};
+		};
 
-DDE.TweetYvent.prototype.DetailView.prototype = {
+DDE.TweetYvent.prototype.MainView.prototype = {
 		
 	makeTabs: function( globals ) {
 	
 		var tg = globals;
 		
 		//Todo: make more efficient code
-		var $extraHeaders = $('h2.no-tab');
+		var $extraHeaders = $('.no-tab');
 		var $detailNavMenu = $('#detailnav ul');
 		var $tweetsContent = $('div.tweets');
 		var $trendsContent = $('div.trends');
@@ -1071,7 +1146,7 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 			$photoTab.removeClass("selected");
 			$tabSubTitle.html('Top Trending Words');
 			
-			tg.mainScroll.refresh();
+			if (tg.mainScroll) tg.mainScroll.refresh();
 			
 		});
 		
@@ -1085,7 +1160,7 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 			$tweetTab.addClass("selected");
 			$tabSubTitle.html('Most Recent Tweets');
 			
-			tg.mainScroll.refresh();
+			if (tg.mainScroll) tg.mainScroll.refresh();
 			
 		});
 		
@@ -1098,7 +1173,7 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 			$tweetTab.removeClass("selected");
 			$photoTab.addClass("selected");
 			
-			tg.mainScroll.refresh();
+			if (tg.mainScroll) tg.mainScroll.refresh();
 			
 		});
 		
@@ -1108,7 +1183,7 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 			$colorSwitch.removeClass("selected");
 			$wordSwitch.addClass("selected");
 			
-			tg.mainScroll.refresh();
+			if (tg.mainScroll) tg.mainScroll.refresh();
 			
 		});
 		
@@ -1118,26 +1193,12 @@ DDE.TweetYvent.prototype.DetailView.prototype = {
 			$colorSwitch.addClass("selected");
 			$wordSwitch.removeClass("selected");
 			
-			tg.mainScroll.refresh();
+			if (tg.mainScroll) tg.mainScroll.refresh();
 			
 		});
 		
 		
 		
-	},
-	
-	updateScreen: function( data, parent ) {
-		var that = parent;
-		var tg = that.globals;
-		if (data.keywords.length > 1) { //we send a 'default' keyword that is ignored
-			tg.tweetUpdates++;
-			
-			var keywordCount = data.keywords.length;
-			for (var i=1; i<keywordCount; i++) {
-			
-			}
-			
-		}
 	}
 	
 };

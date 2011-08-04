@@ -1,23 +1,21 @@
 <?php
-//Build data lists and variables
-$tweet_list = array();
-$url_list = array();
-$trends_list = array();
-$colors_list = array();
-
-try {
-	// open connection to MongoDB server
+// open connection to MongoDB server
 	$conn = new Mongo($NODE_HOST);
-	
+		
 	// access database
 	$db = $conn->{'tweet-event'};
+	
 	
 	//get the designers collection of tweets
 	if (isset($designers) && $designers != "all") {
 	
+		$collection = $db->$designers;
+		
+	
 		$tweets_cursor = $collection->find()->sort(array('created_at'=>-1))->limit(10);
 		
 		foreach ($tweets_cursor as $key=>$value) {
+			
 			$tweet_list[] = array("id"=>$key, "tweet"=>$value);
 			
 		}
@@ -106,7 +104,7 @@ try {
 		$words = $db->words;
 		
 		$designer_counts = 'counts.total';
-		$words_cursor = $words->find(array( $designer_counts=>array( '$exists'=> true ) ))->sort(array($designer_counts=>-1))->limit(10);
+		$words_cursor = $words->find(array( $designer_counts=>array( '$exists'=> true ) ))->sort(array($designer_counts=>-1))->limit(20);
 			
 		
 		foreach ($words_cursor as $key=>$arr) {
@@ -135,15 +133,5 @@ try {
 		}
 
 	}
-	
-	
-	
-	// disconnect from server
-	$conn->close();
-} catch (MongoConnectionException $e) {
-	die('Error connecting to MongoDB server');
-} catch (MongoException $e) {
-	die('Error: ' . $e->getMessage());
-}
 
 ?>

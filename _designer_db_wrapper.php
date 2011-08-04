@@ -1,25 +1,13 @@
 <?php
-
-include('_config.php');
 //Build data lists and variables
-$designers = $_GET["designers"];
 $tweet_list = array();
 $url_list = array();
 $trends_list = array();
 $colors_list = array();
 
 try {
-	
+
 	include('_designer_db_request.php');
-	
-	$response = array(
-		"tweetList"=>$tweet_list,
-		"urlList"=>$url_list,
-		"trendsList"=>$trends_list,
-		"colorsList"=>$colors_list
-	);
-	
-	echo json_encode($response);
 	
 	// disconnect from server
 	$conn->close();

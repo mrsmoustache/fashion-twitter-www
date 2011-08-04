@@ -7,7 +7,7 @@ $designer_event;
 
 if (!isset($designers) || $designers == "all") {
 	//fetch assorted designers data
-	include '_designer_db_request.php';
+	include '_designer_db_wrapper.php';
 	$designer_event = array(
 		"name"=>"All"
 	);
@@ -41,13 +41,15 @@ if (!isset($designers) || $designers == "all") {
 		<div id="modules" class="clearfix">
 		
 			<div id="mainsection">
-				<div id="detailnav">
-					<ul class="clearfix">
-						<li id="tweettab" class="selected"><a href="#">Tweets</a></li>
-						<li id="trendtab"><a href="#">Trends</a></li>
-						<li id="phototab"><a href="#">Photos</a></li>
-						<li id="articlestab"><a href="#">Articles</a></li>
-					</ul>
+				<div class="tabnav detailnav">
+					<div id="detailnav">
+						<ul class="clearfix">
+							<li id="tweettab" class="selected"><a href="#">Tweets</a></li>
+							<li id="trendtab"><a href="#">Trends</a></li>
+							<li id="phototab"><a href="#">Photos</a></li>
+							<li id="articlestab"><a href="#">Articles</a></li>
+						</ul>
+					</div>
 				</div>
 		
 			
@@ -82,6 +84,8 @@ if (!isset($designers) || $designers == "all") {
 							<li id="colorswitch">Colors</li>
 						</ul>
 					</div>
+					
+					<h3 class="no-tab">Words</h3>
 				
 					<div id="trendingwords">
 					
@@ -97,6 +101,8 @@ if (!isset($designers) || $designers == "all") {
 					?>
 					
 					</div>
+					
+					<h3 class="no-tab">Colors</h3>
 					
 					<div id="trendingcolors">
 					
@@ -117,6 +123,10 @@ if (!isset($designers) || $designers == "all") {
 				<h2 class="no-tab">Photos</h2>
 				
 				<div class="photos"></div>
+				
+				<h2 class="no-tab">Articles</h2>
+				
+				<div class="articles"></div>
 				
 								
 			</div>

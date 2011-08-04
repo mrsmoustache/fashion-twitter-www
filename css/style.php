@@ -380,6 +380,10 @@ p.sub-title {
 	height: 29px;
 }
 
+.no-js #detailnav {
+	display: none;
+}
+
 #viewnav .backlink {
 	font-family : "Helvetica Neue", Helvetica, Arial, sans-serif;
 	float: left;
@@ -437,6 +441,10 @@ p.sub-title {
 #viewnav li.selected a, #detailnav li.selected a {
 	color: #000;
 	font-weight: bold;
+}
+
+.tabnav {
+	background: white;
 }
 
 #detailnav ul {
@@ -954,6 +962,11 @@ div.nav .listcat {
 
 
 /* 11.MAIN */
+
+.no-js #map {
+	display: none;
+}
+
 h3.designer {
 	font-size: .9em;
 	margin: 0;
@@ -964,6 +977,11 @@ h3.designer {
 	letter-spacing: 1px;
 	text-align: center;
 	width: 100%;
+}
+
+.no-js h3.designer {
+	position: relative;
+	top: 0;
 }
 
 h3.designer span.breadcrumb {
@@ -980,6 +998,10 @@ h3.designer span.breadcrumb {
 	overflow: visible;
 	height: 15px;
 	margin-bottom: 1em;
+}
+
+.no-js .trends .controlcontainer {
+	display: none;
 }
 
 ul.switchcontrol {
@@ -1010,6 +1032,14 @@ ul.switchcontrol li.selected {
 
 #trendingcolors {
 	display: none;
+}
+
+.no-js #trendingwords {
+	margin-bottom: 2em;
+}
+
+.no-js #trendingcolors {
+	display: block;
 }
 
 .photos img {
@@ -1648,10 +1678,6 @@ h2.secondary {
 
 #viewnav .backlink {
 	display: none;
-}
-
-.designers #viewnav .backlink {
-	display: block;
 }
 
 div.schedule {
