@@ -25,6 +25,7 @@ $(window).load(function(){
 });
 
 $(window).resize(function(){
+	//hacky fix for firefox's need to reset our mainScroll scrollTop when resizing the window
 	if (navigator.userAgent.match(/Firefox/i) && tweetYvent.globals.mainScroll) {
 		tweetYvent.globals.mainScroll.scrollTop = tweetYvent.globals.mainScroll.save;
 		tweetYvent.globals.mainScroll.scrollPane.scrollTop = tweetYvent.globals.mainScroll.save;
@@ -32,12 +33,28 @@ $(window).resize(function(){
 });
 
 $(document).ready(function(){
+
+	var start = (new Date()).getTime();
 	
 	tweetYvent.initSelectors();
 	
+	var finished = (new Date()).getTime() - start;	
+	console.log("processing time initSelectors: " + finished + " msec" );
+	
+	var start = (new Date()).getTime();
+	
 	tweetYvent.setScreenSizes();
 	
+	var finished = (new Date()).getTime() - start;	
+	console.log("processing time setScreenSizes: " + finished + " msec" );
+	
+	
+	var start = (new Date()).getTime();
+	
 	tweetYvent.loadView();
+	
+	var finished = (new Date()).getTime() - start;	
+	console.log("processing time loadView: " + finished + " msec" );
 		
 });
 
@@ -130,6 +147,45 @@ DDE.TweetYvent = function(){
 	this.compareBiggest = function(a,b) {
 		return b-a;
 	}
+	
+	$(window).hashchange( function(){
+		var tg = that.globals;
+		console.log(tg);
+		//override hashchange event with click event
+		if (tg.noHashEvent) { return false; }
+		
+		var hash = location.hash;
+		console.log("hashchange");
+		var match = hash.match(/\/[A-Za-z1-9-]*\//);
+		var hashBase = match ? match[0] : '';
+		
+		//pointer is our sub-subdirectory e.g. marcjacobs of /designers/marcjacobs/
+		var pointerPattern = new RegExp('#'+hashBase);
+		var pointer = location.hash.replace(pointerPattern, '').replace(/\//, '');
+		
+		switch(hashBase){
+			
+			case "/schedule/":
+				//scheduleView();
+				break;
+				
+			case "/designers/":
+				tg.navView.selectedNavItem = pointer;
+				tg.navView.setSelectedNavItem(tg);
+				tg.mainView.selectedDesigner = pointer;
+				tg.navView.loadMainViewDesigner(tg);
+				break;
+				
+			default:
+				tg.navView.selectedNavItem = null;
+				tg.navView.setSelectedNavItem(tg);
+				tg.mainView.selectedDesigner = null;
+				tg.navView.loadMainViewDesigner(tg);
+				break;
+		}
+		
+		//if (tg.mainView.selectedDesigner) tg.navView.loadMainViewDesigner(tg);
+	});
         
 };
 
@@ -138,12 +194,14 @@ DDE.TweetYvent.prototype = {
 	initSelectors: function() {
 		var tg = this.globals;
 		tg.$body = $('body');
-		tg.$tweetsTab = $('div.tweets');
+		tg.$nav = $('#nav');
 		tg.$scheduleNav = $('#schedulenav');
 		tg.$main = $('#main');
+		tg.$modules = $('#modules');
 		tg.$content = $('div.content');
 		tg.$contentNav = $('#contentnav');
 		tg.$detailNavContainer = $('.tabnav.detailnav');
+		tg.$h3DesignerName = $('h3.designer .designer-name');
 		
 		if($('.ie7 body')[0]) tg.ie7 = true;
 		
@@ -195,6 +253,7 @@ DDE.TweetYvent.prototype = {
 	setScreenSizes: function() {
 		var tg = this.globals;
 		
+		//Save's the window dimensions to a global variable
 		this.watchWindowSizes();
 		
 		if (tg.mainScroll) {
@@ -231,6 +290,7 @@ DDE.TweetYvent.prototype = {
 				tg.mainScroll.disableScrollbars();
 				tg.mainScroll.destroy();
 				tg.mainScroll = null;
+				
 			}
 			
 			if (tg.scheduleScroll) {
@@ -238,14 +298,6 @@ DDE.TweetYvent.prototype = {
 				tg.scheduleScroll.destroy();
 				tg.scheduleScroll = null;
 			}
-			
-			//undo fixed header of main view
-			tg.$detailNavContainer[0].style.position = "static";
-			tg.$detailNavContainer[0].style.top = "";
-			tg.$detailNavContainer[0].style.width = "";
-			tg.$detailNavContainer[0].style.zIndex = "";
-			tg.$detailNavContainer[0].style.height = "";
-			tg.$detailNavContainer[0].style.paddingTop = "";
 			
 			if (tg.ie7) {
 				//DDE.setMaxHeight(tg.$body[0], height);
@@ -258,7 +310,7 @@ DDE.TweetYvent.prototype = {
 		if (tg.lastWindowWidth >= 992) {
 		
 			if (!tg.mainScroll && tg.initViewLoaded) {
-				tg.mainScroll = new this.CustomScroll(tg.$main, tg);
+				tg.mainScroll = new this.CustomScroll($('#mainsection'), tg);
 			}
 			
 			if (!tg.scheduleScroll && tg.initViewLoaded) {
@@ -269,11 +321,17 @@ DDE.TweetYvent.prototype = {
 				tg.$schedulePopup.unbind();
 			}
 			
+			if (tg.singleViewMode) {
+				tg.navView.resetSingleViewMode(tg);
+			}
+			
 			if (tg.ie7) {
 				//DDE.setMaxHeight(tg.$body[0], height);
 				DDE.setMaxHeight(tg.$content[0], tg.lastWindowHeight - 125);
 				DDE.setMaxHeight(tg.$scheduleNav[0], tg.lastWindowHeight - 195);
+				DDE.setMaxHeight(tg.$modules[0], tg.lastWindowHeight - 250);
 			}
+			
 		} 
 		
 		//1382	
@@ -299,25 +357,68 @@ DDE.TweetYvent.prototype = {
 		
 		var tg = this.globals;
 		//Todo: remove this for production
-		var pathname = location.pathname.replace(/\/node-projects\/tweet-event-map\/fashion-twitter-www\//, '/');
 		
-		if (pathname.match(/designers/g)) pathname = '/designers/';
+		var pathname = location.pathname;
+		//fix consistency between pathname structure across browsers
+		pathname = pathname.replace(/^\//, '');
 		
-		//todo: with javascript we will need to check for the hash property instead of pathnmame;
-				
-		switch(pathname){
-			case "/":
-				tg.navView = new this.NavView(this);
-				tg.mainView = new this.MainView(this);
-				break;
-				
+		//todo: remove for production
+		var extra = '';
+		if (pathname.match(/node-projects\/tweet-event-map\/fashion-twitter-www/)) {
+			extra = 'node-projects/tweet-event-map/fashion-twitter-www/';
+			pathname = pathname.replace(/node-projects\/tweet-event-map\/fashion-twitter-www\//, '');
+		}
+		
+		//this happens if someone came here from a non-javascript url
+		if (pathname.match(/designers/g)) {
+			
+			//since they have javacript, we should rewrite that location to a hash
+			window.location.href = 'http://'+location.hostname+'/'+extra+'#/'+ pathname;
+			pathname = '/designers/';
+		}
+		
+		//check if the url contains a hash bookmark
+		//hashbase would be our sub-directory. e.g. /designers/
+		console.log(location.hash);
+		var hashBase = '';
+		if (location.hash ) {
+			var match = location.hash.match(/\/[A-Za-z1-9-]*\//);
+			hashBase = match ? match[0] : '';
+		} 
+		
+		//pointer is our sub-subdirectory e.g. marcjacobs of /designers/marcjacobs/
+		var pointerPattern = new RegExp('#'+hashBase);
+		var pointer = location.hash.replace(pointerPattern, '').replace(/\//, '');
+		
+		switch(hashBase){
+			
 			case "/schedule/":
 				//scheduleView();
 				break;
 				
 			case "/designers/":
 				//console.log("test");
-				//tg.navView = new this.MainView(this);
+				tg.navView = new this.NavView(this, pointer);
+				
+				tg.mainView = new this.MainView(this, pointer);
+				
+				break;
+				
+			default:
+				
+				//var start = (new Date()).getTime();
+	
+				tg.navView = new this.NavView(this);
+				
+				//var finished = (new Date()).getTime() - start;	
+				//console.log("processing time NavView loaded: " + finished + " msec" );
+				
+				//var start = (new Date()).getTime();
+				
+				tg.mainView = new this.MainView(this);
+				
+				//var finished = (new Date()).getTime() - start;	
+				//console.log("processing time MainView loaded: " + finished + " msec" );
 				break;
 			
 		}
@@ -446,16 +547,18 @@ DDE.TweetYvent.prototype = {
 	
 };
 
-DDE.TweetYvent.prototype.NavView = function( parent ) {
+DDE.TweetYvent.prototype.NavView = function( parent, selector ) {
 		console.log("New Nav View Object");
 		console.log(this);
 		var that = parent;
 		var tg = that.globals;
 		
-		//todo: move these to proper view
 		this.$scheduleNavItems = $('div.schedule .listitem');
-		this.listCountNodes = []; //cache references to tweetcount nodes in the nav list
+		this.selectedNavItem = selector ? selector : null;
 		
+		//cache references to tweetcount nodes in the nav list
+		//this is for updating tweetcounts in realtime
+		this.listCountNodes = []; 
 		this.saveOnScreenRefs();
 		
 		//this.redrawChart(tg);
@@ -581,7 +684,10 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			//filter data based on toggle
 			var pathname = location.pathname.replace(/\/node-projects\/tweet-event-map\/fashion-twitter-www\//, '/');
 			
-			var hashBase = location.hash ? location.hash.match(/\/[A-Za-z1-9-]*\//)[0] : '';
+			var hashBase;
+			if (location.hash)
+				var match = location.hash.match(/\/[A-Za-z1-9-]*\//)
+				hashBase = match ? match[0] : '';
 			var pointerPattern = new RegExp('#'+hashBase);
 			var pointer = location.hash.replace(pointerPattern, '').replace(/\//, '');
 			switch(hashBase){
@@ -614,7 +720,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			
 			var html = '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3>'+username+'</h3> <span class="tweettext">'+text+'</span> <span class="tweettime"></span></div></div>';
 			
-			tg.$tweetsTab.prepend(html);
+			tg.$tweetsContent.prepend(html);
 			
 			
 			
@@ -664,18 +770,227 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 		
 		if (tg.touch && tg.lastWindowWidth >= 992) { 
+		
 			//webkit mobile touch scroll panels
 			tg.$scheduleNav[0].style['margin-right'] = '0px';
 			tg.scheduleScroll = new iScroll('schedulenav');
-			tg.mainScroll = new iScroll('main');
+			tg.mainScroll = new iScroll('mainsection');
+			
 		} else if (!tg.touch && tg.lastWindowWidth >= 992) {
+		
 			//custom desktop scroll panels
 			tg.scheduleScroll = new that.CustomScroll(tg.$scheduleNav, tg);
-			tg.mainScroll = new that.CustomScroll(tg.$main, tg)
+			tg.mainScroll = new that.CustomScroll($('#mainsection'), tg)
+			
+		} else if (tg.lastWindowWidth < 992 && !tg.touch) {
+		
+			this.enableSmallFixedHeaders(tg);
+			
 		}
 		
 		this.enableScheduleLinks(tg);
+		
+		this.setSelectedNavItem(tg);
+		
+		this.enableHashLinks(tg);
 			
+	},
+	
+	enableSmallFixedHeaders: function ( globals ) {
+		return false;
+		var tg = globals;
+		var that = this;
+		
+		$(window).bind("scroll", function(e){
+			
+			var scrollPosition;
+			
+			if (document.documentElement && document.documentElement.scrollTop) {
+				//IE
+				scrollPosition = document.documentElement.scrollTop;
+			} else {
+				scrollPosition = tg.$body[0].scrollTop;
+			}
+			
+			
+			
+			$('h3.designers').html(scrollPosition);			
+		});
+		
+		var touchBegin = function(e) {
+			//console.log("touchBegin");
+			//tg.$main.append("touchBegin pageY: "+e.pageY + "<br />");
+			
+			$(this).bind("mousemove", touchMoving);
+			$(this).bind("mouseup", touchEnds);
+			
+		},
+		
+		touchMoving = function(e) {
+			//console.log("touchMoving");
+			//tg.$main.append("touchMoving pageY: "+e.pageY + "<br />");
+		},
+		
+		touchEnds = function(e) {
+			//console.log("touchEnds");
+			//tg.$main.append("touchEnds pageY: "+e.pageY + "<br />");
+			
+			$(this).unbind("mousemove", touchMoving, true);
+			$(this).unbind("mouseup", touchEnds, true);
+			
+		};
+		
+		tg.$main.bind("mousedown", touchBegin, true);
+		
+	},
+	
+	loadMainViewDesigner: function (e) {
+		console.log("loadMainViewDesigner");
+		
+		var tg, that, title, designer;
+		
+		if (e.type) {
+			
+			//listitem clicked
+			e.preventDefault();
+			
+			var clickedLI = this;
+			tg = tweetYvent.globals;
+			that = tg.navView;
+			
+			//temporarily disable hashchange event
+			//let our click control the event
+			tg.noHashEvent = true;
+			setTimeout(function(){
+				tg.noHashEvent = false;
+			}, 200);
+			
+			if (clickedLI.id == "all-designers-item") {
+			
+				title = 'All Designers';
+				window.location.href = window.location.pathname + '#';
+				if (tg.mainScroll) tg.mainScroll.refresh();
+			
+			} else {
+				var anchor = $('.listname', clickedLI)[0];
+				title = anchor.innerHTML;
+				designer = clickedLI.id;
+				var href = anchor.href;
+				
+				window.location.href = href;
+			}
+			
+			that.$scheduleNavItems.removeClass('selected');
+			$(clickedLI).addClass('selected');
+			
+			
+			
+		
+		} else {
+		
+			//loading a fresh view from a designer url bookmark
+			tg = e;
+			that = this;
+			
+			if (!that.selectedNavItem) {
+				title = 'All Designers';
+			} else {
+				designer = that.selectedNavItem;
+				var selector = "#" + designer;
+				title = $(selector).find('.listname')[0].innerHTML;
+			}
+			
+		}
+		
+		//clear out old content
+		tg.$tweetsContent.html('');
+		tg.$wordContent.html('');
+		tg.$colorContent.html('');
+		tg.$photosContent.html('');
+		
+		//set main view title
+		tg.$h3DesignerName.html(title);
+		
+		//check if we are in tg.scheduleNavSingleView aka Mobile mode
+		if (tg.scheduleNavSingleView) that.showMainView(tg);		
+		//load db content
+		tg.startDB = (new Date()).getTime();
+			
+		//fetch designer db proxy
+		var xhr = $.ajax({
+			url: 'designer_db_request_proxy.php',
+			data: {"designers": designer},
+			dataType: "json",
+			success: function ( data ) {
+			
+				var finished = (new Date()).getTime() - tg.startDB;	
+				console.log("processing time fetching mongoDG: " + finished + " msec" );
+					
+				//insert archived tweets
+				//data.tweetList = []
+				
+				var start = (new Date()).getTime();
+				
+				var html = ''
+				for (var i=0; i<data.tweetList.length; i++) {
+					var text = data.tweetList[i]["tweet"]["text"];
+					var username = data.tweetList[i]["tweet"]["user"]["screen_name"];
+					var thumb = data.tweetList[i]["tweet"]["user"]["profile_image_url"];
+					//var created_at = data["tweet"]["created_at"];
+					//Todo: create timestamp locally on client based on time of html insert
+					
+					html += '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3>'+username+'</h3> <span class="tweettext">'+text+'</span> <span class="tweettime"></span></div></div>';
+					
+				}
+				
+				tg.$tweetsContent.append(html);	
+				
+				var finished = (new Date()).getTime() - start;	
+				console.log("processing time inserting tweets: " + finished + " msec" );
+				
+				//insert archived trending words
+				//data.trendsList = []
+				var html = ''
+				for (var i=0; i<data.trendsList.length; i++) {
+					var word = data.trendsList[i]["word"];
+					var count = data.trendsList[i]["count"];
+					html += '<div class="listitem"><h3>'+word+'</h3> <span class="trendcount">'+count+'</span> </div>';
+					
+				}
+				
+				tg.$wordContent.append(html);
+				
+				//insert archived trending colors
+				//data.colorsList = []
+				var html = ''
+				for (var i=0; i<data.colorsList.length; i++) {
+					var color = data.colorsList[i]["color"];
+					var count = data.colorsList[i]["count"];
+					html += '<div class="listitem"><h3>'+color+'</h3> <span class="trendcount">'+count+'</span> </div>';
+				}
+				
+				tg.$colorContent.append(html);
+				
+				//insert archived photos
+				//data.urlList = []
+				
+				var start = (new Date()).getTime();
+				
+				that.fetchImgUrls(data.urlList);
+				
+				var finished = (new Date()).getTime() - start;	
+				console.log("processing time fetching images: " + finished + " msec" );
+				
+				if (tg.mainScroll) tg.mainScroll.refresh();
+				
+			},
+			error: function ( data ) {
+				
+				console.log("error");
+				console.log(data);
+				console.log(data.responseText);
+			}
+		});
 	},
 	
 	enableScheduleLinks: function ( globals ) {
@@ -686,110 +1001,97 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		//change all link href to use hash links
 		var links = $('a', tg.$scheduleNav);
 		var count = links.length;
-		var baseURI;
 				
 		for (var i=0; i<links.length; i++) {
-			var baseURI = 'http://'+links[i].hostname+'/';
-			var pathname = links[i].pathname;
-			
-			//fix consistency between pathname structure across browsers
-			pathname = pathname.replace(/^\//, '');
-			
-			//todo: remove for production
-			var extra = '';
-			if (pathname.match(/node-projects\/tweet-event-map\/fashion-twitter-www/)) {
-				extra = 'node-projects/tweet-event-map/fashion-twitter-www/';
-				pathname = pathname.replace(/node-projects\/tweet-event-map\/fashion-twitter-www\//, '');
-			}
-			
-			links[i].href = baseURI + extra + '#/' + pathname;
+			that.makeLinkHash(links[i]);
 		}
 		
 		//enable listitem click events
-		//change this back to $scheduleNavItems.click
-		$(this.$scheduleNavItems[0]).click(function(e){
-			$('.tweets').html('');
-			$('h3.designer').html('<span class="breadcrumb">Schedule</span> <b>/ </b>All Designers');
-			window.location.href = window.location.pathname + '#';
-			if (tg.mainScroll) tg.mainScroll.refresh();
-			
-		});
+		that.$scheduleNavItems.bind("click", that.loadMainViewDesigner);
 		
-		//todo: delete this later when we improve the click event above
-		links.click(function(e){
-			$('.tweets').html('');
-			$('.trends #trendingwords').html('');
-			$('.trends #trendingcolors').html('');
-			$('.photos').html('');
-			$('h3.designer').html('<span class="breadcrumb">Schedule</span> <b>/ </b>'+this.innerHTML);
+	},
+	
+	enableHashLinks: function ( globals ) {
+		var tg = globals;
+		var that = this;
+		
+		//navigation breadcrumbs
+		tg.$breadcrumb = $('h3.designer a');
+		that.makeLinkHash(tg.$breadcrumb[0]);
+		
+		tg.$breadcrumb.bind("click", that.showScheduleView);
+		
+	},
+	
+	showScheduleView: function (e) {
+		e.preventDefault();
+		
+		var anchor = this;
 			
-			var designer = this.parentNode.parentNode.id;
+		var tg = tweetYvent.globals;
+		var that = tg.navView;
+		
+		tg.$main.hide();
+		tg.$nav.show();
+		
+		tg.scheduleNavSingleView = true;
+		tg.singleViewMode = true;
+		
+		window.location.href = anchor.href;
+	},
+	
+	showMainView: function ( globals ) {
+		var tg = globals;
+		var that = this;
+		
+		tg.$main.show();
+		tg.$nav.hide();
+		
+		tg.scheduleNavSingleView = false;
+		tg.singleViewMode = true;
+		
+	},
+	
+	resetSingleViewMode: function ( globals ) {
+		var tg = globals;
+		var that = this;
+		
+		tg.$main[0].style.display = "";
+		tg.$nav[0].style.display = "";
+		tg.scheduleNavSingleView = false;
+		tg.singleViewMode = false;
+	},
+	
+	makeLinkHash: function ( link ) {
+		var baseURI = 'http://'+link.hostname+'/';
+		var pathname = link.pathname;
+		
+		//fix consistency between pathname structure across browsers
+		pathname = pathname.replace(/^\//, '');
+		
+		//todo: remove for production
+		var extra = '';
+		if (pathname.match(/node-projects\/tweet-event-map\/fashion-twitter-www/)) {
+			extra = 'node-projects/tweet-event-map/fashion-twitter-www/';
+			pathname = pathname.replace(/node-projects\/tweet-event-map\/fashion-twitter-www\//, '');
+		}
+		
+		link.href = baseURI + extra + '#/' + pathname;
+		link.hideFocus = 'hidefocus';
+	},
+	
+	setSelectedNavItem: function ( globals ) {
+		var tg = globals;
+		var that = this;
+		
+		if (that.selectedNavItem) {
+			var selector = '#'+that.selectedNavItem;
 			that.$scheduleNavItems.removeClass('selected');
-			$(this.parentNode.parentNode).addClass('selected');
-			
-			//fetch designer db proxy
-			var xhr = $.ajax({
-				url: 'designer_db_request_proxy.php',
-				data: {"designers": designer},
-				dataType: "json",
-				success: function ( data ) {
-					
-					//insert archived tweets
-					//data.tweetList = []
-					var html = ''
-					for (var i=0; i<data.tweetList.length; i++) {
-						var text = data.tweetList[i]["tweet"]["text"];
-						var username = data.tweetList[i]["tweet"]["user"]["screen_name"];
-						var thumb = data.tweetList[i]["tweet"]["user"]["profile_image_url"];
-						//var created_at = data["tweet"]["created_at"];
-						//Todo: create timestamp locally on client based on time of html insert
-						
-						html += '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3>'+username+'</h3> <span class="tweettext">'+text+'</span> <span class="tweettime"></span></div></div>';
-						
-					}
-					
-					tg.$tweetsTab.append(html);	
-					
-					//insert archived trending words
-					//data.trendsList = []
-					var html = ''
-					for (var i=0; i<data.trendsList.length; i++) {
-						var word = data.trendsList[i]["word"];
-						var count = data.trendsList[i]["count"];
-						html += '<div class="listitem"><h3>'+word+'</h3> <span class="trendcount">'+count+'</span> </div>';
-						
-					}
-					
-					$('.trends #trendingwords').append(html);
-					
-					//insert archived trending colors
-					//data.colorsList = []
-					var html = ''
-					for (var i=0; i<data.colorsList.length; i++) {
-						var color = data.colorsList[i]["color"];
-						var count = data.colorsList[i]["count"];
-						html += '<div class="listitem"><h3>'+color+'</h3> <span class="trendcount">'+count+'</span> </div>';
-					}
-					
-					$('.trends #trendingcolors').append(html);
-					
-					//insert archived photos
-					//data.urlList = []
-					that.fetchImgUrls(data.urlList);
-					
-					if (tg.mainScroll) tg.mainScroll.refresh();
-					
-				},
-				error: function ( data ) {
-					
-					console.log("error");
-					console.log(data);
-					console.log(data.responseText);
-				}
-			});
-			
-		});
-		
+			$(selector).addClass('selected');
+		} else {
+			that.$scheduleNavItems.removeClass('selected');
+			$('#all-designers-item').addClass('selected');
+		}
 	},
 	
 	fetchImgUrls: function( urlList ) {
@@ -996,6 +1298,7 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 	enableScrollbars: function ( globals ) {
 		var that = this;
 		var tg = globals;
+		
 		var eventType = 'onmousewheel' in that.scrollPane ? 'mousewheel' : 'DOMMouseScroll';
 		
 		var scrollPanel = function(e) {
@@ -1025,35 +1328,10 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 	  			that.thumb.style.top = Math.round((that.distanceForThumb * percentageMoved)) + "px";
 	  		}
 	  		
-	  		//fix header nav at top for Main View
-	  		if (that.scrollPane.id == "main") {
+			//Firefox wants this to stop it from reseting the scrollTop after the style change
+			this.scrollTop = that.save;
+  				
 	  		
-	  			
-	  			if (this.scrollTop > 384) {
-	  				
-	  				tg.$detailNavContainer[0].style.position = "fixed";
-	  				tg.$detailNavContainer[0].style.top = "87px";
-	  				tg.$detailNavContainer[0].style.width = tg.$main.width() + "px";
-	  				tg.$detailNavContainer[0].style.zIndex = 9999999;
-	  				tg.$detailNavContainer[0].style.height = "4.2em";
-	  				tg.$detailNavContainer[0].style.paddingTop = "1.5em";
-	  				
-	  				//Firefox wants this to stop it from reseting the scrollTop after the style change
-	  				this.scrollTop = that.save;
-	  				
-	  			} else {
-	  				tg.$detailNavContainer[0].style.position = "static";
-	  				tg.$detailNavContainer[0].style.top = "";
-	  				tg.$detailNavContainer[0].style.width = "";
-	  				tg.$detailNavContainer[0].style.zIndex = "";
-	  				tg.$detailNavContainer[0].style.height = "";
-	  				tg.$detailNavContainer[0].style.paddingTop = "";
-	  				
-	  				//Firefox wants this to stop it from reseting the scrollTop after the style change
-	  				this.scrollTop = that.save;
-	  			}
-	  			
-	  		}
 		};
 		
 		$(that.scrollPane).bind(eventType, scrollPanel);
@@ -1097,18 +1375,22 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 //
 ///////////////////////////////////*/
 
-DDE.TweetYvent.prototype.MainView = function( parent ) {
+DDE.TweetYvent.prototype.MainView = function( parent, selector ) {
 		console.log("New Main View Object");
 		console.log(this);
 		var that = parent;
 		var tg = that.globals;
 		
+		this.selectedDesigner = selector ? selector : '';
+		
 		this.makeTabs(tg);
+		
+		if (this.selectedDesigner) tg.navView.loadMainViewDesigner(tg);
 		
 		};
 
 DDE.TweetYvent.prototype.MainView.prototype = {
-		
+	
 	makeTabs: function( globals ) {
 	
 		var tg = globals;
@@ -1116,9 +1398,9 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		//Todo: make more efficient code
 		var $extraHeaders = $('.no-tab');
 		var $detailNavMenu = $('#detailnav ul');
-		var $tweetsContent = $('div.tweets');
-		var $trendsContent = $('div.trends');
-		var $photosContent = $('div.photos');
+		tg.$tweetsContent = $('div.tweets');
+		tg.$trendsContent = $('div.trends');
+		tg.$photosContent = $('div.photos');
 		var $tweetTab = $('#tweettab');
 		var $trendTab = $('#trendtab');
 		var $photoTab = $('#phototab');
@@ -1126,21 +1408,21 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		
 		var $colorSwitch = $('#colorswitch');
 		var $wordSwitch = $('#wordswitch');
-		var $colorContent = $('#trendingcolors');
-		var $wordContent = $('#trendingwords');
+		tg.$colorContent = $('#trendingcolors');
+		tg.$wordContent = $('#trendingwords');
 		
 		
 			
 		$extraHeaders.addClass("visuallyhidden");
 		
-		$trendsContent[0].style.display = "none";
-		$photosContent[0].style.display = "none";
+		tg.$trendsContent[0].style.display = "none";
+		tg.$photosContent[0].style.display = "none";
 		
 		$trendTab.click(function(e){
 			e.preventDefault();
-			$trendsContent[0].style.display = "block";
-			$tweetsContent[0].style.display = "none";
-			$photosContent[0].style.display = "none";
+			tg.$trendsContent[0].style.display = "block";
+			tg.$tweetsContent[0].style.display = "none";
+			tg.$photosContent[0].style.display = "none";
 			$trendTab.addClass("selected");
 			$tweetTab.removeClass("selected");
 			$photoTab.removeClass("selected");
@@ -1152,9 +1434,9 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		
 		$tweetTab.click(function(e){
 			e.preventDefault();
-			$trendsContent[0].style.display = "none";
-			$tweetsContent[0].style.display = "block";
-			$photosContent[0].style.display = "none";
+			tg.$trendsContent[0].style.display = "none";
+			tg.$tweetsContent[0].style.display = "block";
+			tg.$photosContent[0].style.display = "none";
 			$trendTab.removeClass("selected");
 			$photoTab.removeClass("selected");
 			$tweetTab.addClass("selected");
@@ -1166,9 +1448,9 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		
 		$photoTab.click(function(e){
 			e.preventDefault();
-			$trendsContent[0].style.display = "none";
-			$tweetsContent[0].style.display = "none";
-			$photosContent[0].style.display = "block";
+			tg.$trendsContent[0].style.display = "none";
+			tg.$tweetsContent[0].style.display = "none";
+			tg.$photosContent[0].style.display = "block";
 			$trendTab.removeClass("selected");
 			$tweetTab.removeClass("selected");
 			$photoTab.addClass("selected");
@@ -1178,8 +1460,8 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		});
 		
 		$wordSwitch.click(function(e){
-			$colorContent[0].style.display = "none";
-			$wordContent[0].style.display = "block";
+			tg.$colorContent[0].style.display = "none";
+			tg.$wordContent[0].style.display = "block";
 			$colorSwitch.removeClass("selected");
 			$wordSwitch.addClass("selected");
 			
@@ -1188,8 +1470,8 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		});
 		
 		$colorSwitch.click(function(e){
-			$colorContent[0].style.display = "block";
-			$wordContent[0].style.display = "none";
+			tg.$colorContent[0].style.display = "block";
+			tg.$wordContent[0].style.display = "none";
 			$colorSwitch.addClass("selected");
 			$wordSwitch.removeClass("selected");
 			

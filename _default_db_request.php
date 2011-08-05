@@ -18,6 +18,7 @@ try {
 	$cursor = $events->find()->sort(array('startTime'=>1)); //we can use limit here in the future
 	
 	$event_list = array();
+	$designer_lookup = array();
 	$index = 0;
 		
 	//build $event_list array and group by day of the week
@@ -25,6 +26,8 @@ try {
 	
 		$day = date('l, M j', $obj['startTime']->sec);
 		$day = strtotime($day);
+		
+		$designer_lookup[$obj['keyword']] = $obj['name'];
 	
 		if ( isset($event_list[$day]) ) {
 		

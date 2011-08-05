@@ -365,8 +365,15 @@ p.sub-title {
 
 #nav {
 	position: relative;
-	margin-top: 140px;
 	display: none;
+}
+
+h2.secondary {
+	font-size: 1em; 
+	letter-spacing: 1px; 
+	text-transform: uppercase;
+	text-align: left;
+	font-weight: normal; 
 }
 
 #viewnav, #detailnav {
@@ -785,6 +792,7 @@ div.list {
 	overflow: hidden;
 }
 
+
 div.nav b {
 	display: block;
 	float: left;
@@ -969,9 +977,7 @@ div.nav .listcat {
 
 h3.designer {
 	font-size: .9em;
-	margin: 0;
-	position: absolute;
-	top: 160px;
+	margin: 0 0 1em;
 	text-transform: uppercase;
 	font-weight: normal;
 	letter-spacing: 1px;
@@ -984,13 +990,13 @@ h3.designer {
 	top: 0;
 }
 
-h3.designer span.breadcrumb {
+h3.designer .breadcrumb {
 	text-decoration: underline;
 }
 
 
 #modules {
-	margin-top: 2.5em;
+	margin-top: 1.5em;
 }
 
 .trends .controlcontainer {
@@ -1459,7 +1465,7 @@ p.sub-title {
 /* 9.NAVIGATION */
 
 #nav {
-	margin-top: 335px;
+	
 }
 
 #dayslist {
@@ -1540,7 +1546,10 @@ div.minimap {
 }
 
 h3.designer {
-	top: 365px;
+	letter-spacing: 0px; 
+	font-size: 1.5em; 
+	font-weight: bold;
+	margin-top: .3em;
 }
 
 /* 12.COMPLIMENTARY */
@@ -1638,23 +1647,18 @@ body {
 	bottom: 69px;
 }
 
-#mainscroller {
+#mainsectioncroller {
 	bottom: 125px;
 }
 
-.ie7 #mainscroller {
+.ie7 #mainsectionscroller {
 	bottom: 0px;
 }
 
 h2.secondary {
 	position: absolute; 
 	z-index: 9999; 
-	font-weight: normal; 
 	width: 10em; 
-	text-align: left; 
-	font-size: 1em; 
-	letter-spacing: 1px; 
-	text-transform: uppercase;
 }
 
 #viewnav {
@@ -1718,12 +1722,29 @@ h2.page-title {
 	height: 100%;
 	border-left: solid 1px #ccc;
 	padding-left: 1.5em;
+	margin-left: 48%;
 	
 }
 
 .ie7 #main {
 	position: relative;
 	
+}
+
+#modules {
+	height: 100%;
+	padding-bottom: 112px;
+	margin-top: 0;
+	position: relative;
+}
+
+.ie7 #modules {
+	padding-bottom: 0;
+}
+
+#mainsection {
+	position: relative;
+	height: 100%;
 }
 
 div.nav .tweettext {
@@ -1739,10 +1760,13 @@ h3.designer {
 	position: static;
 	top: 0;
 	width: auto;
-	margin-bottom: 1em;
+	letter-spacing: 0px; 
+	font-size: 2.3em; 
+	font-weight: bold; 
+	margin-bottom: .5em;
 }
 
-h3.designer span.breadcrumb {
+h3.designer .breadcrumb {
 	display: none;
 }
 
@@ -1785,6 +1809,11 @@ h3.designer b {
 	height: <?php echo ($max_height+20)*2.5; ?>px;
 }
 /* 11.MAIN */
+
+#main {
+	margin-left: 37.3em;
+}
+
 /* 12.COMPLIMENTARY */
 /* 13.CONTENTINFO */
 /* 14.GLOBAL OBJECTS */

@@ -26,6 +26,8 @@
 		
 		//db.marcjacobs.find({'entities.urls':{ $elemMatch :  { 'url' : /^http:\/\/(twitpic.)/i  }  }}).sort({'created_at':-1}).limit(10);
 		
+		
+		
 		$pattern = '/^http:\/\/(yfrog.|instagr.|lockerz.|twitpic.|pic.twitter.)/i';
 		$url_link = 'entities.urls';
 		
@@ -104,7 +106,7 @@
 		$words = $db->words;
 		
 		$designer_counts = 'counts.total';
-		$words_cursor = $words->find(array( $designer_counts=>array( '$exists'=> true ) ))->sort(array($designer_counts=>-1))->limit(20);
+		$words_cursor = $words->find(array( $designer_counts=>array( '$exists'=> true ) ))->sort(array($designer_counts=>-1))->limit(10);
 			
 		
 		foreach ($words_cursor as $key=>$arr) {

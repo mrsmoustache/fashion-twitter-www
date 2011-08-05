@@ -40,18 +40,7 @@ if (!isset($designers) || $designers == "all") {
 
 		<div id="modules" class="clearfix">
 		
-			<div id="mainsection">
-				<div class="tabnav detailnav">
-					<div id="detailnav">
-						<ul class="clearfix">
-							<li id="tweettab" class="selected"><a href="#">Tweets</a></li>
-							<li id="trendtab"><a href="#">Trends</a></li>
-							<li id="phototab"><a href="#">Photos</a></li>
-							<li id="articlestab"><a href="#">Articles</a></li>
-						</ul>
-					</div>
-				</div>
-		
+			<div id="mainsection" class="scroll">
 			
 				<div class="list tweets">
 				
@@ -123,11 +112,7 @@ if (!isset($designers) || $designers == "all") {
 				<h2 class="no-tab">Photos</h2>
 				
 				<div class="photos"></div>
-				
-				<h2 class="no-tab">Articles</h2>
-				
-				<div class="articles"></div>
-				
+								
 								
 			</div>
 			
