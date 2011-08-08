@@ -300,6 +300,52 @@ DDE.cssAnimation = function(elem, animation, options) {
 	elem.style['-webkit-animation-timing-function'] = easingType;
 }
 
+DDE.cssTransition = function (elem, props, options) {
+	var animationCallback = function (e) {
+		this.style['-webkit-transition-property'] = 'none';
+		this.style['-webkit-transition-duration'] = '';
+		this.style['-webkit-transform'] = 'none';
+		
+		for (p in props) {
+			this.style[p] = props[p] + 'px';
+		}
+		
+		this.removeEventListener("webkitTransitionEnd", animationCallback, false);
+		
+		if (callback) {
+			return callback.call();
+		}
+		
+	}, duration, easingType, callback, transX = 0, transY = 0;
+	
+	if (options.speed == null) duration = 200;
+	else duration = options.speed;
+	
+	if (options.easing == null) easingType = 'ease-out';
+	else easingType = options.easing;
+	
+	if (options.complete && typeof options.complete == 'function') callback = options.complete;
+	
+	for (p in props) {
+		if (p == "top") {
+			transY = props[p] - parseInt(window.getComputedStyle(elem, null).getPropertyValue("top"));
+		}
+		
+		if (p == "left") {
+			var startLeft = window.getComputedStyle(elem, null).getPropertyValue("left");
+			transX = startLeft == "auto" ? props[p] - 0 : props[p] - parseInt(startLeft);
+		}
+	}
+	
+	elem.addEventListener("webkitTransitionEnd", animationCallback, false);
+	//elem.style.display = "block";
+	//elem.style.position = "relative";
+	elem.style['-webkit-transition-property'] = '-webkit-transform';
+	elem.style['-webkit-transform'] = 'translate3d('+transX+'px,'+transY+'px,0)';
+	elem.style['-webkit-transition-duration'] = duration+'ms';
+	elem.style['-webkit-transition-timing-function'] = easingType;
+}
+
 DDE.fadeIn = function(elem, speed, callback) {
 	var options = {};
 	if (callback) options = {complete: callback};
@@ -353,7 +399,7 @@ if (DDE.isEventSupported("touchstart")) {
 	// http://remysharp.com/2010/08/05/doing-it-right-skipping-the-iphone-url-bar/
 	
 	MBP.hideUrlBar = function () {
-	    /mobile/i.test(navigator.userAgent) && !pageYOffset && !location.hash && setTimeout(function () {
+	    /mobile/i.test(navigator.userAgent) && !pageYOffset && setTimeout(function () {
 	    window.scrollTo(0, 1);
 	    }, 1000);
 	}
@@ -384,7 +430,7 @@ if (DDE.isEventSupported("touchstart")) {
 	    document.body.addEventListener('touchmove', this, false);
 	    this.startX = event.touches[0].clientX;
 	    this.startY = event.touches[0].clientY;
-	    this.element.style.backgroundColor = "rgba(0,0,0,.7)";
+	    this.element.style.backgroundColor = "rgba(51,119,175,.15)";
 	};
 	
 	MBP.fastButton.prototype.onTouchMove = function(event) {

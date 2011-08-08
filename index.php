@@ -29,7 +29,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 </head>
 
 
-<body class="clearfix <?php if ( isset($schedule) ) { echo "schedule"; } else if (isset($designers)) { echo "designers"; } ?>">
+<body class="clearfix <?php if ( isset($schedule) ) { echo "schedule"; } ?>">
 
 <header id="banner" role="banner" class="clearfix">
 	<!--[if IEMobile 7]>

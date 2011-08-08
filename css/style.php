@@ -368,6 +368,10 @@ p.sub-title {
 	display: none;
 }
 
+.schedule #nav {
+	display: block;
+}
+
 h2.secondary {
 	font-size: 1em; 
 	letter-spacing: 1px; 
@@ -440,6 +444,10 @@ h2.secondary {
 	font-size: .8em;
 }
 
+.iem7 #detailnav, .ie7 #detailnav {
+	height: 28px;
+}
+
 
 #viewnav li.selected, #detailnav li.selected {
 	height: 28px;
@@ -471,20 +479,6 @@ h2.secondary {
 	float: left;
 }
 
-.schedule #viewnav ul {
-	float: left;
-	right: ;
-	left: 5%;
-}
-
-.schedule #viewnav li {
-	float: left;
-	margin: 0 0 0 5px;
-}
-
-.schedule #viewnav .backlink {
-	float: right;
-}
 
 /* days navigation */
 
@@ -816,6 +810,10 @@ div.nav .listitem {
 	cursor: pointer;
 }
 
+div.list .listitem:first-child {
+	padding-top: 0;
+}
+
 div.nav .listitem.selected {
 	background: #eee;
 }
@@ -928,8 +926,13 @@ div.list .trendcount {
 	border: solid 1px #ccc;
 }
 
+.ie7 .tweets .listthumb, .iem7 .tweets .listthumb {
+	width: 48px;
+	height: 48px;
+}
+
 .tweets .listcontent {
-	margin-left: 55px;
+	margin-left: 60px;
 	position: relative;
 }
 
@@ -971,6 +974,10 @@ div.nav .listcat {
 
 /* 11.MAIN */
 
+.schedule #main {
+	display: none;
+}
+
 .no-js #map {
 	display: none;
 }
@@ -992,11 +999,6 @@ h3.designer {
 
 h3.designer .breadcrumb {
 	text-decoration: underline;
-}
-
-
-#modules {
-	margin-top: 1.5em;
 }
 
 .trends .controlcontainer {
@@ -1542,7 +1544,7 @@ div.minimap {
 
 /* 11.MAIN */
 #main {
-	top: 3.3em;
+	
 }
 
 h3.designer {
@@ -1723,7 +1725,10 @@ h2.page-title {
 	border-left: solid 1px #ccc;
 	padding-left: 1.5em;
 	margin-left: 48%;
-	
+}
+
+.schedule #main {
+	display: block;
 }
 
 .ie7 #main {

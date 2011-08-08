@@ -18,6 +18,8 @@ catch(e){ console={log: function(){ return; }}}
 
 $(window).load(function(){
 	if (window.MBP) MBP.hideUrlBar();
+	
+	//delay our screensizes call until the url bar has time to move
 	setTimeout(function(){
 		tweetYvent.setScreenSizes();
 	},1000);
@@ -32,29 +34,15 @@ $(window).resize(function(){
 	}
 });
 
+
 $(document).ready(function(){
 
-	var start = (new Date()).getTime();
-	
 	tweetYvent.initSelectors();
-	
-	var finished = (new Date()).getTime() - start;	
-	console.log("processing time initSelectors: " + finished + " msec" );
-	
-	var start = (new Date()).getTime();
-	
+		
 	tweetYvent.setScreenSizes();
-	
-	var finished = (new Date()).getTime() - start;	
-	console.log("processing time setScreenSizes: " + finished + " msec" );
-	
-	
-	var start = (new Date()).getTime();
 	
 	tweetYvent.loadView();
 	
-	var finished = (new Date()).getTime() - start;	
-	console.log("processing time loadView: " + finished + " msec" );
 		
 });
 
@@ -116,12 +104,12 @@ DDE.TweetYvent = function(){
 	
 	this.browserCheck = function(){
 		var tg = this.globals;
+				
 		if (navigator.userAgent.match(/Blackberry/i)) {
 			if(navigator.userAgent.match(/\/6\./i)) {
-				$body.addClass('bb6');
+				tg.$body.addClass('bb6');
 			} else {
-				$body.addClass('bb5');
-				
+				tg.$body.addClass('bb5');
 			}
 		}
 		
@@ -167,6 +155,7 @@ DDE.TweetYvent = function(){
 			
 			case "/schedule/":
 				//scheduleView();
+				tg.navView.showScheduleView();
 				break;
 				
 			case "/designers/":
@@ -199,6 +188,7 @@ DDE.TweetYvent.prototype = {
 		tg.$main = $('#main');
 		tg.$modules = $('#modules');
 		tg.$content = $('div.content');
+		tg.$footer = $('#footer');
 		tg.$contentNav = $('#contentnav');
 		tg.$detailNavContainer = $('.tabnav.detailnav');
 		tg.$h3DesignerName = $('h3.designer .designer-name');
@@ -208,12 +198,14 @@ DDE.TweetYvent.prototype = {
 		this.browserCheck();
 		
 		//Modernizr Feature Detection
-		if (Modernizr.cssanimations) tg.cssAnimationOn = true;
+		if (Modernizr.cssanimations && tg.Webkit) tg.cssAnimationOn = true;
+		if (Modernizr.csstransitions && Modernizr.csstransforms3d && tg.Webkit) tg.cssTransitionOn = true;
+	
 		if (Modernizr.touch) tg.touch = true;
 		
 		//cache global selectors
 		tg.$headerB = $('header b');
-		
+				
 	},
 	
 	activeUserCheck: function() {
@@ -276,6 +268,9 @@ DDE.TweetYvent.prototype = {
 				}
 			});
 		}
+		
+		//help the mobile screen from reshowing the url bar after we hide it
+		tg.$content[0].style['min-height'] = tg.lastWindowHeight + 'px';
 		
 		
 		//768
@@ -394,6 +389,13 @@ DDE.TweetYvent.prototype = {
 			
 			case "/schedule/":
 				//scheduleView();
+				tg.navView = new this.NavView(this);
+				tg.mainView = new this.MainView(this);
+				
+				if (tg.lastWindowWidth < 992) {
+					tg.navView.showScheduleView();
+				}
+				
 				break;
 				
 			case "/designers/":
@@ -850,11 +852,17 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		var tg, that, title, designer;
 		
 		if (e.type) {
-			
+		
 			//listitem clicked
 			e.preventDefault();
 			
-			var clickedLI = this;
+			var touch, clickedElem;
+			if (e.touches) touch = e.touches[0];
+			else touch = e;
+			
+			if (this.element) clickedElem = this.element;
+			else clickedElem = this;
+				
 			tg = tweetYvent.globals;
 			that = tg.navView;
 			
@@ -865,23 +873,24 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				tg.noHashEvent = false;
 			}, 200);
 			
-			if (clickedLI.id == "all-designers-item") {
+			if (clickedElem.id == "all-designers-item") {
 			
 				title = 'All Designers';
 				window.location.href = window.location.pathname + '#';
 				if (tg.mainScroll) tg.mainScroll.refresh();
 			
 			} else {
-				var anchor = $('.listname', clickedLI)[0];
+				var anchor = $('.listname', clickedElem)[0];
+				
 				title = anchor.innerHTML;
-				designer = clickedLI.id;
+				designer = clickedElem.id;
 				var href = anchor.href;
 				
 				window.location.href = href;
 			}
 			
 			that.$scheduleNavItems.removeClass('selected');
-			$(clickedLI).addClass('selected');
+			$(clickedElem).addClass('selected');
 			
 			
 			
@@ -912,7 +921,9 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		tg.$h3DesignerName.html(title);
 		
 		//check if we are in tg.scheduleNavSingleView aka Mobile mode
-		if (tg.scheduleNavSingleView) that.showMainView(tg);		
+		//this is an early transition for faster devices that do support CSS Transitions
+		if (tg.scheduleNavSingleView && tg.cssTransitionOn) that.showMainView(tg);
+				
 		//load db content
 		tg.startDB = (new Date()).getTime();
 			
@@ -981,6 +992,10 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				var finished = (new Date()).getTime() - start;	
 				console.log("processing time fetching images: " + finished + " msec" );
 				
+				//check if we are in tg.scheduleNavSingleView aka Mobile mode
+				//this is also a delayed transition for slower devices that don't support CSS Transitions
+				if (tg.scheduleNavSingleView && !tg.cssTransitionOn) that.showMainView(tg);
+				
 				if (tg.mainScroll) tg.mainScroll.refresh();
 				
 			},
@@ -1000,14 +1015,20 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 		//change all link href to use hash links
 		var links = $('a', tg.$scheduleNav);
-		var count = links.length;
-				
-		for (var i=0; i<links.length; i++) {
+		var anchorCount = links.length;
+		var navItemCount = that.$scheduleNavItems.length;
+		
+		for (var i=0; i<anchorCount; i++) {
 			that.makeLinkHash(links[i]);
 		}
 		
-		//enable listitem click events
-		that.$scheduleNavItems.bind("click", that.loadMainViewDesigner);
+		if (tg.touch) {
+			for (var i=0; i<navItemCount; i++ ) {
+				new MBP.fastButton(that.$scheduleNavItems[i], that.loadMainViewDesigner);
+			}
+		} else {
+			that.$scheduleNavItems.bind("click", that.loadMainViewDesigner);
+		}
 		
 	},
 	
@@ -1019,36 +1040,128 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		tg.$breadcrumb = $('h3.designer a');
 		that.makeLinkHash(tg.$breadcrumb[0]);
 		
-		tg.$breadcrumb.bind("click", that.showScheduleView);
+		if (tg.touch) new MBP.fastButton(tg.$breadcrumb[0], that.showScheduleView);
+		else tg.$breadcrumb.bind("click", that.showScheduleView);
 		
 	},
 	
 	showScheduleView: function (e) {
-		e.preventDefault();
+		//mobile only function
+		var touch, clickedElem;
+		if (e) {
+			e.preventDefault();
+			if (e.touches) {
+				touch = e.touches[0];
+				clickedElem = this.element;
+			} else {
+				 touch = e;
+				 if (this.element) clickedElem = this.element;
+				 else clickedElem = this;
+			}
+			window.location.href = clickedElem.href;
+		} 
 		
-		var anchor = this;
-			
 		var tg = tweetYvent.globals;
 		var that = tg.navView;
 		
-		tg.$main.hide();
-		tg.$nav.show();
+		//transition view
+		that.transitionView(tg.$nav, tg);
 		
 		tg.scheduleNavSingleView = true;
 		tg.singleViewMode = true;
 		
-		window.location.href = anchor.href;
 	},
 	
 	showMainView: function ( globals ) {
+		//mobile only function
 		var tg = globals;
 		var that = this;
 		
-		tg.$main.show();
-		tg.$nav.hide();
+		//transition view
+		that.transitionView(tg.$main, tg);
+		
+		//make body scrollTop is reset to 0
+		//tg.$body[0].scrollTop = 1;
 		
 		tg.scheduleNavSingleView = false;
 		tg.singleViewMode = true;
+		
+	},
+	
+	transitionView: function ($elem, globals) {
+		var tg = globals;
+		var that = this;
+		var transitionSpeed = 300;
+		tg.$nav[0].style.position = "absolute";
+		tg.$nav[0].style.width = "100%";
+		tg.$main[0].style.position = "relative";
+		tg.$footer[0].style.display = "none";
+				
+		switch ($elem.selector) {
+			case "#nav":
+				//show schedule navigation
+				tg.$nav[0].style.left = -tg.lastWindowWidth + "px";
+				tg.$nav[0].style.display = "block";
+				
+				var transitionComplete = function() {
+					tg.$main[0].style.display = "none";
+					tg.$nav[0].style.position = "relative";
+					tg.$footer[0].style.display = "block";
+				};
+				
+				if (tg.cssTransitionOn) {
+					DDE.cssTransition(tg.$main[0], {left: tg.lastWindowWidth}, {
+						speed: transitionSpeed, 
+						easing: 'ease-out', 
+						complete: transitionComplete
+					});
+					
+					DDE.cssTransition(tg.$nav[0], {left: 0}, {speed: transitionSpeed, easing: 'ease-out'});
+				} else {
+					tg.$main.animate({left: tg.lastWindowWidth},{
+						duration: transitionSpeed, 
+						easing: 'easeOutQuad', 
+						complete: transitionComplete
+					});
+					
+					tg.$nav.animate({left: 0},{duration: transitionSpeed, easing: 'easeOutQuad'});
+				}
+				
+				break;
+				
+			case "#main":
+				//show main designer detail
+				tg.$main[0].style.left = tg.lastWindowWidth + "px";
+				tg.$main[0].style.display = "block";
+				
+				tg.$body[0].scrollTop = 1;
+				//IEM7 WP7
+			 	document.documentElement.scrollTop = 1;
+				
+				var transitionComplete = function(){
+					tg.$nav[0].style.display = "none";
+					tg.$footer[0].style.display = "block";
+				};
+				
+				if (tg.cssTransitionOn) {
+					DDE.cssTransition(tg.$nav[0], {left: -tg.lastWindowWidth}, {
+						speed: transitionSpeed, 
+						easing: 'ease-out', 
+						complete: transitionComplete
+					});
+					
+					DDE.cssTransition(tg.$main[0], {left: 0}, {speed: transitionSpeed, easing: 'ease-out'});
+				} else {
+					tg.$nav.animate({left: -tg.lastWindowWidth},{
+						duration: transitionSpeed, 
+						easing: 'easeOutQuad', 
+						complete: transitionComplete
+					});
+					
+					tg.$main.animate({left: 0},{duration: transitionSpeed, easing: 'easeOutQuad'});
+				}
+				break;
+		}
 		
 	},
 	
@@ -1058,6 +1171,11 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 		tg.$main[0].style.display = "";
 		tg.$nav[0].style.display = "";
+		tg.$main[0].style.position = "";
+		tg.$main[0].style.left = "";
+		tg.$nav[0].style.position = "";
+		tg.$nav[0].style.width = "";
+		tg.$nav[0].style.left = "";
 		tg.scheduleNavSingleView = false;
 		tg.singleViewMode = false;
 	},
