@@ -74,7 +74,7 @@ background : rgb(255,255,255) /* url(../img/tmp/grid.png) repeat-y 50% 0 */; }
 
 body { 
 margin : 0 auto;
-padding : 16px 0 24px;
+padding : 16px 0 0;
 width : 90% /* 252px */;
 font : 100%/1.4 Georgia,"Times New Roman", Times, serif ;
 color: #282828; 
@@ -400,6 +400,10 @@ h2.secondary {
 	float: left;
 }
 
+.no-js #viewnav .backlink {
+	display: none;
+}
+
 #viewnav .backlink a {
 	font-size: .9em;
 	text-decoration: underline;
@@ -483,7 +487,7 @@ h2.secondary {
 /* days navigation */
 
 #dayslist {
-	width: 8em;
+	width: auto;
 	overflow: auto;
 	position: absolute;
 	z-index: 999;
@@ -498,10 +502,8 @@ h2.secondary {
 	display: none;
 }
 
-.ie7 #dayslist, .ie8 #dayslist {
-	border-top: solid 6px #444;
-	border-bottom: solid 6px #444;
-	border-right: solid 6px #444;
+.iem7 #dayslist, .ie7 #dayslist, .ie8 #dayslist {
+	border: solid 6px #222;
 }
 
 #dayslist h3 {
@@ -509,33 +511,55 @@ h2.secondary {
 }
 
 #dayslist ul {
-	padding-right: 1em;
+	padding: 5px 10px 8px 5px;
 	list-style: none;
 	font-family : "Helvetica Neue", Helvetica, Arial, sans-serif;
+	margin: 0;
 }
 
 #dayslist li {
 	text-align: right;
+	cursor: pointer;
+	width: 6em;
+	float: left;
+	background-color: #eee;
+	margin-left: 5px;
+	margin-top: 5px;
+	padding: 5px;
+	
+}
+
+.csstransforms #dayslist ul {
+	padding: 5px 5px 8px 5px;
+}
+
+.csstransforms #dayslist li {
+	width: 4.8em;
+	position: relative;
 }
 
 #dayslist a {
 	color: #222;
 	display: block;
+	cursor: pointer;
 }
 
 #dayslist a:hover {
 	text-decoration: none;
+	cursor: pointer;
 }
 
 #dayslist span {
 	float: right;
 	font-size: 3em;
 	line-height: 1.06em;
+	cursor: pointer;
 }
 
 #dayslist span b + b {
 	position: relative;
 	left: -.1em;
+	cursor: pointer;
 }
 
 .ie7 #dayslist span b + b, .iem7 #dayslist span b + b {
@@ -550,19 +574,24 @@ h2.secondary {
 	color: #555;
 	letter-spacing: 1px;
 	padding-top: .3em;
-	
-	-webkit-transform: rotate(-90deg) translate(-.5em, -1.6em);
-	-moz-transform: rotate(-90deg) translate(-.5em, -1.6em);
-	-o-transform: rotate(-90deg) translate(-.5em, -1.6em);
-	-ms-transform: rotate(-90deg) translate(-.5em, -1.6em);
-	transform: rotate(-90deg) translate(-.5em, -1.6em);
+	cursor: pointer;
+}
+
+.csstransforms #dayslist em {
+	position: absolute;
+	float: none;
+	right: 0;
+	-webkit-transform: rotate(-90deg) translate(-.5em, -5.2em);
+	-moz-transform: rotate(-90deg) translate(-.5em, -5.2em);
+	-o-transform: rotate(-90deg) translate(-.5em, -5.2em);
+	-ms-transform: rotate(-90deg) translate(-.5em, -5.2em);
+	transform: rotate(-90deg) translate(-.5em, -5.2em);
 	
 	-webkit-transform-origin: right top;
 	-moz-transform-origin: right top;
 	-o-transform-origin: right top;
 	-ms-transform-origin: right top;
 	transform-origin: right top;
-	
 }
 
 
@@ -821,8 +850,9 @@ div.nav .listitem.selected {
 div.nav #all-designers-item {
 	text-transform: uppercase;
 	font-weight: bold;
-	padding: 1em 0;
+	padding: .5em 0 .4em .7em;
 	border-top: solid 1px #ccc;
+	font-size: 1.3em;
 }
 
 .ie7 div.nav #all-designers-item {
@@ -1471,6 +1501,7 @@ p.sub-title {
 }
 
 #dayslist {
+	width: 8em;
 	display: block;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
@@ -1483,11 +1514,22 @@ p.sub-title {
 	
 }
 
-.ie7 #dayslist, .ie8 #dayslist {
-	border-top: none;
-	border-bottom: none;
+.iem7 #dayslist, .ie7 #dayslist, .ie8 #dayslist {
+	border: none;
 	border-right: solid 1px #ccc;
 	position: static;
+}
+
+#dayslist ul, .csstransforms #dayslist ul {
+	padding: 0 1em 0;
+}
+
+#dayslist li, .csstransforms #dayslist li {
+	width: auto;
+	float: none;
+	background: white;
+	margin: 0;
+	padding: 0;
 }
 
 #dayslist h3 {
@@ -1497,7 +1539,6 @@ p.sub-title {
 	text-align: right;	
 	padding-right: .7em;
 	line-height: 1em;
-	letter-spacing: 1px;
 	margin: 0 0 -.1em;
 }
 
@@ -1589,6 +1630,16 @@ body {
 	overflow: visible;
 	height: 100%;
 	max-height: 100%;
+}
+
+.no-js body {
+	height: 92%;
+	max-height: 92%;
+}
+
+html.no-js {
+	height: 92%;
+	max-height: 92%;
 }
 
 /* 2.HEADINGS */
@@ -1708,6 +1759,10 @@ div.schedule {
 	padding-bottom: 125px;
 }
 
+.no-js .content {
+	padding-bottom: 40px;
+}
+
 .ie7 .content {
 	padding-bottom: 0px;
 }
@@ -1781,11 +1836,19 @@ h3.designer b {
 
 /* 12.COMPLIMENTARY */
 /* 13.CONTENTINFO */
-#footer {
+#footer, .no-js noscript {
 	position: absolute; 
-	bottom: 40px; 
+	bottom: 15px; 
 	z-index: 9999; 
 }
+.no-js #footer {
+	bottom: -70px;
+}
+
+.no-js noscript {
+	bottom: -100px;
+}
+
 /* 14.GLOBAL OBJECTS */
 /* 15.VENDOR-SPECIFIC */
 /* 16.TEMPLATE SPECIFICS */

@@ -155,7 +155,13 @@ DDE.TweetYvent = function(){
 			
 			case "/schedule/":
 				//scheduleView();
-				tg.navView.showScheduleView();
+				console.log(hash);
+				console.log(pointer);
+				if (tg.singleViewMode && !tg.scheduleNavSingleView) tg.navView.showScheduleView();
+				if (pointer && pointer != '') {
+					tg.navView.selectedDayItem = pointer;
+					tg.navView.scrollScheduleView();
+				}
 				break;
 				
 			case "/designers/":
@@ -189,10 +195,12 @@ DDE.TweetYvent.prototype = {
 		tg.$modules = $('#modules');
 		tg.$mainSection = $('#mainsection');
 		tg.$content = $('div.content');
+		tg.$header = $('header');
 		tg.$footer = $('#footer');
 		tg.$contentNav = $('#contentnav');
 		tg.$detailNavContainer = $('.tabnav.detailnav');
 		tg.$h3DesignerName = $('h3.designer .designer-name');
+		tg.$dayslist = $('#dayslist');
 		
 		if($('.ie7 body')[0]) tg.ie7 = true;
 		
@@ -277,7 +285,7 @@ DDE.TweetYvent.prototype = {
 		//768
 		if (tg.lastWindowWidth >= 768) { 
 		
-			
+			tg.$dayslist[0].style.display = '';
 		}
 		
 		
@@ -1100,8 +1108,132 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		tg.$breadcrumb = $('h3.designer a');
 		that.makeLinkHash(tg.$breadcrumb[0]);
 		
+		//Day navigation links
+		tg.$dayLinks = $('#dayslist ul li a');
+		var count = tg.$dayLinks.length;
+		for (var i=0; i<count; i++) {
+			that.makeLinkHash(tg.$dayLinks[i]);
+		}
+		
 		if (tg.touch) new MBP.fastButton(tg.$breadcrumb[0], that.showScheduleView);
 		else tg.$breadcrumb.bind("click", that.showScheduleView);
+		
+		//Day navigation panel
+		tg.$dayPanelLink = $('#viewnav .backlink');
+		if (tg.touch) new MBP.fastButton(tg.$dayPanelLink[0], that.showDayPanel);
+		else tg.$dayPanelLink.bind("click", that.showDayPanel);
+		
+	},
+	
+	showDayPanel: function (e) {
+		//mobile only function
+		var touch, clickedElem;
+		var tg = tweetYvent.globals;
+		var that = tg.navView;
+		
+		
+		if (e) {
+			e.preventDefault();
+			if (e.touches) {
+				touch = e.touches[0];
+				clickedElem = this.element;
+			} else {
+				 touch = e;
+				 if (this.element) clickedElem = this.element;
+				 else clickedElem = this;
+			}
+		}
+		
+		if (tg.cssAnimationOn) DDE.fadeIn(tg.$dayslist[0], 200);
+		else tg.$dayslist.fadeIn();
+		
+		tg.dayPanelMode = true;
+		
+	},
+	
+	scrollScheduleView: function () {
+		var tg = tweetYvent.globals;
+		var that = tg.navView;
+		
+		var selector = '#' + that.selectedDayItem;
+		var $dayHeader = $(selector);
+		var targetPosition = $dayHeader[0].offsetTop;
+		
+		//hide dayPane if in dayPanelMode
+		if (tg.dayPanelMode) tg.$dayslist[0].style.display = "none";
+		
+		//animateScroll
+		if (tg.scheduleScroll && tg.scheduleScroll.track) {
+			//custom scrolling div
+			
+			var maxY = tg.scheduleScroll.scrollDistance;
+			var targetY = targetPosition > maxY ? maxY : targetPosition;
+			$(tg.scheduleScroll.scrollPane).animate({scrollTop: targetY}, {
+				duration: 300, 
+				easing: 'easeOutQuad', 
+				complete: function(){
+					tg.scheduleScroll.scrollTop = targetY;
+					tg.scheduleScroll.save = targetY;
+					tg.scheduleScroll.refresh();
+				}
+			});
+			
+				
+		} else if (tg.scheduleScroll && tg.scheduleScroll.scroller) {
+			//iScroll container
+			var scroller = tg.scheduleScroll.scroller,
+				wrapper = tg.scheduleScroll.wrapper,
+				matrix = getComputedStyle(scroller, null)['webkitTransform'].replace(/[^0-9-.,]/g, '').split(','),
+				currentY = matrix[5],
+				maxY = -(scroller.scrollHeight - wrapper.offsetHeight);
+			
+			var targetY = targetPosition > -maxY ? maxY : -targetPosition;
+			
+			var animationCallback = function() {
+				this.style['-webkit-transition-property'] = 'none';
+				this.style['-webkit-transition-duration'] = '';
+				this.removeEventListener('webkitTransitionEnd', animationCallback, false);
+			};
+			
+			scroller.addEventListener('webkitTransitionEnd', animationCallback, false);
+			scroller.style.webkitTransitionProperty = '-webkit-transform';
+			scroller.style.webkitTransitionDuration = '200ms';
+			scroller.style.webkitTransitionTimingFunction = 'ease-out';
+					
+			scroller.style.webkitTransform = 'translate3d(0px, '+targetY+'px, 0)';
+			
+			
+		} else {
+			//native body scrolling
+			
+			var maxY, $scroller;
+			if (document.documentElement && document.documentElement.scrollTop) {
+				//IE
+				maxY = document.documentElement.scrollHeight - tg.lastWindowHeight;
+				$scroller = $(document.documentElement);
+			} else {
+				maxY = tg.$body[0].scrollHeight - tg.lastWindowHeight;
+				$scroller = tg.$body;
+				var testScroll = tg.$body[0].scrollTop;
+				tg.$body[0].scrollTop += 1;
+				
+				if (tg.$body[0].scrollTop == testScroll) {
+					//some browsers still don't scroll the body
+					$scroller = $('html');
+				} else {
+					//the body scrolls, so reset it back
+					tg.$body[0].scrollTop -= 1;
+				}
+			}
+			
+			targetPosition += tg.$contentNav[0].offsetTop + tg.$header[0].offsetTop;
+			var targetY = targetPosition > maxY ? maxY : targetPosition;
+			
+			$scroller.animate({scrollTop: targetY}, {duration: 300, easing: 'easeOutQuad'});
+			
+		}
+		
+		
 		
 	},
 	
@@ -1247,6 +1379,13 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		//fix consistency between pathname structure across browsers
 		pathname = pathname.replace(/^\//, '');
 		
+		//for anchor links that already contain basic hash urls
+		//aka daylist links
+		var hash = '';
+		if (link.hash != '') {
+			hash = link.hash.replace(/#/, '') + '/';
+		}
+		
 		//todo: remove for production
 		var extra = '';
 		if (pathname.match(/node-projects\/tweet-event-map\/fashion-twitter-www/)) {
@@ -1254,7 +1393,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			pathname = pathname.replace(/node-projects\/tweet-event-map\/fashion-twitter-www\//, '');
 		}
 		
-		link.href = baseURI + extra + '#/' + pathname;
+		link.href = baseURI + extra + '#/' + pathname + hash;
 		link.hideFocus = 'hidefocus';
 	},
 	
