@@ -187,6 +187,7 @@ DDE.TweetYvent.prototype = {
 		tg.$scheduleNav = $('#schedulenav');
 		tg.$main = $('#main');
 		tg.$modules = $('#modules');
+		tg.$mainSection = $('#mainsection');
 		tg.$content = $('div.content');
 		tg.$footer = $('#footer');
 		tg.$contentNav = $('#contentnav');
@@ -248,11 +249,11 @@ DDE.TweetYvent.prototype = {
 		//Save's the window dimensions to a global variable
 		this.watchWindowSizes();
 		
-		if (tg.mainScroll) {
+		if (tg.mainScroll && !tg.touch) {
 			tg.mainScroll.refresh();
 		}
 		
-		if (tg.scheduleScroll) {
+		if (tg.scheduleScroll && !tg.touch) {
 			tg.scheduleScroll.refresh();
 		}
 		
@@ -279,39 +280,64 @@ DDE.TweetYvent.prototype = {
 			
 		}
 		
+		
 		if (tg.lastWindowWidth < 992) {
 		
-			if (tg.mainScroll) {
-				tg.mainScroll.disableScrollbars();
-				tg.mainScroll.destroy();
+			if (tg.touch && tg.initViewLoaded) {
+				tg.navView.resetTouchScheduleLinks(tg);
+				if (tg.mainScroll) tg.mainScroll.destroy();
 				tg.mainScroll = null;
 				
-			}
-			
-			if (tg.scheduleScroll) {
-				tg.scheduleScroll.disableScrollbars();
-				tg.scheduleScroll.destroy();
+				if (tg.scheduleScroll) tg.scheduleScroll.destroy();
 				tg.scheduleScroll = null;
+				
+			} else if (tg.initViewLoaded) {
+			
+				if (tg.mainScroll) {
+					tg.mainScroll.disableScrollbars();
+					tg.mainScroll.destroy();
+					tg.mainScroll = null;
+				}
+				if (tg.scheduleScroll) {
+					tg.scheduleScroll.disableScrollbars();
+					tg.scheduleScroll.destroy();
+					tg.scheduleScroll = null;
+				}				
 			}
 			
 			if (tg.ie7) {
 				//DDE.setMaxHeight(tg.$body[0], height);
 				tg.$content[0].style.height = "auto";
-				tg.$scheduleNav[0].height = "auto";
+				tg.$scheduleNav[0].style.height = "auto";
+				tg.$modules[0].style.height = "auto";
 			}
 		}
 		
 		//992
 		if (tg.lastWindowWidth >= 992) {
 		
-			if (!tg.mainScroll && tg.initViewLoaded) {
-				tg.mainScroll = new this.CustomScroll($('#mainsection'), tg);
-			}
+		
+			 if (tg.touch && tg.initViewLoaded) {
+				tg.navView.resetTouchScheduleLinks(tg);
+				
+				if (!tg.mainScroll) tg.mainScroll = new iScroll('mainsection');
+				tg.mainScroll.refresh()
+				
+				tg.$scheduleNav[0].style['margin-right'] = '0px';
+				if (!tg.scheduleScroll) tg.scheduleScroll = new iScroll('schedulenav');
+				setTimeout(function(){
+					tg.scheduleScroll.refresh();
+				}, 200);	
+
+			} else if (tg.initViewLoaded) {
 			
-			if (!tg.scheduleScroll && tg.initViewLoaded) {
-				tg.scheduleScroll = new this.CustomScroll(tg.$scheduleNav, tg);
+				if (!tg.mainScroll) tg.mainScroll = new this.CustomScroll(tg.$mainSection, tg);
+				tg.mainScroll.refresh()
+				if (!tg.scheduleScroll) tg.scheduleScroll = new this.CustomScroll(tg.$scheduleNav, tg);
+				tg.scheduleScroll.refresh();
+				
 			}
-			
+		
 			if (tg.$schedulePopup) {
 				tg.$schedulePopup.unbind();
 			}
@@ -782,7 +808,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 			//custom desktop scroll panels
 			tg.scheduleScroll = new that.CustomScroll(tg.$scheduleNav, tg);
-			tg.mainScroll = new that.CustomScroll($('#mainsection'), tg)
+			tg.mainScroll = new that.CustomScroll(tg.$mainSection, tg)
 			
 		} else if (tg.lastWindowWidth < 992 && !tg.touch) {
 		
@@ -1022,14 +1048,48 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			that.makeLinkHash(links[i]);
 		}
 		
-		if (tg.touch) {
+		tg.fastButtons = [];
+		
+		if (tg.touch && tg.lastWindowWidth < 992) {
+			//we use iScroll for the larger than 992 screen and that handles fast clicks on it's own
 			for (var i=0; i<navItemCount; i++ ) {
-				new MBP.fastButton(that.$scheduleNavItems[i], that.loadMainViewDesigner);
+				tg.fastButtons[i] = new MBP.fastButton(that.$scheduleNavItems[i], that.loadMainViewDesigner);
 			}
 		} else {
 			that.$scheduleNavItems.bind("click", that.loadMainViewDesigner);
 		}
 		
+	},
+	
+	resetTouchScheduleLinks: function ( globals ) {
+		
+		var tg = globals;
+		var that = this;
+		var navItemCount = that.$scheduleNavItems.length;
+		
+		//undo default clicks
+		that.$scheduleNavItems.unbind("click");
+		
+		//undo fastButtons. Would like a better way to do this
+		var count = tg.fastButtons.length;
+		for (var i=0; i<count; i++) {
+			var fastButton = tg.fastButtons[i];
+			for (item in fastButton) {
+				fastButton[item] = null;
+			}
+			tg.fastButtons[i] = null;
+		}
+		
+		tg.fastButtons = [];
+		
+		if (tg.lastWindowWidth < 992) {
+			//we use iScroll for the larger than 992 screen and that handles fast clicks on it's own
+			for (var i=0; i<navItemCount; i++ ) {
+				tg.fastButtons[i] = new MBP.fastButton(that.$scheduleNavItems[i], that.loadMainViewDesigner);
+			}
+		} else {
+			that.$scheduleNavItems.bind("click", that.loadMainViewDesigner);
+		}
 	},
 	
 	enableHashLinks: function ( globals ) {
