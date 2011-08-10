@@ -980,6 +980,11 @@ div.list .trendcount {
 	position: relative;
 }
 
+.ie8 .tweets .listcontent {
+	zoom: 1;
+	position: static; /* need this to apply opacity */
+}
+
 .tweets .tweettext {
 	display: block;
 	font-size: .9em;
@@ -1391,6 +1396,17 @@ margin-bottom : 1.5em; }
 	}
 	to {
 		right: 0;
+	}
+}
+
+@-webkit-keyframes tweetLoad {
+	from {
+		top: 50px;
+		opacity: 0;
+	}
+	to {
+		top: 0px;
+		opacity: 1;
 	}
 }
 

@@ -29,7 +29,7 @@ $(window).load(function(){
 $(window).resize(function(){
 	//hacky fix for firefox's need to reset our mainScroll scrollTop when resizing the window
 	if (navigator.userAgent.match(/Firefox/i) && tweetYvent.globals.mainScroll) {
-		tweetYvent.globals.mainScroll.scrollTop = tweetYvent.globals.mainScroll.save;
+		tweetYvent.globals.mainScroll.y = tweetYvent.globals.mainScroll.save;
 		tweetYvent.globals.mainScroll.scrollPane.scrollTop = tweetYvent.globals.mainScroll.save;
 	}
 });
@@ -756,6 +756,10 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			var username = data["tweet"]["user"]["screen_name"];
 			var thumb = data["tweet"]["user"]["profile_image_url"];
 			//var created_at = data["tweet"]["created_at"];
+			
+			//match urls in the tweetext and hyperlink
+			text = this.hyperlinkUrls(data["tweet"]);
+			
 			//Todo: create timestamp locally on client based on time of html insert
 			
 			var html = '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3>'+username+'</h3> <span class="tweettext">'+text+'</span> <span class="tweettime"></span></div></div>';
@@ -892,6 +896,35 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 	},
 	
+	hyperlinkUrls: function ( tweetData ) {
+		var value = tweetData;
+		var text = value["text"];
+		
+		var urls_length = value["entities"]["urls"].length;
+		
+		for (var i=0;i<urls_length;i++) { 
+			if (value["entities"]["urls"][i]["url"]) {
+				var url = value["entities"]["urls"][i]["url"];
+				var urlExp = new RegExp(url);
+				var anchor = '<a href="'+url+'" target="_blank">'+url+'</a>';
+				text = text.replace(urlExp, anchor);
+			}
+		}
+		
+		var mentions_length = value["entities"]["user_mentions"].length;
+		for (var i=0;i<mentions_length;i++) { 
+			if (value["entities"]["user_mentions"][i]["screen_name"]) {
+				var username = value["entities"]["user_mentions"][i]["screen_name"];
+				
+				var urlExp = new RegExp('@'+username+'\\b', 'i');
+				var anchor = '<a href="http://twitter.com/'+username+'" target="_blank">@'+username+'</a>';
+				text = text.replace(urlExp, anchor);
+			}
+		}
+		
+		return text;
+	},
+	
 	loadMainViewDesigner: function (e) {
 		console.log("loadMainViewDesigner");
 		
@@ -939,15 +972,19 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				var href = anchor.href;
 				
 				window.location.href = href;
+				
 			}
 			
 			that.$scheduleNavItems.removeClass('selected');
 			$(clickedElem).addClass('selected');
 			
-			//setNavItem selected status with animation
-			if (tg.lastWindowWidth >= 992) {
-				that.navHoverOn(clickedElem);
+			if (clickedElem.id != "all-designers-item") {
+				//setNavItem selected status with animation
+				if (tg.lastWindowWidth >= 992) {
+					that.navHoverOn(clickedElem);
+				}
 			}
+			
 			
 		
 		} else {
@@ -974,18 +1011,43 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			
 		}
 		
+		//reset Main View visible value until transition and load are complete
+		tg.mainViewVisible = false;
+		tg.mainViewLoaded = false;
+		
+		//set main view class to designername for extra styling
+		tg.$main[0].className = that.selectedNavItem;
+		
 		//clear out old content
-		tg.$tweetsContent.html('');
-		tg.$wordContent.html('');
-		tg.$colorContent.html('');
-		tg.$photosContent.html('');
+		tg.$tweetsContent[0].innerHTML = '';
+		tg.$wordContent[0].innerHTML = '';
+		tg.$colorContent[0].innerHTML = '';
+		tg.$photosContent[0].innerHTML = '';
+		
+		if (tg.mainScroll) {
+			tg.mainScroll.y = 0;
+			if (tg.mainScroll.save) tg.mainScroll.save = 0;
+			if (tg.mainScroll._pos) tg.mainScroll._pos(0,0);
+					
+			tg.mainScroll.refresh();
+		}
 		
 		//set main view title
 		tg.$h3DesignerName.html(title);
 		
+		//reset detailView tabs
+		tg.$trendsContent[0].style.display = "none";
+		tg.$tweetsContent[0].style.display = "block";
+		tg.$photosContent[0].style.display = "none";
+		tg.$trendTab.removeClass("selected");
+		tg.$photoTab.removeClass("selected");
+		tg.$tweetTab.addClass("selected");
+		tg.detailTabVisible = "tweets";
+		
 		//check if we are in tg.scheduleNavSingleView aka Mobile mode
 		//this is an early transition for faster devices that do support CSS Transitions
 		if (tg.scheduleNavSingleView && tg.cssTransitionOn) that.showMainView(tg);
+		else if (!tg.scheduleNavSingleView) tg.mainViewVisible = true;
 				
 		//load db content
 		tg.startDB = (new Date()).getTime();
@@ -1003,24 +1065,26 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				//insert archived tweets
 				//data.tweetList = []
 				
-				var start = (new Date()).getTime();
-				
 				var html = ''
+				
+				//store all tweet html in one string and append at once
 				for (var i=0; i<data.tweetList.length; i++) {
+				
 					var text = data.tweetList[i]["tweet"]["text"];
 					var username = data.tweetList[i]["tweet"]["user"]["screen_name"];
 					var thumb = data.tweetList[i]["tweet"]["user"]["profile_image_url"];
 					//var created_at = data["tweet"]["created_at"];
 					//Todo: create timestamp locally on client based on time of html insert
 					
+					//match urls in the tweetext and hyperlink
+					text = that.hyperlinkUrls(data.tweetList[i]["tweet"]);
+					
 					html += '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3>'+username+'</h3> <span class="tweettext">'+text+'</span> <span class="tweettime"></span></div></div>';
 					
 				}
 				
-				tg.$tweetsContent.append(html);	
-				
-				var finished = (new Date()).getTime() - start;	
-				console.log("processing time inserting tweets: " + finished + " msec" );
+				tg.mainView.tweetsHTML = html;
+				//tg.$tweetsContent.append(html);	
 				
 				//insert archived trending words
 				//data.trendsList = []
@@ -1032,7 +1096,8 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					
 				}
 				
-				tg.$wordContent.append(html);
+				tg.mainView.trendingWordsHTML = html;
+				//tg.$wordContent.append(html);
 				
 				//insert archived trending colors
 				//data.colorsList = []
@@ -1043,7 +1108,16 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					html += '<div class="listitem"><h3>'+color+'</h3> <span class="trendcount">'+count+'</span> </div>';
 				}
 				
-				tg.$colorContent.append(html);
+				tg.mainView.trendingColorsHTML = html;
+				//tg.$colorContent.append(html);
+				
+				tg.mainViewLoaded = true;
+				
+				//check if we are in tg.singleViewMode aka Mobile mode
+				//this is also a delayed transition for slower devices that don't support CSS Transitions
+				if (tg.singleViewMode && !tg.cssTransitionOn) that.showMainView(tg);
+				else if (!tg.singleViewMode) that.fancyDataTransition(tg);
+				
 				
 				//insert archived photos
 				//data.urlList = []
@@ -1055,11 +1129,6 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				var finished = (new Date()).getTime() - start;	
 				console.log("processing time fetching images: " + finished + " msec" );
 				
-				//check if we are in tg.scheduleNavSingleView aka Mobile mode
-				//this is also a delayed transition for slower devices that don't support CSS Transitions
-				if (tg.scheduleNavSingleView && !tg.cssTransitionOn) that.showMainView(tg);
-				
-				if (tg.mainScroll) tg.mainScroll.refresh();
 				
 			},
 			error: function ( data ) {
@@ -1069,6 +1138,61 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				console.log(data.responseText);
 			}
 		});
+	},
+	
+	fancyDataTransition: function ( globals ) {
+		var tg = globals;
+		var that = this;
+		
+		var checkInterval = setInterval(function(){
+		
+			if (tg.mainViewLoaded) {
+				clearInterval(checkInterval);
+				checkInterval = null;
+				
+				var tweets = tg.mainView.tweetsHTML;
+				var words = tg.mainView.trendingWordsHTML;
+				var colors = tg.mainView.trendingColorsHTML;
+				
+				
+				tg.$tweetsContent.append(tweets);
+				var count = tg.$tweetsContent[0].children.length;
+				var stagger = 100;
+				if (tg.cssAnimationOn) {
+					for (var i=0; i<count; i++) {
+						var tweet = tg.$tweetsContent[0].children[i];
+						var delayed = stagger*i;
+						tweet.style.opacity = 0;
+						tweet.style.top = "50px";
+						DDE.cssAnimation(tweet, 'tweetLoad', {
+							speed: 200, 
+							delay: delayed,
+							props: {top: "0px", opacity: 1} 
+						});
+					}
+				} else {
+					for (var i=0; i<count; i++) {
+						var tweet = tg.$tweetsContent[0].children[i];
+						var delayed = stagger*i;
+						tweet.style.top = "50px";
+						$(tweet).css({opacity: 0}).delay(delayed).animate({opacity: 1, top: 0},{duration: 200, easing: 'easeOutQuad'});
+					}
+				}
+				
+				//wait until animations have finished before appending more
+				setTimeout(function(){
+					tg.$wordContent.append(words);
+					tg.$colorContent.append(colors);
+					
+					if (tg.mainScroll) tg.mainScroll.refresh();
+					
+					var count = tg.$tweetsContent[0].children.length;
+					
+				}, stagger*count);
+				
+			}
+		}, 500);
+		
 	},
 	
 	enableScheduleLinks: function ( globals ) {
@@ -1111,7 +1235,6 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			for (var i=0; i<count; i++) {
 				var index = i;
 				var $countElem = that.listCountNodes[i];
-				console.log($countElem);
 				
 				if ($(that.$scheduleNavItems[i+1]).hasClass("selected")) { continue; }
 				var $arrow = that.listArrows[i];
@@ -1220,10 +1343,9 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			name = 'itemCountRight'+this.id;
 			
 			if (that.selectedNavItem == this.id) { return false; }
-			if (tg.touch && !tg.singleViewMode && tg.watchPos == tg.scheduleScroll.scrollTop) { 
+			if (tg.touch && !tg.singleViewMode && tg.watchPos == tg.scheduleScroll.y) { 
 				tg.watchPos = null;
-				console.log(tg.watchPos);
-				return false; 
+				return; 
 			}
 			if (tg.touch) this.style.backgroundColor = 'transparent';
 			
@@ -1354,7 +1476,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				duration: 300, 
 				easing: 'easeOutQuad', 
 				complete: function(){
-					tg.scheduleScroll.scrollTop = targetY;
+					tg.scheduleScroll.y = targetY;
 					tg.scheduleScroll.save = targetY;
 					tg.scheduleScroll.refresh();
 				}
@@ -1485,6 +1607,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					tg.$main[0].style.display = "none";
 					tg.$nav[0].style.position = "relative";
 					tg.$footer[0].style.display = "block";
+					
 				};
 				
 				if (tg.cssTransitionOn) {
@@ -1519,6 +1642,9 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				var transitionComplete = function(){
 					tg.$nav[0].style.display = "none";
 					tg.$footer[0].style.display = "block";
+					
+					tg.mainViewVisible = true;
+					that.fancyDataTransition(tg);
 				};
 				
 				if (tg.cssTransitionOn) {
@@ -1701,7 +1827,7 @@ DDE.TweetYvent.prototype.CustomScroll = function ( $elem, globals ) {
 	
 	//init scrollbar
 	this.scrollbar = $elem[0].nextSibling;
-	this.scrollTop = 0;
+	this.y = 0;
 	
 	this.track = this.scrollbar.childNodes[0];
 	this.thumb = this.scrollbar.childNodes[1];
@@ -1768,7 +1894,7 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
   			
   			this.scrollTop += -wheelData;
   			
-  			that.scrollTop = this.scrollTop;
+  			that.y = this.scrollTop;
   			that.save = this.scrollTop;
   			
   			//move thumb
@@ -1791,7 +1917,7 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 		
 		//Firefox is having trouble retaining this info on the element
 		if (that.save) {
-			that.scrollTop = that.save;
+			that.y = that.save;
 			that.scrollPane.scrollTop = that.save;
 		}
 		
@@ -1810,7 +1936,7 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 		
 		//move thumb
 		if (that.scrollDistance > 0) {
-			var percentageMoved = that.scrollTop/that.scrollDistance;
+			var percentageMoved = that.y/that.scrollDistance;
 			that.thumb.style.top = Math.round((that.distanceForThumb * percentageMoved)) + "px";
 		}
 		
@@ -1850,10 +1976,10 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		tg.$tweetsContent = $('div.tweets');
 		tg.$trendsContent = $('div.trends');
 		tg.$photosContent = $('div.photos');
-		var $tweetTab = $('#tweettab');
-		var $trendTab = $('#trendtab');
-		var $photoTab = $('#phototab');
-		var $tabSubTitle = $('#chartheaders h4');
+		tg.$tweetTab = $('#tweettab');
+		tg.$trendTab = $('#trendtab');
+		tg.$photoTab = $('#phototab');
+		$tabSubTitle = $('#chartheaders h4');
 		
 		var $colorSwitch = $('#colorswitch');
 		var $wordSwitch = $('#wordswitch');
@@ -1867,44 +1993,52 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		tg.$trendsContent[0].style.display = "none";
 		tg.$photosContent[0].style.display = "none";
 		
-		$trendTab.click(function(e){
+		tg.detailTabVisible = "tweets";
+		
+		tg.$trendTab.click(function(e){
 			e.preventDefault();
 			tg.$trendsContent[0].style.display = "block";
 			tg.$tweetsContent[0].style.display = "none";
 			tg.$photosContent[0].style.display = "none";
-			$trendTab.addClass("selected");
-			$tweetTab.removeClass("selected");
-			$photoTab.removeClass("selected");
+			tg.$trendTab.addClass("selected");
+			tg.$tweetTab.removeClass("selected");
+			tg.$photoTab.removeClass("selected");
 			$tabSubTitle.html('Top Trending Words');
 			
 			if (tg.mainScroll) tg.mainScroll.refresh();
 			
+			tg.detailTabVisible = "trends";
+			
 		});
 		
-		$tweetTab.click(function(e){
+		tg.$tweetTab.click(function(e){
 			e.preventDefault();
 			tg.$trendsContent[0].style.display = "none";
 			tg.$tweetsContent[0].style.display = "block";
 			tg.$photosContent[0].style.display = "none";
-			$trendTab.removeClass("selected");
-			$photoTab.removeClass("selected");
-			$tweetTab.addClass("selected");
+			tg.$trendTab.removeClass("selected");
+			tg.$photoTab.removeClass("selected");
+			tg.$tweetTab.addClass("selected");
 			$tabSubTitle.html('Most Recent Tweets');
 			
 			if (tg.mainScroll) tg.mainScroll.refresh();
 			
+			tg.detailTabVisible = "tweets";
+			
 		});
 		
-		$photoTab.click(function(e){
+		tg.$photoTab.click(function(e){
 			e.preventDefault();
 			tg.$trendsContent[0].style.display = "none";
 			tg.$tweetsContent[0].style.display = "none";
 			tg.$photosContent[0].style.display = "block";
-			$trendTab.removeClass("selected");
-			$tweetTab.removeClass("selected");
-			$photoTab.addClass("selected");
+			tg.$trendTab.removeClass("selected");
+			tg.$tweetTab.removeClass("selected");
+			tg.$photoTab.addClass("selected");
 			
 			if (tg.mainScroll) tg.mainScroll.refresh();
+			
+			tg.detailTabVisible = "photos";
 			
 		});
 		
@@ -1916,6 +2050,8 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			
 			if (tg.mainScroll) tg.mainScroll.refresh();
 			
+			tg.detailSubTabVisible = "words";
+			
 		});
 		
 		$colorSwitch.click(function(e){
@@ -1925,6 +2061,8 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			$wordSwitch.removeClass("selected");
 			
 			if (tg.mainScroll) tg.mainScroll.refresh();
+			
+			tg.detailSubTabVisible = "colors";
 			
 		});
 		

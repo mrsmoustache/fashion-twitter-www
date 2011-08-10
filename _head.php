@@ -15,7 +15,7 @@
 
 <!-- For all browsers -->
 <?php //echo '<link rel="stylesheet" href="css/style.php?v=10&margin='.$margin.'&tr_width='.$tr_width.'&event_length='.$event_length.'&max_height='.$max_height.'">'; ?>
-<link rel="stylesheet" href="css/style.php?v=12">
+<link rel="stylesheet" href="css/style.php?v=13">
 
 <style>
 <?php 
@@ -83,6 +83,11 @@
 				echo ' #'.$event["keyword"].'.selected { background-color: rgb('.$red.','.$green.','.$blue.'); }';
 				
 				echo' #'.$event["keyword"].' .tweetcount { background-color: '.$event['color'].'; }';
+				echo' .'.$event["keyword"].' #detailnav li a { color: '.$event['color'].'; }';
+				echo' .'.$event["keyword"].' #detailnav li.selected a { color: black; }';
+				
+				echo' .'.$event["keyword"].' .tweettext a { color: '.$event['color'].'; border-bottom: dotted 1px #aaa; }';
+				echo' .'.$event["keyword"].' .tweettext a:hover { border-bottom: solid 1px black; text-decoration: none; }';
 				
 				echo ' @-webkit-keyframes itemCountRight'.$event['keyword'].' { from { right: 30px; background-color: '.$event['color'].'); } to { right: 0; background-color: rgb(200,200,200); } }';
 				
