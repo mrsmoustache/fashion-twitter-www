@@ -841,11 +841,11 @@ div.nav .listitem, div.list .listitem {
 div.schedule .arrow {
 	position: absolute;
 	height: 22px;
-	width: 14px;
+	width: 13px;
 	right: 8px;
 	top: 50%;
-	margin-top: -11px;
-	background: url(../img/l/nav-arrow-right.gif) no-repeat 97% 50%;
+	margin-top: -9px;
+	background: url(../img/l/nav-arrow-right.png) no-repeat 97% 50%;
 }
 
 div.nav .listitem {
@@ -2015,9 +2015,9 @@ h1 .logo {
 /* 9.NAVIGATION */
 /* 10.CONTENT */
 ol.nav li {
-	background: url(../img/h/nav-arrow-right2x.gif) no-repeat center right;
-	background-size: 14px 22px;
-	-webkit-background-size: 14px 22px;
+	background: url(../img/h/nav-arrow-right2x.png) no-repeat center right;
+	background-size: 13px 22px;
+	-webkit-background-size: 13px 22px;
 }
 /* 11.MAIN */
 /* 12.COMPLIMENTARY */
