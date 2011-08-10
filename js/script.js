@@ -165,6 +165,12 @@ DDE.TweetYvent = function(){
 				break;
 				
 			case "/designers/":
+				
+				//undo selected status with animation
+				if (tg.lastWindowWidth >= 992) {
+					if (tg.navView.selectedNavItem) tg.navView.navHoverOff(tg.navView.selectedNavItem);
+				}
+				
 				tg.navView.selectedNavItem = pointer;
 				tg.navView.setSelectedNavItem(tg);
 				tg.mainView.selectedDesigner = pointer;
@@ -207,6 +213,7 @@ DDE.TweetYvent.prototype = {
 		this.browserCheck();
 		
 		//Modernizr Feature Detection
+		//Todo: fix DDE.cssAnimation to work with all vendor prefixes
 		if (Modernizr.cssanimations && tg.Webkit) tg.cssAnimationOn = true;
 		if (Modernizr.csstransitions && Modernizr.csstransforms3d && tg.Webkit) tg.cssTransitionOn = true;
 	
@@ -265,19 +272,6 @@ DDE.TweetYvent.prototype = {
 			tg.scheduleScroll.refresh();
 		}
 		
-		if (tg.$schedulePopup) {
-			tg.$schedulePopup[0].style.display = '';
-			tg.$schedulePopup.click(function(e){
-				if (tg.cssAnimationOn) {
-					DDE.fadeOut(this, 400, function(){
-						tg.$schedulePopup[0].style.display = '';
-					});
-				} else {
-					$(this).fadeOut();
-				}
-			});
-		}
-		
 		//help the mobile screen from reshowing the url bar after we hide it
 		tg.$content[0].style['min-height'] = tg.lastWindowHeight + 'px';
 		
@@ -299,6 +293,8 @@ DDE.TweetYvent.prototype = {
 				if (tg.scheduleScroll) tg.scheduleScroll.destroy();
 				tg.scheduleScroll = null;
 				
+				tg.navView.disableFancyNav(tg);
+				
 			} else if (tg.initViewLoaded) {
 			
 				if (tg.mainScroll) {
@@ -310,7 +306,8 @@ DDE.TweetYvent.prototype = {
 					tg.scheduleScroll.disableScrollbars();
 					tg.scheduleScroll.destroy();
 					tg.scheduleScroll = null;
-				}				
+				}
+				tg.navView.disableFancyNav(tg);				
 			}
 			
 			if (tg.ie7) {
@@ -335,7 +332,11 @@ DDE.TweetYvent.prototype = {
 				if (!tg.scheduleScroll) tg.scheduleScroll = new iScroll('schedulenav');
 				setTimeout(function(){
 					tg.scheduleScroll.refresh();
-				}, 200);	
+				}, 200);
+				
+				setTimeout(function(){
+					tg.navView.enableFancyNav(tg);
+				}, 600);	
 
 			} else if (tg.initViewLoaded) {
 			
@@ -343,6 +344,10 @@ DDE.TweetYvent.prototype = {
 				tg.mainScroll.refresh()
 				if (!tg.scheduleScroll) tg.scheduleScroll = new this.CustomScroll(tg.$scheduleNav, tg);
 				tg.scheduleScroll.refresh();
+				
+				setTimeout(function(){
+					tg.navView.enableFancyNav(tg);
+				}, 600);
 				
 			}
 		
@@ -594,16 +599,13 @@ DDE.TweetYvent.prototype.NavView = function( parent, selector ) {
 		
 		//cache references to tweetcount nodes in the nav list
 		//this is for updating tweetcounts in realtime
-		this.listCountNodes = []; 
+		this.listCountNodes = [];
+		this.listArrows = [];
 		this.saveOnScreenRefs();
-		
-		//this.redrawChart(tg);
 		
 		this.enhanceUI(that);
 	
 		DDE.fpsCounter();
-		
-		that.makeRainClouds();
 		
 		//rainPerfTest();
 		
@@ -640,9 +642,11 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		var count = this.$scheduleNavItems.length-1;
 		for (var i=0; i<count; i++) {
 			var listItem = this.$scheduleNavItems[i+1],
-				$listCountNode = $('.tweetcount', listItem);
+				$listCountNode = $('.tweetcount', listItem),
+				$listArrow = $('.arrow', listItem);
 				
-			this.listCountNodes[i] = $listCountNode; 
+			this.listCountNodes[i] = $listCountNode;
+			this.listArrows[i] = $listArrow;
 		}
 	},
 	
@@ -829,6 +833,14 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		this.setSelectedNavItem(tg);
 		
 		this.enableHashLinks(tg);
+		
+		var other = this;
+		var delay = tg.touch ? 1200 : 600;
+		setTimeout(function(){
+			other.enableFancyNav(tg);
+		}, delay);
+		
+		this.bindNavHovers(tg);
 			
 	},
 	
@@ -907,6 +919,11 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				tg.noHashEvent = false;
 			}, 200);
 			
+			//undo selected status with animation
+			if (tg.lastWindowWidth >= 992) {
+				if (that.selectedNavItem) that.navHoverOff(that.selectedNavItem);
+			}
+			
 			if (clickedElem.id == "all-designers-item") {
 			
 				title = 'All Designers';
@@ -918,6 +935,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				
 				title = anchor.innerHTML;
 				designer = clickedElem.id;
+				that.selectedNavItem = designer;
 				var href = anchor.href;
 				
 				window.location.href = href;
@@ -926,7 +944,10 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			that.$scheduleNavItems.removeClass('selected');
 			$(clickedElem).addClass('selected');
 			
-			
+			//setNavItem selected status with animation
+			if (tg.lastWindowWidth >= 992) {
+				that.navHoverOn(clickedElem);
+			}
 			
 		
 		} else {
@@ -938,9 +959,17 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			if (!that.selectedNavItem) {
 				title = 'All Designers';
 			} else {
+				
 				designer = that.selectedNavItem;
 				var selector = "#" + designer;
-				title = $(selector).find('.listname')[0].innerHTML;
+				var $clickedElem = $(selector);
+				title = $clickedElem.find('.listname')[0].innerHTML;
+				
+				//setNavItem selected status with animation
+				if (tg.lastWindowWidth >= 992) {
+					that.navHoverOn($clickedElem[0]);
+				}
+				
 			}
 			
 		}
@@ -1069,6 +1098,159 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 	},
 	
+	enableFancyNav: function ( globals ) {
+		
+		var tg = globals;
+		var that = this;
+		var count = that.listCountNodes.length;
+		
+		if (tg.lastWindowWidth >= 992) {
+			//initialize fancy hover
+			
+			var stagger = 75;
+			for (var i=0; i<count; i++) {
+				var index = i;
+				var $countElem = that.listCountNodes[i];
+				console.log($countElem);
+				
+				if ($(that.$scheduleNavItems[i+1]).hasClass("selected")) { continue; }
+				var $arrow = that.listArrows[i];
+				var delayed = stagger * i;
+				if (delayed > 600) delayed = 0;
+				if (tg.touch) {
+					var name = 'itemCountRight';
+					DDE.cssAnimation($countElem[0], name, {
+						speed: 300, 
+						delay: delayed,
+						props: {right: "0px", backgroundColor: "rgb(200,200,200)"}
+						
+					});
+					DDE.fadeOut($countElem[0].nextSibling, {delay: delayed});
+				} else {
+					$countElem.delay(delayed).animate({right: 0, backgroundColor: "rgb(200,200,200)"}, {duration: 300, easing: 'easeOutQuad'});
+					$arrow.delay(delayed).animate({opacity: 0, right: 28}, {duration: 300, easing: 'easeOutQuad'});
+				}
+			}
+		}
+	},
+	
+	disableFancyNav: function ( globals ) {
+		var tg = globals;
+		var that = this;
+		var count = that.listCountNodes.length;
+		
+		for (var i=0; i<count; i++) {
+			var $countElem = that.listCountNodes[i];
+			var $arrow = that.listArrows[i];
+			
+			$countElem[0].style.right = '';
+			$countElem[0].style.backgroundColor = '';
+			
+			$arrow[0].style.opacity = '';
+			$arrow[0].style.right = '';
+			$arrow[0].style.display = '';
+			
+			$countElem[0].style.webkitAnimationName = '';
+			$countElem[0].style.webkitAnimationDelay = '';
+			$countElem[0].style.webkitAnimationDuration = '';
+			$arrow[0].style.webkitAnimationName = '';
+			$arrow[0].style.webkitAnimationDelay = '';
+			$arrow[0].style.webkitAnimationDuration = '';
+			
+		}
+		
+	},
+	
+	bindNavHovers: function ( globals ) {
+		var tg = globals;
+		var that = this;
+		//bind activation events
+		if (tg.touch) {
+			that.$scheduleNavItems.bind(DDE.touchStart, that.navHoverOn).bind(DDE.touchEnd, that.navHoverOff);
+		} else {
+			that.$scheduleNavItems.bind("mouseenter", that.navHoverOn).bind("mouseleave", that.navHoverOff);
+		}
+	},
+	
+	navHoverOn: function (e) {
+	
+		var tg = tweetYvent.globals;
+		var color, tweetCount, arrow, name;
+		
+		if (!tg.singleViewMode) {
+			if (e.type) {
+				color = tweetYvent.allEventsDesigners[this.id].color;
+				tweetCount = this.children[1].children[1];
+				arrow = this.children[1].children[2];
+				name = 'itemCountLeft'+this.id;
+			} else {
+				color = tweetYvent.allEventsDesigners[e.id].color;
+				tweetCount = e.children[1].children[1];
+				arrow = e.children[1].children[2];
+				name = 'itemCountLeft'+e.id;
+			}
+			
+			if (tg.touch) {
+				if (e.type) tg.watchPos = tg.scheduleScroll.y;
+				else e.style.backgroundColor = navBackgroundColors[e.id];
+				
+				DDE.cssAnimation(tweetCount, name, {speed: 300, props: {right: "30px", backgroundColor: color} });
+				DDE.fadeIn(arrow);
+				setTimeout( function() { 
+					arrow.style.display = "block";
+				}, 400);
+				
+			} else {
+				
+				$(tweetCount).stop().animate({right: 30, backgroundColor: color}, {duration: 300, easing: 'easeOutQuad'});
+				$(arrow).stop().delay(100).animate({opacity: 1, right: 8}, {duration: 300, easing: 'easeOutQuad'});
+			}
+		}
+		
+	},
+	
+	navHoverOff: function (e) {
+		var tg = tweetYvent.globals;
+		var that = tg.navView;
+		var tweetCount, arrow, name;
+		
+		if (e.type) {
+			tweetCount = this.children[1].children[1];
+			arrow = this.children[1].children[2];
+			name = 'itemCountRight'+this.id;
+			
+			if (that.selectedNavItem == this.id) { return false; }
+			if (tg.touch && !tg.singleViewMode && tg.watchPos == tg.scheduleScroll.scrollTop) { 
+				tg.watchPos = null;
+				console.log(tg.watchPos);
+				return false; 
+			}
+			if (tg.touch) this.style.backgroundColor = 'transparent';
+			
+		} else {
+		
+			var selector = '#'+e;
+			var $elem = $(selector);
+			tweetCount = $elem[0].children[1].children[1];
+			arrow = $elem[0].children[1].children[2];
+			name = 'itemCountRight'+$elem[0].id;
+			if (tg.touch) $elem[0].style.backgroundColor = 'transparent';
+		}
+		
+		if (!tg.singleViewMode) {
+			if (tg.touch) {
+			
+				DDE.cssAnimation(tweetCount, name, {speed: 300, props: {right: "0px", backgroundColor: "rgb(200,200,200)"} });
+				DDE.fadeOut(arrow);
+				
+			} else {
+				
+				$(tweetCount).stop().animate({right: 0, backgroundColor: "rgb(200,200,200)"}, {duration: 300, easing: 'easeOutQuad'});
+				$(arrow).stop().animate({opacity: 0, right: 28}, {duration: 300, easing: 'easeOutQuad'});
+			}
+		}
+	},
+	
 	resetTouchScheduleLinks: function ( globals ) {
 		
 		var tg = globals;
@@ -1144,7 +1326,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			}
 		}
 		
-		if (tg.cssAnimationOn) DDE.fadeIn(tg.$dayslist[0], 200);
+		if (tg.cssAnimationOn) DDE.fadeIn(tg.$dayslist[0]);
 		else tg.$dayslist.fadeIn();
 		
 		tg.dayPanelMode = true;
@@ -1261,6 +1443,10 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 		tg.scheduleNavSingleView = true;
 		tg.singleViewMode = true;
+		
+		setTimeout(function(){
+			if (that.selectedNavItem) that.navHoverOff(that.selectedNavItem);
+		}, 1000);
 		
 	},
 	
@@ -1441,7 +1627,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			var img = new Image();
 			img.src = request;
 			$(img).load(function(){
-				$('.photos').append(this);
+				$('.photos').prepend(this);
 			});
 		};
 		
@@ -1493,60 +1679,6 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-	},
-	
-	loadScheduleView: function( globals ) {
-		return false;
-		var tg = globals;
-		var that = this;
-		//create popup container
-		var DOMstr = '<aside id="schedule-popup" class="schedule"><div id="event-list"></div></aside>';
-		
-		tg.$content.prepend(DOMstr);
-		tg.$schedulePopup = $('#schedule-popup');
-		var $eventList = $('#event-list');
-		
-		$eventList.load('views/static_html/schedule.html', function(){
-			//box-shadow isn't rendering on top edge of container on iphone until we nudge styling
-			tg.$schedulePopup[0].style.opacity = 1;
-			setTimeout(function(){
-				tg.$schedulePopup[0].style.height = tg.lastWindowHeight - 25 + "px";
-				//alert(screen.height);
-			}, 1100);
-			
-			var selectedItem = $('div.listitem', '#event-list' )[1];
-			var $backLink = $('#viewnav .backlink a');
-			
-			$(selectedItem).addClass('selected');
-			
-			$backLink.bind(DDE.touchStart, function(e){
-				//stop url bar from dropping on iphone
-				//Todo: make this work with hashtags for bookmarking
-				this.href = '';
-				
-			}, false);
-			
-			$backLink.click(function(e){
-				console.log("click");
-				
-				e.preventDefault();
-				if (tg.cssAnimationOn) {
-					DDE.fadeIn(tg.$schedulePopup[0], 400);
-				} else {
-					tg.$schedulePopup.fadeIn()
-				}
-				
-			});
-			
-			
-		});
 		
 	}
 

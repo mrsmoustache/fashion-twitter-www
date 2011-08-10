@@ -264,8 +264,9 @@ DDE.cssPrefixes = ["", "webkit", "ms", "O", "Moz"];
 DDE.cssAnimation = function(elem, animation, options) {
 	//Use predefined css animations in style.css to avoid extra overhead of dynamically injecting <style> nodes
 	var animationCallback = function(e) {
-		this.style['-webkit-animation-name'] = 'none';
+		//this.style['-webkit-animation-name'] = 'none'; //this needs to be left in for the fill-mode to work
 		this.style['-webkit-animation-duration'] = '';
+		this.style['-webkit-animation-delay'] = ''
 		this.style['-webkit-animation-iteration-count'] = '';
 		this.style['-webkit-animation-timing-function'] = '';
 		
@@ -274,19 +275,30 @@ DDE.cssAnimation = function(elem, animation, options) {
 		
 		this.removeEventListener("webkitAnimationEnd", animationCallback, false);
 		
+		if (props) {
+			for (p in props) {
+				this.style[p] = props[p];
+			}
+		}
+		
 		if (callback) {
 			return callback.call();
 		}
 		
-	}, duration, easingType, callback;
+	}, duration, easingType, callback, delay, props;
 	
 	if (options.speed == null) duration = 200;
 	else duration = options.speed;
 	
+	if (options.delay == null) delay = 0;
+	else delay = options.delay;
+		
 	if (options.easing == null) easingType = 'ease-out';
 	else easingType = options.easing;
 	
 	if (options.complete && typeof options.complete == 'function') callback = options.complete;
+	
+	if (options.props) props = options.props;
 	
 	if (animation == "fade-in") {
 		elem.style.display = "block";
@@ -295,8 +307,10 @@ DDE.cssAnimation = function(elem, animation, options) {
 	elem.addEventListener("webkitAnimationEnd", animationCallback, false);
 	//elem.style.display = "block";
 	elem.style['-webkit-animation-name'] = animation;
+	elem.style['-webkit-animation-delay'] = delay+'ms';
 	elem.style['-webkit-animation-duration'] = duration+'ms';
 	elem.style['-webkit-animation-iteration-count'] = '1';
+	elem.style['-webkit-animation-fill-mode'] = 'forwards';
 	elem.style['-webkit-animation-timing-function'] = easingType;
 }
 
@@ -346,15 +360,22 @@ DDE.cssTransition = function (elem, props, options) {
 	elem.style['-webkit-transition-timing-function'] = easingType;
 }
 
-DDE.fadeIn = function(elem, speed, callback) {
+DDE.fadeIn = function(elem, ops) {
 	var options = {};
-	if (callback) options = {complete: callback};
+	if (ops && ops.complete) options.complete = ops.complete;
+	if (ops && ops.speed) options.speed = ops.speed;
+	if (ops && ops.delay) options.delay = ops.delay;
+	
 	this.cssAnimation(elem, 'fade-in', options);
 }
 
-DDE.fadeOut = function(elem, speed, callback) {
+DDE.fadeOut = function(elem, ops) {
 	var options = {};
-	if (callback) options = {complete: callback};
+	if (ops && ops.complete) options.complete = ops.complete;
+	if (ops && ops.speed) options.speed = ops.speed;
+	if (ops && ops.delay) options.delay = ops.delay;
+	if (ops && ops.props) options.props = ops.props;
+	
 	this.cssAnimation(elem, 'fade-out', options);
 }
 
@@ -430,7 +451,7 @@ if (DDE.isEventSupported("touchstart")) {
 	    document.body.addEventListener('touchmove', this, false);
 	    this.startX = event.touches[0].clientX;
 	    this.startY = event.touches[0].clientY;
-	    this.element.style.backgroundColor = "rgba(51,119,175,.15)";
+	    this.element.style.backgroundColor = "rgba(0,0,0,.05)";
 	};
 	
 	MBP.fastButton.prototype.onTouchMove = function(event) {

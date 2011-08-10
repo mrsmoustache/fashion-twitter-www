@@ -324,7 +324,7 @@ h1 .logo {
 	top: -14px;
 	width: 100%;
 	line-height: .8em;
-	display: none;
+	display: block;
 }
 
 #banner b {
@@ -828,10 +828,23 @@ div.nav b {
 	font-weight: bold;
 }
 
+div.schedule .listitem:hover b, div.schedule .listitem.selected b {
+	color: #666;
+}
+
 div.nav .listitem, div.list .listitem {
 	border-bottom: solid 1px #ddd;
 	padding: .75em 0 .8em;
 	position: relative;
+}
+
+div.schedule .arrow {
+	position: absolute;
+	height: 22px;
+	width: 14px;
+	right: 8px;
+	top: 50%;
+	margin-top: -11px;
 	background: url(../img/l/nav-arrow-right.gif) no-repeat 97% 50%;
 }
 
@@ -844,7 +857,7 @@ div.list .listitem:first-child {
 }
 
 div.nav .listitem.selected {
-	background: #eee;
+	background-color: #eee;
 }
 
 div.nav #all-designers-item {
@@ -862,6 +875,7 @@ div.nav #all-designers-item {
 div.schedule .listitem {
 	border: none;
 	padding: 0;
+	overflow: visible;
 }
 
 div.schedule b.timegroup {
@@ -916,7 +930,7 @@ div.nav .listitem a.listname {
 }
 
 div.nav .selected, #schedule-popup div.nav .selected {
-	background: #eee;
+	background-color: #eee;
 }
 
 div.nav .listname {
@@ -937,7 +951,7 @@ div.nav .tweetcount, div.list .trendcount {
 	position: absolute; 
 	top: 50%;
 	margin-top: -.75em; 
-	right: 2.7em; 
+	right: 30px; 
 	background: #aaa;
 	color: #fff;
 	padding: .2em .3em;
@@ -1371,6 +1385,15 @@ margin-bottom : 1.5em; }
 	}
 }
 
+@-webkit-keyframes itemCountRight {
+	from {
+		right: 30px;
+	}
+	to {
+		right: 0;
+	}
+}
+
 /* MEDIA QUERIES */
 
 /*Print __________________________________________________________________________________________________________ */
@@ -1630,6 +1653,10 @@ body {
 	overflow: visible;
 	height: 100%;
 	max-height: 100%;
+}
+
+.touch body {
+	overflow: hidden;
 }
 
 .no-js body {

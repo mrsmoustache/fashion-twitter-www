@@ -78,7 +78,7 @@
 		
 		foreach ($words_cursor as $key=>$arr) {
 		
-			if ($arr["counts"][$designers]) {
+			if ($arr["counts"][$designers] && $arr["counts"][$designers] > 2) {
 				$trends_list[] = array("count"=>$arr["counts"][$designers], "word"=>$arr["word"]);
 			}
 			
@@ -111,7 +111,7 @@
 		
 		foreach ($words_cursor as $key=>$arr) {
 		
-			if ($arr["counts"]["total"]) {
+			if ($arr["counts"]["total"] && $arr["counts"]["total"] > 2) {
 				$trends_list[] = array("count"=>$arr["counts"]["total"], "word"=>$arr["word"]);
 			}
 			
