@@ -82,12 +82,14 @@
 				echo ' #'.$event["keyword"].':hover { background-color: rgb('.$red.','.$green.','.$blue.'); }';
 				echo ' #'.$event["keyword"].'.selected { background-color: rgb('.$red.','.$green.','.$blue.'); }';
 				
-				echo' #'.$event["keyword"].' .tweetcount { background-color: '.$event['color'].'; }';
-				echo' .'.$event["keyword"].' #detailnav li a { color: '.$event['color'].'; }';
-				echo' .'.$event["keyword"].' #detailnav li.selected a { color: black; }';
+				echo ' #'.$event["keyword"].' .tweetcount { background-color: '.$event['color'].'; }';
+				echo ' .'.$event["keyword"].' #detailnav li a { color: '.$event['color'].'; }';
+				echo ' .'.$event["keyword"].' #detailnav li.selected a { color: black; }';
 				
-				echo' .'.$event["keyword"].' .tweettext a { color: '.$event['color'].'; border-bottom: dotted 1px #aaa; }';
-				echo' .'.$event["keyword"].' .tweettext a:hover { border-bottom: solid 1px black; text-decoration: none; }';
+				echo ' .'.$event["keyword"].' .tweettext a { color: '.$event['color'].'; border-bottom: dotted 1px #aaa; }';
+				echo ' .'.$event["keyword"].' .tweettext a:hover { border-bottom: solid 1px black; text-decoration: none; }';
+				
+				echo ' .'.$event["keyword"].' h3.designer a { color: '.$event['color'].'; text-decoration: none; }';
 				
 				echo ' @-webkit-keyframes itemCountRight'.$event['keyword'].' { from { right: 30px; background-color: '.$event['color'].'); } to { right: 0; background-color: rgb(200,200,200); } }';
 				

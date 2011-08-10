@@ -32,21 +32,9 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 <body class="clearfix <?php if ( isset($schedule) ) { echo "schedule"; } ?>">
 
 <header id="banner" role="banner" class="clearfix">
-	<!--[if IEMobile 7]>
-	<img src="img/m/nyt-logo1.5x.gif" width="50" height="50" />	
-	<![endif]-->
 	
-	<h1 class="with-sub clearfix"><span class="ir logo">New York Times TweetYvent</span> <span aria-hidden="true">TweetYvent</span></h1>
-	<p class="visuallyhidden" id="sub-aloud">New York Fashion Week Edition</p>
-	<p role="group" aria-hidden="true" class="sub-title">NY Fashion Week Edition</p>
+	<h1 class="clearfix"><span class="hashtag">#<span> </span></span><span class="logo1">New York</span> <span class="logo2">Fashion Week</span></h1>
 	
-	<div class="search">
-		<h2><a href="#" class="ir">Search</a></h2>
-		<form>
-			<input type="search" name="search" placeholder="Search for designers...">
-			<input type="submit" class="button" value="Go">
-		</form>
-	</div>
 	<div id="socialtop">
 		
 		

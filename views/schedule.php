@@ -1,5 +1,5 @@
 	<div id="nav" role="navigation">
-		<h2 class="secondary">NY Fashion Week Fall 2011</h2>
+		<h2 class="secondary">Sept 8-15 | <span>Spring 2012</span></h2>
 		<nav id="viewnav">
 			<ul class="clearfix">
 				<li id="charttab" class="selected"><a href="#">Schedule</a></li>

@@ -17,8 +17,43 @@ _____________________________________________________
 
 1.ROOT
 2.HEADINGS
-3.TYPOGRAPHY
-4.LINKS
+3.TYPOGRAPHY */
+
+@font-face {
+	font-family: 'ChunkFiveRegular';
+    src: url('../fonts/Chunkfive-webfont.eot');
+    src: url('../fonts/Chunkfive-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/Chunkfive-webfont.woff') format('woff'),
+         url('../fonts/Chunkfive-webfont.ttf') format('truetype'),
+         url('../fonts/Chunkfive-webfont.svg#ChunkFiveRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'CodaHeavy';
+    src: url('../fonts/Coda-Heavy-webfont.eot');
+    src: url('../fonts/Coda-Heavy-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/Coda-Heavy-webfont.woff') format('woff'),
+         url('../fonts/Coda-Heavy-webfont.ttf') format('truetype'),
+         url('../fonts/Coda-Heavy-webfont.svg#CodaHeavy') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSansExtrabold';
+    src: url('../fonts/OpenSans-ExtraBold-webfont.eot');
+    src: url('../fonts/OpenSans-ExtraBold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/OpenSans-ExtraBold-webfont.woff') format('woff'),
+         url('../fonts/OpenSans-ExtraBold-webfont.ttf') format('truetype'),
+         url('../fonts/OpenSans-ExtraBold-webfont.svg#OpenSansExtrabold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+	
+/* 4.LINKS
 5.FIGURES & IMAGES
 6.TABLES
 7.FORMS (See css/mylibs/forms.css)
@@ -279,16 +314,37 @@ h1.with-sub {
 	position: absolute;
 }
 
-h1 .logo {
-	width: 50px;
-	height: 50px;
-	float: left;
-	padding: 0;
-	background: black url(../img/l/nyt-logo.gif) no-repeat 0 0;
+h1 {
+	font-family: 'OpenSansExtrabold', 'Arial Black', Arial, sans-serif; 
+	position: relative; 
+	height: 45px;
+	border-bottom: 4px solid black;
+	margin-bottom: .15em;
 }
 
-.iem7 h1 .logo {
-	background: none;
+h1 .hashtag {
+	position: absolute; 
+	font-size: 2.2em; 
+	top: -15px; 
+}
+
+h1 .logo1 {
+	text-transform: uppercase; 
+	top: -7px; left: 40px; 
+	position: absolute; 
+	font-size: 1em; 
+	letter-spacing: -1px;
+	font-weight: bold;
+}
+
+h1 .logo2 {
+	top: 14px; 
+	left: 40px; 
+	text-transform: uppercase; 
+	font-size: 1em; 
+	position: absolute; 
+	letter-spacing: -1px; 
+	font-weight: bold;
 }
 
 #banner .search {
@@ -324,7 +380,7 @@ h1 .logo {
 	top: -14px;
 	width: 100%;
 	line-height: .8em;
-	display: block;
+	display: none;
 }
 
 #banner b {
@@ -345,9 +401,6 @@ h1 .logo {
 	font-style: normal;
 }
 
-h1 span {
-	padding: 0 0 0 5px;
-}
 
 p.sub-title {
 	margin: -1.5em 0 0 55px;
@@ -373,11 +426,12 @@ p.sub-title {
 }
 
 h2.secondary {
-	font-size: 1em; 
-	letter-spacing: 1px; 
 	text-transform: uppercase;
 	text-align: left;
-	font-weight: normal; 
+	font-weight: normal;
+	letter-spacing: -1px; 
+	color: #999; 
+	font-size: 1.5em;
 }
 
 #viewnav, #detailnav {
@@ -529,6 +583,10 @@ h2.secondary {
 	
 }
 
+.ie8 #dayslist li {
+	width: 6.2em;
+}
+
 .csstransforms #dayslist ul {
 	padding: 5px 5px 8px 5px;
 }
@@ -554,6 +612,14 @@ h2.secondary {
 	font-size: 3em;
 	line-height: 1.06em;
 	cursor: pointer;
+}
+
+#dayslist span b {
+	font-family: 'OpenSansExtrabold', 'Arial Black', Arial, sans-serif;
+}
+
+.touch #dayslist span b {
+	font-size: .9em;
 }
 
 #dayslist span b + b {
@@ -632,7 +698,7 @@ h2.secondary {
 /* 10.CONTENT */
 
 .content {
-	margin: 1em 0;
+	margin: .1em 0;
 	position: relative;
 }
 
@@ -1036,12 +1102,12 @@ div.nav .listcat {
 }
 
 h3.designer {
-	font-size: .9em;
-	margin: 0 0 1em;
+	font-size: 1.5em;
+	margin: 0 0 .75em;
 	text-transform: uppercase;
 	font-weight: normal;
-	letter-spacing: 1px;
-	text-align: center;
+	letter-spacing: -1px;
+	line-height: 1.2em;
 	width: 100%;
 }
 
@@ -1050,8 +1116,13 @@ h3.designer {
 	top: 0;
 }
 
-h3.designer .breadcrumb {
-	text-decoration: underline;
+h3.designer a {
+	text-decoration: none;
+	border-bottom: dotted 1px #aaa;
+}
+
+h3.designer a:hover {
+	border-bottom: solid 1px black;
 }
 
 .trends .controlcontainer {
@@ -1503,8 +1574,7 @@ page-break-after : avoid; }
 /* 8.BANNER */
 
 #banner {
-	border-bottom: solid 2px #000;
-	padding-bottom: .5em;
+	
 }
 
 h1 .logo {
@@ -1515,13 +1585,6 @@ h1 .logo {
 	bottom: .5em;
 	padding: 0;
 	background: white url(../img/l/nytlogo152x23.gif) no-repeat 0 0;
-}
-
-h1 span {
-	display: block;
-	text-align: center;
-	padding: 0;
-	width: 100%;
 }
 
 p.sub-title {
@@ -1583,6 +1646,7 @@ p.sub-title {
 	padding-right: .7em;
 	line-height: 1em;
 	margin: 0 0 -.1em;
+	font-family: 'OpenSansExtrabold', 'Arial Black', Arial, sans-serif;
 }
 
 
@@ -1627,16 +1691,6 @@ div.minimap {
 }
 
 /* 11.MAIN */
-#main {
-	
-}
-
-h3.designer {
-	letter-spacing: 0px; 
-	font-size: 1.5em; 
-	font-weight: bold;
-	margin-top: .3em;
-}
 
 /* 12.COMPLIMENTARY */
 /* 13.CONTENTINFO */
@@ -1755,28 +1809,23 @@ html.no-js {
 	bottom: 0px;
 }
 
-h2.secondary {
-	position: absolute; 
-	z-index: 9999; 
-	width: 10em; 
-}
 
 #viewnav {
 	margin-top: 1.4em;
 }
 
 .ie7 #viewnav {
-	top: 1.4em;
+	
 }
 
 #contentnav {
 	height: 100%;
-	padding-bottom: 68px;
+	padding-bottom: 100px;
 	position: relative;
 }
 
 .ie7 #contentnav {
-	margin-top: 2.4em;
+	
 	padding-bottom: 0px;
 }
 
@@ -1803,7 +1852,7 @@ div.schedule {
 /* 10.CONTENT */
 .content {
 	height: 100%;
-	padding-bottom: 125px;
+	padding-bottom: 105px;
 }
 
 .no-js .content {
@@ -1840,7 +1889,7 @@ h2.page-title {
 
 #modules {
 	height: 100%;
-	padding-bottom: 112px;
+	padding-bottom: 100px;
 	margin-top: 0;
 	position: relative;
 }
@@ -1867,10 +1916,12 @@ h3.designer {
 	position: static;
 	top: 0;
 	width: auto;
-	letter-spacing: 0px; 
-	font-size: 2.3em; 
-	font-weight: bold; 
-	margin-bottom: .5em;
+	letter-spacing: -1px; 
+	font-size: 2.7em; 
+	font-family: 'OpenSansExtrabold', 'Arial Black', Arial, sans-serif; 
+	line-height: 1.0em;
+	margin-bottom: 0.2em;
+
 }
 
 h3.designer .breadcrumb {

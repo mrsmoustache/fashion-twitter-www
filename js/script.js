@@ -361,9 +361,9 @@ DDE.TweetYvent.prototype = {
 			
 			if (tg.ie7) {
 				//DDE.setMaxHeight(tg.$body[0], height);
-				DDE.setMaxHeight(tg.$content[0], tg.lastWindowHeight - 125);
-				DDE.setMaxHeight(tg.$scheduleNav[0], tg.lastWindowHeight - 195);
-				DDE.setMaxHeight(tg.$modules[0], tg.lastWindowHeight - 250);
+				DDE.setMaxHeight(tg.$content[0], tg.lastWindowHeight - 145);
+				DDE.setMaxHeight(tg.$scheduleNav[0], tg.lastWindowHeight - 215);
+				DDE.setMaxHeight(tg.$modules[0], tg.lastWindowHeight - 210);
 			}
 			
 		} 
