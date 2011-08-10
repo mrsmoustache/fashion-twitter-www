@@ -1156,6 +1156,9 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				
 				
 				tg.$tweetsContent.append(tweets);
+				
+				if (tg.singleViewMode && !tg.cssAnimationOn) { return false; }
+				
 				var count = tg.$tweetsContent[0].children.length;
 				var stagger = 100;
 				if (tg.cssAnimationOn) {
