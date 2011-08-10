@@ -848,6 +848,10 @@ div.schedule .arrow {
 	background: url(../img/l/nav-arrow-right.png) no-repeat 97% 50%;
 }
 
+.iem7 div.schedule .arrow {
+	background: none;
+}
+
 div.nav .listitem {
 	cursor: pointer;
 }
@@ -1996,10 +2000,10 @@ h1 .logo {
 }
 /* 9.NAVIGATION */
 /* 10.CONTENT */
-ol.nav li {
-	background: url(../img/m/nav-arrow-right1.5x.gif) no-repeat center right;
-	background-size: 14px 22px;
-	-webkit-background-size: 14px 22px;
+div.schedule .arrow {
+	background: url(../img/m/nav-arrow-right1.5x.png) no-repeat center right;
+	background-size: 13px 22px;
+	-webkit-background-size: 13px 22px;
 }
 /* 11.MAIN */
 /* 12.COMPLIMENTARY */
@@ -2030,7 +2034,7 @@ h1 .logo {
 }
 /* 9.NAVIGATION */
 /* 10.CONTENT */
-ol.nav li {
+div.schedule .arrow {
 	background: url(../img/h/nav-arrow-right2x.png) no-repeat center right;
 	background-size: 13px 22px;
 	-webkit-background-size: 13px 22px;
