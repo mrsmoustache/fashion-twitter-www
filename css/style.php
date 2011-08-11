@@ -849,6 +849,10 @@ div.list.photos .listitem {
 	clear: right;
 }
 
+div.list.photos .listitem:last-child {
+	border-bottom: none;
+}
+
 div.list.photos .listitem .photocontainer {
 	background: ;
 	position: relative;
@@ -857,7 +861,6 @@ div.list.photos .listitem .photocontainer {
 div.list.photos .caption {
 	padding: .75em 1em;
 	background-color: white; 
-	background-color: rgba(255,255,255,.9);
 	float: right;
 	width: 75%;
 	min-width: 250px;
@@ -868,6 +871,10 @@ div.list.photos .caption {
 	color: #282828; 
 	font-size: .7em; 
 	border: solid 1px #ccc;
+}
+
+.rgba div.list.photos .caption {
+	background-color: rgba(255,255,255,.9);
 }
 
 div.list.photos .caption a {
