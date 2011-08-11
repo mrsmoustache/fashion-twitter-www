@@ -205,6 +205,7 @@ DDE.replaceHtml = function (el, html) {
 		oldEl.innerHTML = html;
 		return oldEl;
 	@*/
+	if($(oldEl).is(':animated')) { return false; };
 	var newEl = oldEl.cloneNode(false);
 	newEl.innerHTML = html;
 	oldEl.parentNode.replaceChild(newEl, oldEl);

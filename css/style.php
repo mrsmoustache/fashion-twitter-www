@@ -407,9 +407,18 @@ h2.secondary {
 	text-transform: uppercase;
 	text-align: left;
 	font-weight: normal;
-	letter-spacing: -1px; 
-	color: #999; 
+	letter-spacing: -1px;  
 	font-size: 1.5em;
+}
+
+a#dayslink {
+	text-decoration: none;
+	border-bottom: dotted 1px #aaa;
+}
+
+a#dayslink:hover {
+	text-decoration: none;
+	border-bottom: solid 1px black;
 }
 
 #viewnav, #detailnav {
@@ -532,6 +541,7 @@ h2.secondary {
 	-o-box-shadow: 0px 0px 20px rgba(0,0,0,.75);
 	box-shadow: 0px 0px 20px rgba(0,0,0,.75);
 	display: none;
+	top: 40px;
 }
 
 .iem7 #dayslist, .ie7 #dayslist, .ie8 #dayslist {
@@ -1589,8 +1599,15 @@ p.sub-title {
 
 /* 9.NAVIGATION */
 
-#nav {
-	
+a#dayslink {
+	text-decoration: none;
+	border: none;
+	color: #282828;
+}
+
+a#dayslink:hover {
+	text-decoration: none;
+	border: none;
 }
 
 #dayslist {
@@ -1604,7 +1621,7 @@ p.sub-title {
 	float: left;
 	border-top: none;
 	border-bottom: none;
-	
+	top: auto;
 }
 
 .iem7 #dayslist, .ie7 #dayslist, .ie8 #dayslist {

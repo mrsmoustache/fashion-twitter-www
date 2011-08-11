@@ -1,11 +1,10 @@
 	<div id="nav" role="navigation">
-		<h2 class="secondary">Sept 8-15 | <span>Spring 2012</span></h2>
+		<h2 class="secondary"><a id="dayslink">Sept 8-15</a> / <span>Spring 2012</span></h2>
 		<nav id="viewnav">
 			<ul class="clearfix">
 				<li id="charttab" class="selected"><a href="#">Schedule</a></li>
 				<li id="maptab"><a href="#">Designers</a></li>
 			</ul>
-			<span class="backlink daystab"><a class="back" href="">Days</a> <span>&raquo;</span> </span>
 		</nav>
 		
 		<div id="contentnav" class="clearfix">

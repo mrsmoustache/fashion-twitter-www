@@ -321,6 +321,7 @@ DDE.TweetYvent.prototype = {
 		//992
 		if (tg.lastWindowWidth >= 992) {
 		
+			this.resetBodyScroll();
 		
 			 if (tg.touch && tg.initViewLoaded) {
 				tg.navView.resetTouchScheduleLinks(tg);
@@ -385,6 +386,18 @@ DDE.TweetYvent.prototype = {
 		
 		
 		
+	},
+	
+	resetBodyScroll: function () {
+		var tg = this.globals;
+		
+		if (document.documentElement && document.documentElement.scrollTop) {
+			//IE
+			document.documentElement.scrollTop = 0;
+		} else {
+			$('html')[0].scrollTop = 0;
+			tg.$body[0].scrollTop = 0;
+		}
 	},
 	
 	loadView: function() {
@@ -1239,6 +1252,10 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 		var tg = globals;
 		var that = this;
+		
+		//resave references to ensure we animate the right nodes
+		that.saveOnScreenRefs();
+		
 		var count = that.listCountNodes.length;
 		
 		if (tg.lastWindowWidth >= 992) {
@@ -1263,6 +1280,8 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					});
 					DDE.fadeOut($countElem[0].nextSibling, {delay: delayed});
 				} else {
+					if ($countElem.css("background-color") == '') $countElem[0].style.backgroundColor = "rgb(200,200,200)";
+					if ($countElem.css("right") == '') $countElem[0].style.right = "0px";
 					$countElem.delay(delayed).animate({right: 0, backgroundColor: "rgb(200,200,200)"}, {duration: 300, easing: 'easeOutQuad'});
 					$arrow.delay(delayed).animate({opacity: 0, right: 28}, {duration: 300, easing: 'easeOutQuad'});
 				}
@@ -1273,13 +1292,20 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 	disableFancyNav: function ( globals ) {
 		var tg = globals;
 		var that = this;
+		
+		//resave references to ensure we animate the right nodes
+		that.saveOnScreenRefs();
+		
 		var count = that.listCountNodes.length;
 		
 		for (var i=0; i<count; i++) {
 			var $countElem = that.listCountNodes[i];
 			var $arrow = that.listArrows[i];
 			
-			$countElem[0].style.right = '';
+			$countElem.stop();
+			$arrow.stop();
+			
+			$countElem[0].style.right = '30px';
 			$countElem[0].style.backgroundColor = '';
 			
 			$arrow[0].style.opacity = '';
@@ -1436,7 +1462,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		else tg.$breadcrumb.bind("click", that.showScheduleView);
 		
 		//Day navigation panel
-		tg.$dayPanelLink = $('#viewnav .backlink');
+		tg.$dayPanelLink = $('#dayslink');
 		if (tg.touch) new MBP.fastButton(tg.$dayPanelLink[0], that.showDayPanel);
 		else tg.$dayPanelLink.bind("click", that.showDayPanel);
 		
@@ -1447,6 +1473,8 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		var touch, clickedElem;
 		var tg = tweetYvent.globals;
 		var that = tg.navView;
+		
+		if (tg.lastWindowWidth >= 768) { return false; }
 		
 		
 		if (e) {
