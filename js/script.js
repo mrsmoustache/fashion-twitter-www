@@ -1166,12 +1166,22 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 						var tweet = tg.$tweetsContent[0].children[i];
 						var delayed = stagger*i;
 						tweet.style.opacity = 0;
-						tweet.style.top = "50px";
-						DDE.cssAnimation(tweet, 'tweetLoad', {
-							speed: 200, 
-							delay: delayed,
-							props: {top: "0px", opacity: 1} 
-						});
+						
+						if (tg.lastWindowWidth >= 768) {
+							tweet.style.top = "50px";
+							DDE.cssAnimation(tweet, 'tweetLoad', {
+								speed: 200, 
+								delay: delayed,
+								props: {top: "0px", opacity: 1} 
+							});
+						} else {
+							DDE.fadeIn(tweet, {
+								speed: 200, 
+								delay: delayed,
+								props: {opacity: 1} 
+							});
+						}
+						
 					}
 				} else {
 					for (var i=0; i<count; i++) {
