@@ -2025,6 +2025,7 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 	makeTabs: function( globals ) {
 	
 		var tg = globals;
+		var that = this;
 		
 		//Todo: make more efficient code
 		var $extraHeaders = $('.no-tab');
@@ -2061,7 +2062,7 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			tg.$photoTab.removeClass("selected");
 			$tabSubTitle.html('Top Trending Words');
 			
-			if (tg.mainScroll) tg.mainScroll.refresh();
+			if (tg.mainScroll) that.resetMainScroll(tg);
 			
 			tg.detailTabVisible = "trends";
 			
@@ -2077,8 +2078,7 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			tg.$tweetTab.addClass("selected");
 			$tabSubTitle.html('Most Recent Tweets');
 			
-			if (tg.mainScroll) tg.mainScroll.refresh();
-			
+			if (tg.mainScroll) that.resetMainScroll(tg);			
 			tg.detailTabVisible = "tweets";
 			
 		});
@@ -2092,7 +2092,7 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			tg.$tweetTab.removeClass("selected");
 			tg.$photoTab.addClass("selected");
 			
-			if (tg.mainScroll) tg.mainScroll.refresh();
+			if (tg.mainScroll) that.resetMainScroll(tg);
 			
 			tg.detailTabVisible = "photos";
 			
@@ -2104,7 +2104,7 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			$colorSwitch.removeClass("selected");
 			$wordSwitch.addClass("selected");
 			
-			if (tg.mainScroll) tg.mainScroll.refresh();
+			if (tg.mainScroll) that.resetMainScroll(tg);
 			
 			tg.detailSubTabVisible = "words";
 			
@@ -2116,14 +2116,22 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			$colorSwitch.addClass("selected");
 			$wordSwitch.removeClass("selected");
 			
-			if (tg.mainScroll) tg.mainScroll.refresh();
+			if (tg.mainScroll) that.resetMainScroll(tg);
 			
 			tg.detailSubTabVisible = "colors";
 			
 		});
 		
+	},
+	
+	resetMainScroll: function( globals ) {
+		var tg = globals;
 		
+		tg.mainScroll.y = 0;
+		if (tg.mainScroll.save) tg.mainScroll.save = 0;
+		if (tg.mainScroll._pos) tg.mainScroll._pos(0,0);
 		
+		tg.mainScroll.refresh();
 	}
 	
 };
