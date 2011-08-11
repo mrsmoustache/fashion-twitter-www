@@ -347,7 +347,7 @@ DDE.TweetYvent.prototype = {
 				tg.scheduleScroll.refresh();
 				
 				setTimeout(function(){
-					tg.navView.enableFancyNav(tg);
+					if (!tg.fancyNavEnabled) tg.navView.enableFancyNav(tg);
 				}, 600);
 				
 			}
@@ -1260,6 +1260,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 		if (tg.lastWindowWidth >= 992) {
 			//initialize fancy hover
+			tg.fancyNavEnabled = true;
 			
 			var stagger = 75;
 			for (var i=0; i<count; i++) {
@@ -1286,6 +1287,10 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					$arrow.delay(delayed).animate({opacity: 0, right: 28}, {duration: 300, easing: 'easeOutQuad'});
 				}
 			}
+			
+			setTimeout(function(){
+				tg.scheduleScroll.refresh();
+			}, 600);
 		}
 	},
 	
@@ -1295,6 +1300,8 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 		//resave references to ensure we animate the right nodes
 		that.saveOnScreenRefs();
+		
+		tg.fancyNavEnabled = false;
 		
 		var count = that.listCountNodes.length;
 		
@@ -1308,7 +1315,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			$countElem[0].style.right = '30px';
 			$countElem[0].style.backgroundColor = '';
 			
-			$arrow[0].style.opacity = '';
+			$arrow.css({opacity: 1}); //IE7
 			$arrow[0].style.right = '';
 			$arrow[0].style.display = '';
 			
