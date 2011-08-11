@@ -116,6 +116,7 @@ if (!isset($designers) || $designers == "all") {
 								
 			</div>
 			
+			<div id="loading">loading...</div>
 			
 		</div>
 	

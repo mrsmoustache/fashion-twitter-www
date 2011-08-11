@@ -207,6 +207,7 @@ DDE.TweetYvent.prototype = {
 		tg.$detailNavContainer = $('.tabnav.detailnav');
 		tg.$h3DesignerName = $('h3.designer .designer-name');
 		tg.$dayslist = $('#dayslist');
+		tg.$loading = $('#loading');
 		
 		if($('.ie7 body')[0]) tg.ie7 = true;
 		
@@ -1028,14 +1029,16 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		tg.mainViewVisible = false;
 		tg.mainViewLoaded = false;
 		
-		//set main view class to designername for extra styling
-		tg.$main[0].className = that.selectedNavItem;
-		
 		//clear out old content
 		tg.$tweetsContent[0].innerHTML = '';
 		tg.$wordContent[0].innerHTML = '';
 		tg.$colorContent[0].innerHTML = '';
 		tg.$photosContent[0].innerHTML = '';
+		
+		//set main view class to designername for extra styling
+		tg.$main[0].className = that.selectedNavItem;
+		//tg.$modules[0].className += ' loading';
+		tg.loadingTimer = setTimeout(function(){ tg.$loading[0].style.display = "block"; }, 300);
 		
 		if (tg.mainScroll) {
 			tg.mainScroll.y = 0;
@@ -1071,7 +1074,10 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			data: {"designers": designer},
 			dataType: "json",
 			success: function ( data ) {
-			
+				
+				clearTimeout(tg.loadingTimer);
+				tg.loadingTimer = null
+				
 				var finished = (new Date()).getTime() - tg.startDB;	
 				console.log("processing time fetching mongoDG: " + finished + " msec" );
 					
@@ -1125,6 +1131,8 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				//tg.$colorContent.append(html);
 				
 				tg.mainViewLoaded = true;
+				//tg.$modules[0].className = tg.$modules[0].className.replace(/ ?loading/gi, '');
+				tg.$loading[0].style.display = "none";
 				
 				//check if we are in tg.singleViewMode aka Mobile mode
 				//this is also a delayed transition for slower devices that don't support CSS Transitions

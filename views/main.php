@@ -40,12 +40,11 @@
 				</div>
 			</div>
 			
-			
 			<!--
 			<div id="map" class="minimap" style="overflow: hidden; background-image: url(img/l/map-temp.png); background-repeat: no-repeat; background-position: 25% 0;"></div> -->
 			
 			<?php include 'views/designers.php' ?>
-		
+			
 	</div>
 		
 	
