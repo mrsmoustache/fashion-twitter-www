@@ -1813,18 +1813,34 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			});
 		};
 		
-		var fetchImgDirect = function (request) {
+		var fetchImgDirect = function (request, data) {
 			var img = new Image();
 			img.src = request;
+			
+			var tweetStr = data["text"];
+			
+			tweetStr = tweetStr.replace(/http:\/\/[a-zA-Z0-9-.\/]+/gi, ' ');
+			
+			var author = data["user"]["name"];
+			var author_url = 'http://twitter.com/'+data["user"]["screen_name"];
+			
 			$(img).load(function(){
-				$('.photos').prepend(this);
+			
+				var html = '<div class="listitem"><div class="photocontainer clearfix">';
+						html += '<img src="'+this.src+'" />';
+						
+						html += '<div class="caption">'+tweetStr+' &mdash;<a href="'+author_url+'">'+author+'</a></div>';
+						html += '</div>';
+					html+= '</div>';
+				
+				$('.photos').prepend(html);
 			});
 		};
 		
 		//var url_test = "http://yfrog.com/klu2qjtj:iphone";
 		//var url_test = "http://twitpic.com/show/large/5t4c7y";
 		
-		var chooseImgAPI = function(url) {
+		var chooseImgAPI = function(url, data) {
 		
 			var imgURL = url;
 			var allowedurls = ['http:\/\/yfrog.com\/','http:\/\/lockerz.com\/','http:\/\/instagr.am\/','http:\/\/twitpic.com\/', 'http:\/\/pic.twitter.com\/'];
@@ -1839,24 +1855,24 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			switch(url_group[0]) {
 				case "http://yfrog.com/":
 					var request = imgURL+":iphone";
-					fetchImgDirect(request);
+					fetchImgDirect(request, data);
 					break;
 					
 				case "http://twitpic.com/":
 					var imgID = imgURL.replace(/^http:\/\/twitpic.com\//i,'');
 					var request = "http://twitpic.com/show/large/"+imgID;
-					fetchImgDirect(request);
+					fetchImgDirect(request, data);
 					break;
 					
 				case "http://lockerz.com/":
 					var request = "http://api.plixi.com/api/TPAPI.svc/imagefromurl?size=big&url="+imgURL;
-					fetchImgDirect(request);
+					fetchImgDirect(request, data);
 					break;
 					
 				case "http://instagr.am/":
 					var imgID = imgURL.replace(/^http:\/\/instagr.am\/p\//i,'');
 					var request = "http://instagr.am/p/"+imgID+"media";
-					fetchImgDirect(request);
+					fetchImgDirect(request, data);
 					break;
 				
 				case "http://pic.twitter.com/":
@@ -1867,9 +1883,15 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		
 		for(var i=0; i<urlList.length; i++) {
 			//console.log(DDE.externalLinks[i]);
+			//["img_urls"]
+			//["tweet"]
+			//["id"]
+			
+			var tweetData = urlList[i]["tweet"];
+		
 			for(var j=0; j<urlList[i]["img_urls"].length; j++) {
 				var url = urlList[i]["img_urls"][j];
-				chooseImgAPI(url);
+				chooseImgAPI(url, tweetData);
 				
 			}
 		}

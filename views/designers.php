@@ -172,9 +172,18 @@ if (!isset($designers) || $designers == "all") {
 									break;
 							}
 							
+							$tweetStr = $arr["tweet"]["text"];
+			
+							$tweetStr = preg_replace('/http:\/\/[a-zA-Z0-9-.\/]+/i', ' ', $tweetStr);
+			
+							$author = $arr["tweet"]["user"]["name"];
+							$author_url = 'http://twitter.com/'+$arr["tweet"]["user"]["screen_name"];
+			
+							
 							if (isset($request)) {
-								echo '<div class="listitem"><div class="photocontainer">';
+								echo '<div class="listitem"><div class="photocontainer clearfix">';
 								echo '<img src="'.$request.'" />';
+								echo '<div class="caption">'.$tweetStr.' &mdash;<a href="'.$author_url.'">'.$author.'</a></div>';
 								echo '</div></div>';
 							}
 							

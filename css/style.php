@@ -844,16 +844,48 @@ div.list .listitem h3 {
 }
 
 div.list.photos .listitem {
-	padding: .5em 0;
+	padding: 1.5em 0 0;
+	border-bottom: solid 1px #282828;
+	clear: right;
 }
 
 div.list.photos .listitem .photocontainer {
-	background: #eee;
+	background: ;
+	position: relative;
+}
+
+div.list.photos .caption {
+	padding: .75em 1em;
+	background-color: white; 
+	background-color: rgba(255,255,255,.9);
+	float: right;
+	width: 75%;
+	min-width: 250px;
+	margin-bottom: 1.5em;
+	margin-top: -2em;
+	z-index: 2;
+	position: relative; 
+	color: #282828; 
+	font-size: .7em; 
+	border: solid 1px #ccc;
+}
+
+div.list.photos .caption a {
+	color: black;
+	font-weight: bold;
 }
 
 div.list.photos .listitem img {
 	display: block;
 	margin: 0 auto;
+	border: solid 1px #eee;
+	padding: 4px;
+	
+	-webkit-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 div.list.tweets .listitem h3 {
@@ -1593,6 +1625,10 @@ div.minimap {
 }
 
 /* 11.MAIN */
+
+div.list.photos .caption {
+	font-size: .8em; 
+}
 
 /* 12.COMPLIMENTARY */
 /* 13.CONTENTINFO */
