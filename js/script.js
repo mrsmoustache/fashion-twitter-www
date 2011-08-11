@@ -1852,6 +1852,10 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					var request = "http://instagr.am/p/"+imgID+"media";
 					fetchImgDirect(request);
 					break;
+				
+				case "http://pic.twitter.com/":
+					console.log("Twitters pic.twitter.com used!!");
+					break;
 			}
 		}; 
 		

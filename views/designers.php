@@ -52,11 +52,39 @@ if (!isset($designers) || $designers == "all") {
 						$index = 0;
 						foreach ($tweet_list as $arr) { 
 							
+							$value = $arr["tweet"];
 							$text = $arr["tweet"]["text"];
 							$username = $arr["tweet"]["user"]["screen_name"];
 							$thumb = $arr["tweet"]["user"]["profile_image_url"];
-							$created_at = date('d M Y, h:m:s', strtotime($arr["tweet"]["created_at"]));
-							echo '<div id="tweet'.$index.'" class="listitem clearfix"><div class="listthumb"><img src="'.$thumb.'" height="48" width="48" /></div><div class="listcontent"><h3>'.$username.'</h3> <span class="tweettext">'.$text.'</span> <span class="tweettime">'.$created_at.'</span></div></div>';
+							
+							
+							$urls_length = count($value["entities"]["urls"]);
+		
+							for ($i=0;$i<$urls_length;$i++) { 
+								if (isset($value["entities"]["urls"][$i]["url"])) {
+									$url = $value["entities"]["urls"][$i]["url"];
+									$url_match = preg_replace('/\//', '\/', $url);
+									$pattern = '/'.$url_match.'/';
+									$replace = '<a href="'.$url.'" target="_blank">'.$url.'</a>';
+									$text = preg_replace($pattern, $replace, $text);
+								}
+							}
+							
+							$mentions_length = count($value["entities"]["user_mentions"]);
+							for ($i=0;$i<$mentions_length;$i++) { 
+								if (isset($value["entities"]["user_mentions"][$i]["screen_name"])) {
+									$username = $value["entities"]["user_mentions"][$i]["screen_name"];
+									
+									$pattern = '/@'.$username.'\b/i';
+									$replace = '<a href="http://twitter.com/'.$username.'" target="_blank">@'.$username.'</a>';
+									$text = preg_replace($pattern, $replace, $text);
+								}
+							}
+							
+							
+							
+							//$created_at = date('d M Y, h:m:s', strtotime($arr["tweet"]["created_at"]));
+							echo '<div id="tweet'.$index.'" class="listitem clearfix"><div class="listthumb"><img src="'.$thumb.'" height="48" width="48" /></div><div class="listcontent"><h3>'.$username.'</h3> <span class="tweettext">'.$text.'</span></div></div>';
 							
 							$index++;
 							
@@ -113,7 +141,46 @@ if (!isset($designers) || $designers == "all") {
 					
 					<h2 id="photosheader" class="no-tab">Photos</h2>
 					
-					<div class="photos"></div>
+					<div class="photos">
+					
+					<?php
+						foreach($url_list as $arr) {
+							$url = $arr["img_urls"][0];
+		
+							$pattern = '/^http:\/\/(yfrog.|instagr.|lockerz.|twitpic.|pic.twitter.)/i';
+							preg_match($pattern, $url, $url_group);
+							
+							$request;
+							
+							switch($url_group[0]) {
+								case 'http://yfrog.':
+									$request = $url.":iphone";
+									break;
+								
+								case 'http://instagr.':
+									$imgID = preg_replace('/^http:\/\/instagr.am\/p\//i', '', $url);
+									$request = "http://instagr.am/p/".$imgID."media";
+									break;
+									
+								case 'http://lockerz.':
+									$request = "http://api.plixi.com/api/TPAPI.svc/imagefromurl?size=big&url=".$url;
+									break;
+									
+								case 'http://twitpic.':
+									$imgID = preg_replace('/^http:\/\/twitpic.com\//i', '', $url);
+									$request = "http://twitpic.com/show/large/".$imgID;
+									break;
+							}
+							
+							if (isset($request)) {
+								echo '<img src="'.$request.'" />';
+							}
+							
+						}
+						
+					?>
+					
+					</div>
 				
 				</div>			
 								

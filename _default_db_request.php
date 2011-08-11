@@ -19,6 +19,7 @@ try {
 	
 	$event_list = array();
 	$designer_lookup = array();
+	$designer_ids = array();
 	$index = 0;
 		
 	//build $event_list array and group by day of the week
@@ -28,6 +29,7 @@ try {
 		$day = strtotime($day);
 		
 		$designer_lookup[$obj['keyword']] = $obj['name'];
+		$designer_ids[] = $obj['keyword'];
 	
 		if ( isset($event_list[$day]) ) {
 		
