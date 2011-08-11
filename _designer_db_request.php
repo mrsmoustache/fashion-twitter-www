@@ -5,7 +5,6 @@
 	// access database
 	$db = $conn->{'tweet-event'};
 	
-	
 	//get the designers collection of tweets
 	if (isset($designers) && $designers != "all") {
 	

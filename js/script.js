@@ -976,6 +976,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			if (clickedElem.id == "all-designers-item") {
 			
 				title = 'All Designers';
+				designer = 'all';
 				window.location.href = window.location.pathname + '#!';
 				if (tg.mainScroll) tg.mainScroll.refresh();
 			
@@ -1011,6 +1012,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			
 			if (!that.selectedNavItem) {
 				title = 'All Designers';
+				designer = 'all';
 			} else {
 				
 				designer = that.selectedNavItem;
@@ -1069,6 +1071,8 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				
 		//load db content
 		tg.startDB = (new Date()).getTime();
+		
+		console.log("designer: "+designer);
 			
 		//fetch designer db proxy
 		var xhr = $.ajax({
@@ -1076,6 +1080,8 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			data: {"designers": designer},
 			dataType: "json",
 			success: function ( data ) {
+			
+				console.log(data);
 				
 				clearTimeout(tg.loadingTimer);
 				tg.loadingTimer = null

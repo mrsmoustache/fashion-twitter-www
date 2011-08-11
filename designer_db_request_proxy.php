@@ -8,6 +8,8 @@ $url_list = array();
 $trends_list = array();
 $colors_list = array();
 
+include('_default_db_request.php');
+
 try {
 	
 	include('_designer_db_request.php');

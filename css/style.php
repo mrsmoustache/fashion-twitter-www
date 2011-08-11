@@ -843,6 +843,19 @@ div.list .listitem h3 {
 	margin: 0 0 0 0;
 }
 
+div.list.photos .listitem {
+	padding: .5em 0;
+}
+
+div.list.photos .listitem .photocontainer {
+	background: #eee;
+}
+
+div.list.photos .listitem img {
+	display: block;
+	margin: 0 auto;
+}
+
 div.list.tweets .listitem h3 {
 	margin: 0 0 .4em;
 	font-size: .9em;

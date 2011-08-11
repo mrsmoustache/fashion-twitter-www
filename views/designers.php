@@ -141,7 +141,7 @@ if (!isset($designers) || $designers == "all") {
 					
 					<h2 id="photosheader" class="no-tab">Photos</h2>
 					
-					<div class="photos">
+					<div class="list photos">
 					
 					<?php
 						foreach($url_list as $arr) {
@@ -173,7 +173,9 @@ if (!isset($designers) || $designers == "all") {
 							}
 							
 							if (isset($request)) {
+								echo '<div class="listitem"><div class="photocontainer">';
 								echo '<img src="'.$request.'" />';
+								echo '</div></div>';
 							}
 							
 						}
