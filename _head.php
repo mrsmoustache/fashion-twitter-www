@@ -15,7 +15,33 @@
 
 <!-- For all browsers -->
 <?php //echo '<link rel="stylesheet" href="css/style.php?v=10&margin='.$margin.'&tr_width='.$tr_width.'&event_length='.$event_length.'&max_height='.$max_height.'">'; ?>
-<link rel="stylesheet" href="css/style.php?v=13">
+<link rel="stylesheet" href="css/style.php?v=14">
+
+<!-- JavaScript at bottom except for Modernizr -->
+<script src="js/libs/modernizr-1.7.min.js"></script>
+
+<!-- For iPhone 4 -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/h/apple-touch-icon.png">
+<!-- For iPad 1-->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/m/apple-touch-icon.png">
+<!-- For iPhone 3G, iPod Touch and Android -->
+<link rel="apple-touch-icon-precomposed" href="img/l/apple-touch-icon-precomposed.png">
+<!-- For Nokia -->
+<link rel="shortcut icon" href="img/l/apple-touch-icon.png">
+<!-- For everything else -->
+<link rel="shortcut icon" href="/favicon.ico">
+
+<!--iOS. Delete if not required -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-startup-image" href="img/splash.png">
+
+<!--Microsoft. Delete if not required -->
+<meta http-equiv="cleartype" content="on">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<!-- http://t.co/y1jPVnT -->
+<link rel="canonical" href="/">
 
 <style>
 <?php 
@@ -79,7 +105,9 @@
 				$navBackgroundColors[$event['keyword']] = 'rgb('.$red.','.$green.','.$blue.')';
 				
 			
-				echo ' #'.$event["keyword"].':hover { background-color: rgb('.$red.','.$green.','.$blue.'); }';
+				echo '.no-touch #'.$event["keyword"].':hover { background-color: rgb('.$red.','.$green.','.$blue.'); }';
+				echo '.touch #'.$event["keyword"].'.pressed { background-color: rgb('.$red.','.$green.','.$blue.'); }';
+				
 				echo ' #'.$event["keyword"].'.selected { background-color: rgb('.$red.','.$green.','.$blue.'); }';
 				
 				echo ' #'.$event["keyword"].' .tweetcount { background-color: '.$event['color'].'; }';
@@ -108,29 +136,3 @@
 var navBackgroundColors = <?php echo json_encode($navBackgroundColors); ?>;
 
 </script>
-
-<!-- JavaScript at bottom except for Modernizr -->
-<script src="js/libs/modernizr-1.7.min.js"></script>
-
-<!-- For iPhone 4 -->
-<link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/h/apple-touch-icon.png">
-<!-- For iPad 1-->
-<link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/m/apple-touch-icon.png">
-<!-- For iPhone 3G, iPod Touch and Android -->
-<link rel="apple-touch-icon-precomposed" href="img/l/apple-touch-icon-precomposed.png">
-<!-- For Nokia -->
-<link rel="shortcut icon" href="img/l/apple-touch-icon.png">
-<!-- For everything else -->
-<link rel="shortcut icon" href="/favicon.ico">
-
-<!--iOS. Delete if not required -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<link rel="apple-touch-startup-image" href="img/splash.png">
-
-<!--Microsoft. Delete if not required -->
-<meta http-equiv="cleartype" content="on">
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-<!-- http://t.co/y1jPVnT -->
-<link rel="canonical" href="/">

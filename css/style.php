@@ -20,28 +20,6 @@ _____________________________________________________
 3.TYPOGRAPHY */
 
 @font-face {
-	font-family: 'ChunkFiveRegular';
-    src: url('../fonts/Chunkfive-webfont.eot');
-    src: url('../fonts/Chunkfive-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Chunkfive-webfont.woff') format('woff'),
-         url('../fonts/Chunkfive-webfont.ttf') format('truetype'),
-         url('../fonts/Chunkfive-webfont.svg#ChunkFiveRegular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'CodaHeavy';
-    src: url('../fonts/Coda-Heavy-webfont.eot');
-    src: url('../fonts/Coda-Heavy-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Coda-Heavy-webfont.woff') format('woff'),
-         url('../fonts/Coda-Heavy-webfont.ttf') format('truetype'),
-         url('../fonts/Coda-Heavy-webfont.svg#CodaHeavy') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
     font-family: 'OpenSansExtrabold';
     src: url('../fonts/OpenSans-ExtraBold-webfont.eot');
     src: url('../fonts/OpenSans-ExtraBold-webfont.eot?#iefix') format('embedded-opentype'),
@@ -586,6 +564,15 @@ h2.secondary {
 .ie8 #dayslist li {
 	width: 6.2em;
 }
+
+.iem7 #dayslist li {
+	width: 6.7em;
+}
+
+.iem7 #dayslist ul {
+	padding: 5px 12px 8px 5px;
+}
+
 
 .csstransforms #dayslist ul {
 	padding: 5px 5px 8px 5px;

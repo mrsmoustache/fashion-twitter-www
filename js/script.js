@@ -1292,7 +1292,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		var that = this;
 		//bind activation events
 		if (tg.touch) {
-			that.$scheduleNavItems.bind(DDE.touchStart, that.navHoverOn).bind(DDE.touchEnd, that.navHoverOff);
+			//that.$scheduleNavItems.bind(DDE.touchStart, that.navHoverOn).bind(DDE.touchEnd, that.navHoverOff);
 		} else {
 			that.$scheduleNavItems.bind("mouseenter", that.navHoverOn).bind("mouseleave", that.navHoverOff);
 		}
