@@ -421,6 +421,17 @@ a#dayslink:hover {
 	border-bottom: solid 1px black;
 }
 
+.no-js a#dayslink {
+	text-decoration: none;
+	border: none;
+	color: #282828;
+}
+
+.no-js a#dayslink:hover {
+	text-decoration: none;
+	border: none;
+}
+
 #viewnav, #detailnav {
 	position: relative;
 	margin: 0 0 1em;
@@ -575,7 +586,7 @@ a#dayslink:hover {
 	width: 6.2em;
 }
 
-.iem7 #dayslist li {
+.iem7 #dayslist li, .no-js #dayslist li {
 	width: 6.7em;
 }
 
@@ -988,7 +999,11 @@ h3.designer a:hover {
 	display: none;
 }
 
-.no-js .trends, .no-js .photos {
+#photosheader {
+	display: none;
+}
+
+.no-js .trends {
 	display: block;
 }
 

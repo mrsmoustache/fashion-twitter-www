@@ -111,7 +111,7 @@ if (!isset($designers) || $designers == "all") {
 						</div>	
 					</div>
 					
-					<h2 class="no-tab">Photos</h2>
+					<h2 id="photosheader" class="no-tab">Photos</h2>
 					
 					<div class="photos"></div>
 				

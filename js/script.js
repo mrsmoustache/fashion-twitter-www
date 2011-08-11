@@ -148,7 +148,7 @@ DDE.TweetYvent = function(){
 		var hashBase = match ? match[0] : '';
 		
 		//pointer is our sub-subdirectory e.g. marcjacobs of /designers/marcjacobs/
-		var pointerPattern = new RegExp('#'+hashBase);
+		var pointerPattern = new RegExp('#!'+hashBase);
 		var pointer = location.hash.replace(pointerPattern, '').replace(/\//, '');
 		
 		switch(hashBase){
@@ -421,13 +421,15 @@ DDE.TweetYvent.prototype = {
 		if (pathname.match(/designers/g)) {
 			
 			//since they have javacript, we should rewrite that location to a hash
-			window.location.href = 'http://'+location.hostname+'/'+extra+'#/'+ pathname;
+			window.location.href = 'http://'+location.hostname+'/'+extra+'#!/'+ pathname;
 			pathname = '/designers/';
+		} else if (pathname.match(/schedule/g)) {
+			window.location.href = 'http://'+location.hostname+'/'+extra+'#!/'+ pathname;
+			pathname = '/schedule/';
 		}
 		
 		//check if the url contains a hash bookmark
 		//hashbase would be our sub-directory. e.g. /designers/
-		console.log(location.hash);
 		var hashBase = '';
 		if (location.hash ) {
 			var match = location.hash.match(/\/[A-Za-z1-9-]*\//);
@@ -435,7 +437,7 @@ DDE.TweetYvent.prototype = {
 		} 
 		
 		//pointer is our sub-subdirectory e.g. marcjacobs of /designers/marcjacobs/
-		var pointerPattern = new RegExp('#'+hashBase);
+		var pointerPattern = new RegExp('#!'+hashBase);
 		var pointer = location.hash.replace(pointerPattern, '').replace(/\//, '');
 		
 		switch(hashBase){
@@ -974,7 +976,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			if (clickedElem.id == "all-designers-item") {
 			
 				title = 'All Designers';
-				window.location.href = window.location.pathname + '#';
+				window.location.href = window.location.pathname + '#!';
 				if (tg.mainScroll) tg.mainScroll.refresh();
 			
 			} else {
@@ -1761,7 +1763,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			pathname = pathname.replace(/node-projects\/tweet-event-map\/fashion-twitter-www\//, '');
 		}
 		
-		link.href = baseURI + extra + '#/' + pathname + hash;
+		link.href = baseURI + extra + '#!/' + pathname + hash;
 		link.hideFocus = 'hidefocus';
 	},
 	
