@@ -123,6 +123,16 @@
 				
 				echo ' @-webkit-keyframes itemCountLeft'.$event['keyword'].' { from { right: 0; background-color: rgb(200,200,200); } to { right: 30px; background-color: '.$event['color'].'; } }';
 				
+				
+				//designers panel
+				echo '.no-touch #'.$event["keyword"].'-:hover { background-color: rgb('.$red.','.$green.','.$blue.'); }';
+				echo '.touch #'.$event["keyword"].'-.pressed { background-color: rgb('.$red.','.$green.','.$blue.'); }';
+				
+				echo ' #'.$event["keyword"].'-.selected { background-color: rgb('.$red.','.$green.','.$blue.'); }';
+				
+				echo ' #'.$event["keyword"].'- .tweetcount { background-color: '.$event['color'].'; }';
+
+				
 				$index++;
 			}
 		

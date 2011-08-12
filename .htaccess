@@ -345,9 +345,11 @@ FileETag None
 	#Options +FollowSymLinks
 	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ^schedule/([a-zA-Z0-9-]+)/$ index.php?schedule=$1
 	RewriteRule ^schedule/$ index.php?schedule=show
 	RewriteRule ^schedule_long/$ index.php?schedule=long
 	RewriteRule ^designers/([a-zA-Z0-9-]+)/$ index.php?designers=$1
+	RewriteRule ^designers/$ index.php?designers=all
 	
 </IfModule>
 

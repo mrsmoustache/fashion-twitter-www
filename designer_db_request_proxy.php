@@ -1,6 +1,7 @@
 <?php
 
 include('_config.php');
+include('_global.php');
 //Build data lists and variables
 $designers = $_GET["designers"];
 $tweet_list = array();

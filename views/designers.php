@@ -5,7 +5,7 @@
 $match = -1;
 $designer_event;
 
-if (!isset($designers) || $designers == "all") {
+if ((!isset($designers) && !isset($schedule)) || ( $designers == "all" || $schedule == "show")) {
 	//fetch assorted designers data
 	include '_designer_db_wrapper.php';
 	$designer_event = array(
@@ -13,10 +13,17 @@ if (!isset($designers) || $designers == "all") {
 	);
 } else {
 	
+	$slug;
+	if (isset($designers)) {
+		$slug = $designers;
+	} else {
+		$slug = $schedule;
+	}
+	
 	foreach ($event_list as $day_arr) {
 		foreach($day_arr as $time_arr) {
 			foreach ($time_arr as $event) {
-				if ($event["keyword"] == $designers) {
+				if ($event["keyword"] == $slug) {
 					$designer_event = $event;
 					$match = 1;
 				}

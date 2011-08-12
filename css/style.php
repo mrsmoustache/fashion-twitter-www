@@ -399,7 +399,12 @@ p.sub-title {
 	display: none;
 }
 
-.schedule #nav {
+.schedule #nav, .designers #nav, .schedule.default.start #nav {
+	display: none;
+	position: relative;
+}
+
+.schedule.default #nav, .designers.default #nav {
 	display: block;
 }
 
@@ -446,6 +451,7 @@ a#dayslink:hover {
 .no-js #detailnav {
 	display: none;
 }
+
 
 #viewnav .backlink {
 	font-family : "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -538,7 +544,7 @@ a#dayslink:hover {
 
 /* days navigation */
 
-#dayslist {
+#dayslist, #alphalist {
 	width: auto;
 	overflow: auto;
 	position: absolute;
@@ -555,7 +561,7 @@ a#dayslink:hover {
 	top: 40px;
 }
 
-.iem7 #dayslist, .ie7 #dayslist, .ie8 #dayslist {
+.iem7 #dayslist, .ie7 #dayslist, .ie8 #dayslist, .iem7 #alphalist, .ie7 #alphalist, .ie8 #alphalist {
 	border: solid 6px #222;
 }
 
@@ -563,14 +569,14 @@ a#dayslink:hover {
 	display: none;
 }
 
-#dayslist ul {
+#dayslist ul, #alphalist ul {
 	padding: 5px 10px 8px 5px;
 	list-style: none;
 	font-family : "Helvetica Neue", Helvetica, Arial, sans-serif;
 	margin: 0;
 }
 
-#dayslist li {
+#dayslist li, #alphalist li {
 	text-align: right;
 	cursor: pointer;
 	width: 6em;
@@ -579,7 +585,18 @@ a#dayslink:hover {
 	margin-left: 5px;
 	margin-top: 5px;
 	padding: 5px;
-	
+}
+
+#alphalist ul {
+	padding: 5px 10px 10px 5px; 
+}
+
+#alphalist li {
+	width: 1em;
+	font-weight: bold;
+	padding: .75em .5em .25em 1em;
+	margin: 7px 0 0 7px;
+	font-size: 1.21em;
 }
 
 .ie8 #dayslist li {
@@ -604,13 +621,13 @@ a#dayslink:hover {
 	position: relative;
 }
 
-#dayslist a {
+#dayslist a, #alphalist a {
 	color: #222;
 	display: block;
 	cursor: pointer;
 }
 
-#dayslist a:hover {
+#dayslist a:hover, #alphalist a:hover {
 	text-decoration: none;
 	cursor: pointer;
 }
@@ -744,6 +761,14 @@ div.list {
 	overflow: hidden;
 }
 
+.schedule div.schedule #scheduleview, .designers div.schedule #designersview {
+	display: block;
+}
+
+.schedule div.schedule #designersview, .designers div.schedule #scheduleview {
+	display: none;
+}
+
 div.nav b {
 	display: block;
 	float: left;
@@ -792,7 +817,7 @@ div.nav .listitem.selected {
 	background-color: #eee;
 }
 
-div.nav #all-designers-item {
+div.nav #all-designers-item, div.nav #all-designers-item- {
 	text-transform: uppercase;
 	font-weight: bold;
 	padding: .5em 0 .4em .7em;
@@ -800,7 +825,7 @@ div.nav #all-designers-item {
 	font-size: 1.3em;
 }
 
-.ie7 div.nav #all-designers-item {
+.ie7 div.nav #all-designers-item, .ie7 div.nav #all-designers-item- {
 	border-top: solid 2px #eee;
 }
 
@@ -825,6 +850,14 @@ div.schedule .itemcontent {
 	border-left: dotted 1px #ccc;
 	padding: .9em 0 .9em .5em;
 	border-top: solid 1px #ddd;
+}
+
+div.schedule .itemcontent.first {
+	border-top: none;
+}
+
+.designers div.schedule .itemcontent {
+	margin-left: 1em;
 }
 
 div.schedule b.timegroup + .itemcontent {
@@ -905,7 +938,7 @@ div.nav .listitem a {
 	color: #282828;
 }
 
-div.nav .listitem a:hover {
+.js div.nav .listitem a:hover {
 	text-decoration: none;
 }
 
@@ -1007,8 +1040,12 @@ div.nav .listcat {
 
 /* 11.MAIN */
 
-.schedule #main {
+.schedule.default #main, .designers.default #main {
 	display: none;
+}
+
+.schedule.default.start #main {
+	display: block;
 }
 
 .no-js #map {
@@ -1036,6 +1073,7 @@ h3.designer {
 .no-js h3.designer {
 	position: relative;
 	top: 0;
+	margin-bottom: 1.2em;
 }
 
 h3.designer a {
@@ -1547,7 +1585,7 @@ a#dayslink:hover {
 	border: none;
 }
 
-#dayslist {
+#dayslist, #alphalist {
 	width: 8em;
 	display: block;
 	-webkit-box-shadow: none;
@@ -1559,15 +1597,28 @@ a#dayslink:hover {
 	border-top: none;
 	border-bottom: none;
 	top: auto;
+} 
+
+.schedule #dayslist, .designers #alphalist {
+	display: block;
 }
 
-.iem7 #dayslist, .ie7 #dayslist, .ie8 #dayslist {
+.schedule #alphalist, .designers #dayslist {
+	display: none;
+}
+
+.schedule.start #dayslist, .schedule.start #alphalist {
+	display: none;
+}
+
+
+.iem7 #dayslist, .ie7 #dayslist, .ie8 #dayslist, .iem7 #alphalist, .ie7 #alphalist, .ie8 #alphalist {
 	border: none;
 	border-right: solid 1px #ccc;
 	position: static;
 }
 
-#dayslist ul, .csstransforms #dayslist ul {
+#dayslist ul, .csstransforms #dayslist ul, #alphalist ul {
 	padding: 0 1em 0;
 }
 
@@ -1577,6 +1628,23 @@ a#dayslink:hover {
 	background: white;
 	margin: 0;
 	padding: 0;
+}
+
+#alphalist ul {
+	padding: 0 0 0 .6em;
+}
+
+#alphalist li {
+	background: white;
+	padding: 0.1em 0.6em 0.1em .6em;
+	margin: 0;
+	width: .75em;
+	font-size: 1.5em;
+	font-family: 'OpenSansExtrabold', 'Arial Black', Arial, sans-serif; 	
+}
+
+.no-touch #dayslist li:hover, .no-touch #alphalist li:hover {
+	background: #eee;
 }
 
 #dayslist h3 {
@@ -1698,13 +1766,22 @@ html.no-js {
 /* 9.NAVIGATION */
 
 #nav {
-	display: block;
+	display: block !important;
 	margin-top: 0;
 	float: left;
 	width: 45%;
 	height: 100%;
 	margin-right: 1.5em;
 	overflow-x: visible;
+}
+
+.schedule.default.start #nav, .schedule #nav, .designers #nav, .schedule.default.start #nav {
+	display: block;
+	position: relative;
+}
+
+.schedule.start #dayslist {
+	display: block;
 }
 
 .scroller {
@@ -1830,6 +1907,11 @@ h2.page-title {
 .schedule #main {
 	display: block;
 }
+
+.schedule.default #main, .designers.default #main {
+	display: block;
+}
+
 
 .ie7 #main {
 	position: relative;

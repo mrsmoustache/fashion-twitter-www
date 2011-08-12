@@ -28,7 +28,7 @@ try {
 		$day = date('l, M j', $obj['startTime']->sec);
 		$day = strtotime($day);
 		
-		$designer_lookup[$obj['keyword']] = $obj['name'];
+		$designer_lookup[$obj['keyword']] = array("name"=>$obj['name'], "tweet_count"=>$obj['tweetCount'], "keyword"=>$obj['keyword']);
 		$designer_ids[] = $obj['keyword'];
 	
 		if ( isset($event_list[$day]) ) {
@@ -82,85 +82,30 @@ try {
 		
 	}
 	
-	//Old: Group events time slots
-	//require_once('_time_slots.php');
+	//Create Designers alpha view
 	
-	//$daterange
-	//$time_slots
+	$alpha_order = subval_sort($designer_lookup, 'name');
+	$alpha_list = array();
 	
+	foreach ($alpha_order as $arr) {
 	
-	//For only showing one time slot on the front page
-	/*
-	$view_slots;
-	$limited_event_list = array();
-	
-	if (!$daterange) {
-		$view_slots = $time_slots['Thursday, Feb 10'][1];
-		foreach ($view_slots as $arr) {
-			foreach($arr as $key=>$item) {
-				//$key = "name";
-				//$item = "Vena Cava
-			}
-			
-			$limited_event_list[] = $event_list[$arr["key_index"]];
+		$letter = strtoupper( substr($arr["name"], 0, 1) );
+		
+		if ( isset($alpha_list[$letter]) ) {
+			$alpha_list[$letter][] = array(
+				'keyword'=>$arr['keyword'],
+				'name'=>$arr['name'],
+				'tweet_count'=>$arr['tweet_count']
+			);
+		} else {
+			$alpha_list[$letter] = array();
+			$alpha_list[$letter][] = array(
+				'keyword'=>$arr['keyword'],
+				'name'=>$arr['name'],
+				'tweet_count'=>$arr['tweet_count']
+			);
 		}
 	}
-	*/
-	
-	
-	//Todo: may not need this in the future
-	/*
-	$biggest_first = subval_sort($event_list, 'tweet_count', 'desc');
-	$highest_count = $biggest_first[key($biggest_first)]['tweet_count'];
-	
-	$max_count = $highest_count/.95;
-	if ($max_count == 0) $max_count = 1;
-	$scale = $max_height/$max_count;
-	$index = 0;
-	$event_length = count($event_list);
-	$margin = 2;
-	$margin_total = $margin*($event_length-1);
-	$tr_width = (100-$margin_total)/($event_length);
-	$tr_spaced = $tr_width * .70;
-	*/
-	
-	?>
-
-	
-	<?php
-	
-	/*
-	$events = array();
-	
-	foreach ($list as $collection) {
-		// access collection
-		//echo $collection;
-		
-		//$collection = $db->items;
-		
-		//echo $list;
-		
-		$name = $collection->getName();
-		$count = $collection->count();
-		$events[$index] = array("name"=>$name, "count"=>$count);
-		
-		$index++;
-		//echo "<li style='height: ".(($count*.2)+1)."em;'><span>".$index."</span> ".$name."</li>";
-		
-	}
-	
-	
-	//sort events by date-time
-	
-	
-	//create a copy of the events array and sort by tweet count
-	$biggest_first = subval_sort($events, 'count', 'desc');
-	echo "<br />";
-	print_r($biggest_first);
-	
-	//get the event with the largest count
-	*/
-	
 	
 	
 	
