@@ -42,7 +42,7 @@
 				
 					<div id="scheduleview">
 				
-						<div id="all-designers-item" class="listitem <?php if ($designers == 'all' || $schedule == 'show') {echo "selected"; } ?>">All Designers</div>
+						<div id="all-designers-item" class="listitem <?php if ($designers == 'all' || $schedule == 'show') {echo "selected"; } ?>">All Designers<span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.png" width="13" height="22" /><![endif]--></span></div>
 					
 						<?php 
 						$index = 0;
@@ -89,7 +89,7 @@
 					
 					<div id="designersview">
 					
-						<div id="all-designers-item-" class="listitem <?php if ($designers == 'all' || $schedule == 'show') {echo "selected"; } ?>">All Designers</div>
+						<div id="all-designers-item-" class="listitem <?php if ($designers == 'all' || $schedule == 'show') {echo "selected"; } ?>">All Designers<span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.png" width="13" height="22" /><![endif]--></span></div>
 						
 						<?php 
 						foreach ($alpha_list as $alpha=>$alpha_arr) { 
