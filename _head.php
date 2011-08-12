@@ -15,7 +15,7 @@
 
 <!-- For all browsers -->
 <?php //echo '<link rel="stylesheet" href="css/style.php?v=10&margin='.$margin.'&tr_width='.$tr_width.'&event_length='.$event_length.'&max_height='.$max_height.'">'; ?>
-<link rel="stylesheet" href="css/style.php?v=15">
+<link rel="stylesheet" href="css/style.php?v=16">
 
 <!-- JavaScript at bottom except for Modernizr -->
 <script src="js/libs/modernizr-1.7.min.js"></script>
