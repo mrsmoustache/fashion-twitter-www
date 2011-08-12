@@ -281,7 +281,6 @@ DDE.cssAnimation = function(elem, animation, options) {
 				this.style[p] = props[p];
 			}
 		}
-		
 		if (callback) {
 			return callback.call();
 		}
@@ -313,6 +312,26 @@ DDE.cssAnimation = function(elem, animation, options) {
 	elem.style['-webkit-animation-iteration-count'] = '1';
 	elem.style['-webkit-animation-fill-mode'] = 'forwards';
 	elem.style['-webkit-animation-timing-function'] = easingType;
+}
+
+DDE.fadeIn = function(elem, ops) {
+	var options = {};
+	if (ops && ops.complete) options.complete = ops.complete;
+	if (ops && ops.speed) options.speed = ops.speed;
+	if (ops && ops.delay) options.delay = ops.delay;
+	if (ops && ops.props) options.props = ops.props;
+	
+	this.cssAnimation(elem, 'fade-in', options);
+}
+
+DDE.fadeOut = function(elem, ops) {
+	var options = {};
+	if (ops && ops.complete) options.complete = ops.complete;
+	if (ops && ops.speed) options.speed = ops.speed;
+	if (ops && ops.delay) options.delay = ops.delay;
+	if (ops && ops.props) options.props = ops.props;
+	
+	this.cssAnimation(elem, 'fade-out', options);
 }
 
 DDE.cssTransition = function (elem, props, options) {
@@ -359,25 +378,6 @@ DDE.cssTransition = function (elem, props, options) {
 	elem.style['-webkit-transform'] = 'translate3d('+transX+'px,'+transY+'px,0)';
 	elem.style['-webkit-transition-duration'] = duration+'ms';
 	elem.style['-webkit-transition-timing-function'] = easingType;
-}
-
-DDE.fadeIn = function(elem, ops) {
-	var options = {};
-	if (ops && ops.complete) options.complete = ops.complete;
-	if (ops && ops.speed) options.speed = ops.speed;
-	if (ops && ops.delay) options.delay = ops.delay;
-	
-	this.cssAnimation(elem, 'fade-in', options);
-}
-
-DDE.fadeOut = function(elem, ops) {
-	var options = {};
-	if (ops && ops.complete) options.complete = ops.complete;
-	if (ops && ops.speed) options.speed = ops.speed;
-	if (ops && ops.delay) options.delay = ops.delay;
-	if (ops && ops.props) options.props = ops.props;
-	
-	this.cssAnimation(elem, 'fade-out', options);
 }
 
 DDE.fpsCounter = function() {

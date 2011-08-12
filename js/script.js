@@ -1110,7 +1110,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					
 				}
 				
-				tg.mainView.tweetsHTML = html;
+				tg.tweetsHTML = html;
 				//tg.$tweetsContent.append(html);	
 				
 				//insert archived trending words
@@ -1123,7 +1123,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					
 				}
 				
-				tg.mainView.trendingWordsHTML = html;
+				tg.trendingWordsHTML = html;
 				//tg.$wordContent.append(html);
 				
 				//insert archived trending colors
@@ -1135,7 +1135,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					html += '<div class="listitem"><h3>'+color+'</h3> <span class="trendcount">'+count+'</span> </div>';
 				}
 				
-				tg.mainView.trendingColorsHTML = html;
+				tg.trendingColorsHTML = html;
 				//tg.$colorContent.append(html);
 				
 				tg.mainViewLoaded = true;
@@ -1179,9 +1179,9 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				clearInterval(checkInterval);
 				checkInterval = null;
 				
-				var tweets = tg.mainView.tweetsHTML;
-				var words = tg.mainView.trendingWordsHTML;
-				var colors = tg.mainView.trendingColorsHTML;
+				var tweets = tg.tweetsHTML;
+				var words = tg.trendingWordsHTML;
+				var colors = tg.trendingColorsHTML;
 				
 				
 				tg.$tweetsContent.append(tweets);
@@ -2070,7 +2070,6 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		tg.$tweetTab = $('#tweettab');
 		tg.$trendTab = $('#trendtab');
 		tg.$photoTab = $('#phototab');
-		$tabSubTitle = $('#chartheaders h4');
 		
 		var $colorSwitch = $('#colorswitch');
 		var $wordSwitch = $('#wordswitch');
@@ -2094,7 +2093,6 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			tg.$trendTab.addClass("selected");
 			tg.$tweetTab.removeClass("selected");
 			tg.$photoTab.removeClass("selected");
-			$tabSubTitle.html('Top Trending Words');
 			
 			if (tg.mainScroll) that.resetMainScroll(tg);
 			
@@ -2106,11 +2104,12 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			e.preventDefault();
 			tg.$trendsContent[0].style.display = "none";
 			tg.$tweetsContent[0].style.display = "block";
+			
+			console.log(tg.$tweetsContent[0].innerHTML);
 			tg.$photosContent[0].style.display = "none";
 			tg.$trendTab.removeClass("selected");
 			tg.$photoTab.removeClass("selected");
 			tg.$tweetTab.addClass("selected");
-			$tabSubTitle.html('Most Recent Tweets');
 			
 			if (tg.mainScroll) that.resetMainScroll(tg);			
 			tg.detailTabVisible = "tweets";
