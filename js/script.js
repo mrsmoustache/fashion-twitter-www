@@ -1450,7 +1450,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 						tg.$loadMore.html("Load More");
 					}
 
-					that.fetchImgUrls(data.urlList);
+					that.fetchImgUrls(data.urlList, true);
 				}	
 								
 				//var finished = (new Date()).getTime() - start;	
@@ -2183,7 +2183,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		}
 	},
 	
-	fetchImgUrls: function( urlList ) {
+	fetchImgUrls: function( urlList, append ) {
 	
 		var tg = tweetYvent.globals;
 	
@@ -2235,7 +2235,8 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 						html += '</div>';
 					html+= '</div>';
 				
-				$('.photos').prepend(html);
+				if (append ) $('.photos').append(html);
+				else $('.photos').prepend(html);
 			});
 		};
 		
