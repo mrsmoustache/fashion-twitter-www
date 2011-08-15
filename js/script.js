@@ -343,12 +343,16 @@ DDE.TweetYvent.prototype = {
 		if (tg.lastWindowWidth >= 768) { 
 		
 			tg.$dayslist[0].style.display = '';
+			tg.$alphalist[0].style.display = '';
+			tg.$alphalist[0].style.zoom = 1;
 		}
 		
 		
 		if (tg.lastWindowWidth < 992) {
 		
 			tg.singleViewMode = true;
+			
+			tg.$modules[0].style.paddingBottom = '';
 		
 			if (tg.touch && tg.initViewLoaded) {
 				tg.navView.resetTouchScheduleLinks(tg);
@@ -2405,11 +2409,20 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 	
 	refresh: function () {
 		var that = this;
+		var tg = tweetYvent.globals;
 		
 		//Firefox is having trouble retaining this info on the element
 		if (that.save) {
 			that.y = that.save;
 			that.scrollPane.scrollTop = that.save;
+		}
+		
+		if(that.scrollPane.parentElement.offsetTop > 100 ) {
+			if (!tg.ie7) that.scrollPane.parentElement.style.paddingBottom = '145px';
+			else DDE.setMaxHeight(tg.$modules[0], tg.lastWindowHeight - 250);
+		} else {
+			if (!tg.ie7) that.scrollPane.parentElement.style.paddingBottom = '100px';
+			else DDE.setMaxHeight(tg.$modules[0], tg.lastWindowHeight - 210);
 		}
 		
 		that.panelHeight = that.scrollPane.offsetHeight;

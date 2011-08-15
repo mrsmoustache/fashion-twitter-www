@@ -1877,7 +1877,7 @@ html.no-js {
 }
 
 .scroller .thumb:hover {
-	background-color: #777;
+	/* background-color: #777; */
 }
 
 #schedulenavscroller {
