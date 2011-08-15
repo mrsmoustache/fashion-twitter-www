@@ -86,25 +86,31 @@ try {
 	
 	$alpha_order = subval_sort($designer_lookup, 'name');
 	$alpha_list = array();
+	$index = 0;
 	
 	foreach ($alpha_order as $arr) {
 	
 		$letter = strtoupper( substr($arr["name"], 0, 1) );
+		$designer_lookup[$arr['keyword']]['alpha_index'] = $index;
 		
 		if ( isset($alpha_list[$letter]) ) {
 			$alpha_list[$letter][] = array(
 				'keyword'=>$arr['keyword'],
 				'name'=>$arr['name'],
-				'tweet_count'=>$arr['tweet_count']
+				'tweet_count'=>$arr['tweet_count'],
+				'alpha_index'=>$index
 			);
 		} else {
 			$alpha_list[$letter] = array();
 			$alpha_list[$letter][] = array(
 				'keyword'=>$arr['keyword'],
 				'name'=>$arr['name'],
-				'tweet_count'=>$arr['tweet_count']
+				'tweet_count'=>$arr['tweet_count'],
+				'alpha_index'=>$index
 			);
 		}
+		
+		$index++;
 	}
 	
 	

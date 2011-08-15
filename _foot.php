@@ -35,6 +35,7 @@ DDE.allEventIndexes = {};
 //DDE.allEvents = [];
 //Todo: might not needs this for 
 DDE.allEventsSchedule = <?php echo json_encode($event_list); ?>;
+DDE.designerLookup = <?php echo json_encode($designer_lookup); ?>
 	
 <?php
 	/*

@@ -214,6 +214,56 @@ DDE.replaceHtml = function (el, html) {
 	return newEl;
 };
 
+DDE.hashBasePointer = function ( locationHash ) {
+	var hash = locationHash;
+	var match = hash.match(/\/[A-Za-z1-9-]*\//);
+	var base = match ? match[0] : '';
+	
+	//pointer is our sub-subdirectory e.g. marcjacobs of /designers/marcjacobs/
+	var pointerPattern = new RegExp('#!'+base);
+	var point = hash.replace(pointerPattern, '').replace(/\//, '');
+	if (!point) point = '';
+	
+	return {hashBase: base, pointer: point};
+};
+
+DDE.getTheMonth = function(date) {
+	
+	myMonths= ["Jan","Feb","Mar","Apr","May","June","July","Aug","Sep","Oct","Nov","Dec"];
+	
+	myDate=new Date(eval('"'+date+'"'));
+	
+	return myMonths[myDate.getMonth()];
+
+};
+
+DDE.getClockTime = function(date) {
+
+   var hour   = date.getHours();
+   var minute = date.getMinutes();
+   //var second = date.getSeconds();
+   var ap = "AM";
+   if (hour   > 11) { ap = "PM";             }
+   if (hour   > 12) { hour = hour - 12;      }
+   if (hour   == 0) { hour = 12;             }
+   //if (hour   < 10) { hour   = "0" + hour;   }
+   if (minute < 10) { minute = "0" + minute; }
+   //if (second < 10) { second = "0" + second; }
+   var timeString = hour +
+					':' +
+					minute +
+					//':' +
+					//second +
+					" " +
+					ap;
+   return timeString;
+};
+
+DDE.parseDate = function(str) {
+  var v=str.split(' ');
+  return new Date(Date.parse(v[1]+" "+v[2]+", "+v[5]+" "+v[3]+" UTC"));
+} 
+
 
 //IE dynamic max-height
 DDE.setMaxHeight = function(elem, height){
@@ -265,7 +315,10 @@ DDE.cssPrefixes = ["", "webkit", "ms", "O", "Moz"];
 DDE.cssAnimation = function(elem, animation, options) {
 	//Use predefined css animations in style.css to avoid extra overhead of dynamically injecting <style> nodes
 	var animationCallback = function(e) {
-		//this.style['-webkit-animation-name'] = 'none'; //this needs to be left in for the fill-mode to work
+		if (reset) {
+			this.style['-webkit-animation-name'] = 'none'; //this needs to be left in for the fill-mode to work
+			this.style['-webkit-animation-fill-mode'] = '';
+		}
 		this.style['-webkit-animation-duration'] = '';
 		this.style['-webkit-animation-delay'] = ''
 		this.style['-webkit-animation-iteration-count'] = '';
@@ -285,7 +338,7 @@ DDE.cssAnimation = function(elem, animation, options) {
 			return callback.call();
 		}
 		
-	}, duration, easingType, callback, delay, props;
+	}, duration, easingType, callback, delay, props, reset;
 	
 	if (options.speed == null) duration = 200;
 	else duration = options.speed;
@@ -299,6 +352,8 @@ DDE.cssAnimation = function(elem, animation, options) {
 	if (options.complete && typeof options.complete == 'function') callback = options.complete;
 	
 	if (options.props) props = options.props;
+	
+	if (options.reset) reset = true;
 	
 	if (animation == "fade-in") {
 		elem.style.display = "block";
@@ -320,6 +375,10 @@ DDE.fadeIn = function(elem, ops) {
 	if (ops && ops.speed) options.speed = ops.speed;
 	if (ops && ops.delay) options.delay = ops.delay;
 	if (ops && ops.props) options.props = ops.props;
+	if (options.props) options.props.opacity = 1;
+	else options.props = {opacity: 1};
+	
+	options.reset = true;
 	
 	this.cssAnimation(elem, 'fade-in', options);
 }
@@ -330,6 +389,9 @@ DDE.fadeOut = function(elem, ops) {
 	if (ops && ops.speed) options.speed = ops.speed;
 	if (ops && ops.delay) options.delay = ops.delay;
 	if (ops && ops.props) options.props = ops.props;
+	if (options.props) options.props.opacity = 0;
+	else options.props = {opacity: 0};
+	options.reset = true;
 	
 	this.cssAnimation(elem, 'fade-out', options);
 }

@@ -898,7 +898,7 @@ div.list.photos .caption {
 	width: 75%;
 	min-width: 250px;
 	margin-bottom: 1.5em;
-	margin-top: -2em;
+	margin-top: -1.5em;
 	z-index: 2;
 	position: relative; 
 	color: #282828; 
@@ -918,14 +918,18 @@ div.list.photos .caption a {
 div.list.photos .listitem img {
 	display: block;
 	margin: 0 auto;
-	border: solid 1px #eee;
-	padding: 4px;
-	
-	-webkit-box-sizing: border-box;
-	-ms-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-o-box-sizing: border-box;
-	box-sizing: border-box;
+}
+
+div.list.photos .photodate {
+	color: #777;
+	position: absolute;
+	bottom: -.8em;
+	right: 1em;
+	background: white;
+	background: rgba(255,255,255,.9);
+	z-index: 999;
+	padding: 0 4px;
+	font-size: .85em;
 }
 
 div.list.tweets .listitem h3 {
@@ -980,11 +984,12 @@ div.list .trendcount {
 }
 
 .tweets .listthumb {
-	width: 50px;
-	height: 50px;
+	width: 54px;
+	height: 54px;
 	float: left;
-	background-color: #ddd;
-	border: solid 1px #ccc;
+	padding: 2px;
+	background-color: #fff;
+	border: solid 1px #eee;
 }
 
 .ie7 .tweets .listthumb, .iem7 .tweets .listthumb {
@@ -993,23 +998,40 @@ div.list .trendcount {
 }
 
 .tweets .listcontent {
-	margin-left: 60px;
+	margin-left: 64px;
 	position: relative;
 }
 
 .ie8 .tweets .listcontent {
 	zoom: 1;
 	position: static; /* need this to apply opacity */
+	
 }
+
+.listcontent h3 a {
+	color: #282828;
+}
+
+.tweets .tweettext a {
+	text-decoration: none;
+	border-bottom: 1px dotted #ccc;
+}
+
+.tweets .tweettext a:hover {
+	text-decoration: none;
+	border-bottom: solid 1px black;
+}
+
 
 .tweets .tweettext {
 	display: block;
 	font-size: .9em;
-	line-height: 1.3em;
+	line-height: 1.5em;
 }
 
 .tweets .listthumb img {
 	display: block;
+	margin: 0;
 }
 
 .tweets .tweettime {
@@ -1019,6 +1041,44 @@ div.list .trendcount {
 	top: 0;
 	right: 0;
 	line-height: .8em;
+}
+
+.ie8 .tweets .tweettime {
+	top: .7em;
+}
+
+.ie7 .tweets .tweettime, .iem7 .tweets .tweettime {
+	line-height: 1.3em;
+	top: -2px;
+}
+
+.no-js #loadmore, .all #loadmore {
+	display: none !important;
+}
+
+#loadmore {
+	font-family: Helvetica, Arial, sans-serif;
+	text-align: center;
+	text-transform: uppercase;
+	font-weight: bold;
+	background: #eee;
+	padding: .5em 0;
+	font-size: .9em;
+	color: #555;
+	cursor: pointer;
+	margin-bottom: 1em;
+}
+
+#loadmore:hover {
+	color: black;
+	background: #ddd;
+}
+
+#loadmore.disabled, #loadmore.disabled:hover {
+	color: #555;
+	background: #fff;
+	border: solid 1px #ccc;
+	
 }
 
 
@@ -1920,6 +1980,7 @@ h2.page-title {
 
 #modules {
 	height: 100%;
+	max-height: 100%;
 	padding-bottom: 100px;
 	margin-top: 0;
 	position: relative;

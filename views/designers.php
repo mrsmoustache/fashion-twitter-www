@@ -61,8 +61,10 @@ if ((!isset($designers) && !isset($schedule)) || ( $designers == "all" || $sched
 							
 							$value = $arr["tweet"];
 							$text = $arr["tweet"]["text"];
-							$username = $arr["tweet"]["user"]["screen_name"];
+							$author_name = $arr["tweet"]["user"]["screen_name"];
 							$thumb = $arr["tweet"]["user"]["profile_image_url"];
+							$author = $arr["tweet"]["user"]["name"];
+							$author_url = 'http://twitter.com/'.$arr["tweet"]["user"]["screen_name"];
 							
 							
 							$urls_length = count($value["entities"]["urls"]);
@@ -90,8 +92,8 @@ if ((!isset($designers) && !isset($schedule)) || ( $designers == "all" || $sched
 							
 							
 							
-							//$created_at = date('d M Y, h:m:s', strtotime($arr["tweet"]["created_at"]));
-							echo '<div id="tweet'.$index.'" class="listitem clearfix"><div class="listthumb"><img src="'.$thumb.'" height="48" width="48" /></div><div class="listcontent"><h3>'.$username.'</h3> <span class="tweettext">'.$text.'</span></div></div>';
+							$created_at = date('M j, g:i A', strtotime($arr["tweet"]["created_at"]));
+							echo '<div id="tweet'.$index.'" class="listitem clearfix"><div class="listthumb"><img src="'.$thumb.'" height="48" width="48" /></div><div class="listcontent"><h3><a href="'.$author_url.'" target="_blank">'.$author_name.'</a></h3> <span class="tweettext">'.$text.'</span> <span class="tweettime">'.$created_at.'</span></div></div>';
 							
 							$index++;
 							
@@ -184,13 +186,14 @@ if ((!isset($designers) && !isset($schedule)) || ( $designers == "all" || $sched
 							$tweetStr = preg_replace('/http:\/\/[a-zA-Z0-9-.\/]+/i', ' ', $tweetStr);
 			
 							$author = $arr["tweet"]["user"]["name"];
-							$author_url = 'http://twitter.com/'+$arr["tweet"]["user"]["screen_name"];
+							$author_url = 'http://twitter.com/'.$arr["tweet"]["user"]["screen_name"];
 			
+							$photo_date = date('M j, g:i A', strtotime($arr["tweet"]["created_at"]));
 							
 							if (isset($request)) {
 								echo '<div class="listitem"><div class="photocontainer clearfix">';
 								echo '<img src="'.$request.'" />';
-								echo '<div class="caption">'.$tweetStr.' &mdash;<a href="'.$author_url.'">'.$author.'</a></div>';
+								echo '<div class="caption">'.$tweetStr.' &mdash;<a href="'.$author_url.'" target="_blank">'.$author.'</a> <span class="photodate">'.$photo_date.'</span></div>';
 								echo '</div></div>';
 							}
 							
@@ -199,12 +202,12 @@ if ((!isset($designers) && !isset($schedule)) || ( $designers == "all" || $sched
 					?>
 					
 					</div>
+					
+					<div id="loadmore">Load More</div>
 				
 				</div>			
 								
 			</div>
-			
-			<div id="loading">loading...</div>
 			
 		</div>
 	

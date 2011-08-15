@@ -65,11 +65,13 @@ DDE.TweetYvent = function(){
 		lastWindowHeight: 0,
 		chartHeight: 0,
 		tweetUpdates: 0,
+		tweetsLoaded: 0,
 		currView: null
 	};
 	
 	this.reorderScheduleJSON = function() {
 		var designers = {};
+		var designerCount = 0;
 		
 		for (dayGroup in DDE.allEventsSchedule) {
 			var day = DDE.allEventsSchedule[dayGroup];
@@ -80,11 +82,16 @@ DDE.TweetYvent = function(){
 					
 					var event = time[i];
 					designers[event.keyword] = event;
+					designers[event.keyword].newTweets = 0;
+					designers[event.keyword].newPhotos = 0;
+					designers[event.keyword].alphaIndex = DDE.designerLookup[event.keyword]['alpha_index'];
+					designerCount++;
 				}
 			}
 			
 		}
 		
+		that.globals.designerCount = designerCount;		
 		return designers;
 	};
 		
@@ -499,6 +506,7 @@ DDE.TweetYvent.prototype = {
 		console.log("pointer: "+pointer);
 		if (!pointer || pointer == '') {
 			pointer = 'all';
+			tg.$main.addClass('all');
 		}
 		
 		switch(hashBase){
@@ -876,8 +884,13 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				
 				//update tweetCount labels
 				that.allEventsDesigners[keyword].tweet_count++;
+				that.allEventsDesigners[keyword].newTweets++;
 								
 				DDE.replaceHtml(this.listCountNodes[eventIndex].context.children[1].children[1], that.allEventsDesigners[keyword].tweet_count);
+				
+				var otherCloneIndex = tg.designerCount + that.allEventsDesigners[keyword].alphaIndex + 1;
+				
+				DDE.replaceHtml(this.listCountNodes[otherCloneIndex].context.children[0].children[1], that.allEventsDesigners[keyword].tweet_count);
 				
 				classStr += data.keywords[i] + ' ';
 				if (i == 1) firstColor = that.allEventsDesigners[keyword].color;
@@ -889,48 +902,41 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			//filter data based on toggle
 			var pathname = location.pathname.replace(/\/node-projects\/tweet-event-map\/fashion-twitter-www\//, '/');
 			
-			var hashBase;
-			if (location.hash)
-				var match = location.hash.match(/\/[A-Za-z1-9-]*\//)
-				hashBase = match ? match[0] : '';
-			var pointerPattern = new RegExp('#'+hashBase);
-			var pointer = location.hash.replace(pointerPattern, '').replace(/\//, '');
-			switch(hashBase){
-				
-				case "/schedule/":
-					//scheduleView();
-					break;
-					
-				case "/designers/":
-					var match = false;
-					for (var i=1; i<keywordCount; i++) {
-						var keyword = new RegExp(data.keywords[i]);
-						if (pointer.match(keyword)) match = true;
-					}
-					if (!match) return false;
-					
-					break;
-					
-				default:
-				
-					break;
-				
-			}
 			
+			var hashData = DDE.hashBasePointer(location.hash);
+			var hashBase = hashData.hashBase;
+			var pointer = hashData.pointer;
+			
+			if (tg.navView.selectedNavItem != 'all') {
+			
+				var match = false;
+				for (var i=1; i<keywordCount; i++) {
+					var keyword = new RegExp(data.keywords[i]);
+					if (tg.navView.selectedNavItem.match(keyword)) match = true;
+				}
+				if (!match) { return false; }
+				
+			} 			
 			var text = data["tweet"]["text"];
 			var username = data["tweet"]["user"]["screen_name"];
 			var thumb = data["tweet"]["user"]["profile_image_url"];
-			//var created_at = data["tweet"]["created_at"];
+			var author_url = 'http://twitter.com/'+username;
+			var tweetDate = new Date(DDE.parseDate(data["tweet"]["created_at"]));
+			var tweetTime = DDE.getTheMonth(tweetDate) + ' '+tweetDate.getDate()+', '+DDE.getClockTime(tweetDate);
 			
 			//match urls in the tweetext and hyperlink
 			text = this.hyperlinkUrls(data["tweet"]);
 			
 			//Todo: create timestamp locally on client based on time of html insert
 			
-			var html = '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3>'+username+'</h3> <span class="tweettext">'+text+'</span> <span class="tweettime"></span></div></div>';
+			var html = '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3><a href="'+author_url+'" target="_blank">'+username+'</a></h3> <span class="tweettext">'+text+'</span> <span class="tweettime">'+tweetTime+'</span></div></div>';
 			
+			var tmpNode = tg.$tweetsContent[0].children[0];
+									
 			tg.$tweetsContent.prepend(html);
 			
+			tmpNode.style.zoom = 1;
+			tmpNode = null;			
 			
 			
 			//$("<li class='"+classStr+"' style='color: "+firstColor+";'> </li>").text("@" + data.tweet.user.screen_name + ": " + data.tweet.text).prependTo("#main ul");
@@ -961,6 +967,12 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			
 			if (img_count > 0) {
 				var arrayWrapper = [{"img_urls" : img_urls}];
+				
+				for (var i=1; i<keywordCount; i++) {
+					var keyword = data.keywords[i];
+					that.allEventsDesigners[keyword].newPhotos++;
+				}
+				
 				this.fetchImgUrls(arrayWrapper);
 			}
 			
@@ -1231,10 +1243,21 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		tg.$colorContent[0].innerHTML = '';
 		tg.$photosContent[0].innerHTML = '';
 		
+		tg.tweetsLoaded = 0;
+		tg.photosLoaded = 0;
+		tg.$loadMore.removeClass("disabled");
+		tg.$loadMore.html("Loading...");
+		tg.allTweetsLoaded = false;
+		tg.allPhotosLoaded = false;
+		if (designer != 'all') {
+			tweetYvent.allEventsDesigners[designer].newTweets = 0;
+			tweetYvent.allEventsDesigners[designer].newPhotos = 0;
+		}
+		
 		//set main view class to designername for extra styling
 		tg.$main[0].className = that.selectedNavItem;
 		//tg.$modules[0].className += ' loading';
-		tg.loadingTimer = setTimeout(function(){ tg.$loading[0].style.display = "block"; }, 300);
+		//tg.loadingTimer = setTimeout(function(){ tg.$loading[0].style.display = "block"; }, 300);
 		
 		if (tg.mainScroll) {
 			tg.mainScroll.y = 0;
@@ -1281,58 +1304,12 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				var finished = (new Date()).getTime() - tg.startDB;	
 				console.log("processing time fetching mongoDG: " + finished + " msec" );
 					
-				//insert archived tweets
-				//data.tweetList = []
-				
-				var html = ''
-				
-				//store all tweet html in one string and append at once
-				for (var i=0; i<data.tweetList.length; i++) {
-				
-					var text = data.tweetList[i]["tweet"]["text"];
-					var username = data.tweetList[i]["tweet"]["user"]["screen_name"];
-					var thumb = data.tweetList[i]["tweet"]["user"]["profile_image_url"];
-					//var created_at = data["tweet"]["created_at"];
-					//Todo: create timestamp locally on client based on time of html insert
-					
-					//match urls in the tweetext and hyperlink
-					text = that.hyperlinkUrls(data.tweetList[i]["tweet"]);
-					
-					html += '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3>'+username+'</h3> <span class="tweettext">'+text+'</span> <span class="tweettime"></span></div></div>';
-					
-				}
-				
-				tg.tweetsHTML = html;
-				//tg.$tweetsContent.append(html);	
-				
-				//insert archived trending words
-				//data.trendsList = []
-				var html = ''
-				for (var i=0; i<data.trendsList.length; i++) {
-					var word = data.trendsList[i]["word"];
-					var count = data.trendsList[i]["count"];
-					html += '<div class="listitem"><h3>'+word+'</h3> <span class="trendcount">'+count+'</span> </div>';
-					
-				}
-				
-				tg.trendingWordsHTML = html;
-				//tg.$wordContent.append(html);
-				
-				//insert archived trending colors
-				//data.colorsList = []
-				var html = ''
-				for (var i=0; i<data.colorsList.length; i++) {
-					var color = data.colorsList[i]["color"];
-					var count = data.colorsList[i]["count"];
-					html += '<div class="listitem"><h3>'+color+'</h3> <span class="trendcount">'+count+'</span> </div>';
-				}
-				
-				tg.trendingColorsHTML = html;
-				//tg.$colorContent.append(html);
+				that.buildTweetDOM(tg, data);
 				
 				tg.mainViewLoaded = true;
 				//tg.$modules[0].className = tg.$modules[0].className.replace(/ ?loading/gi, '');
-				tg.$loading[0].style.display = "none";
+				//tg.$loading[0].style.display = "none";
+				tg.$loadMore.html("Load More");
 				
 				//check if we are in tg.singleViewMode aka Mobile mode
 				//this is also a delayed transition for slower devices that don't support CSS Transitions
@@ -1350,6 +1327,134 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				
 				var finished = (new Date()).getTime() - start;	
 				console.log("processing time fetching images: " + finished + " msec" );
+				
+				
+			},
+			error: function ( data ) {
+				
+				console.log("error");
+				console.log(data);
+				console.log(data.responseText);
+			}
+		});
+	},
+	
+	buildTweetDOM: function (globals, data) {
+	
+		var that = this;
+		var tg = globals;
+		
+		tg.tweetsLoaded += data.tweetList.length;
+		
+		if (data.tweetList.length == 0) {
+		
+			tg.$loadMore.html("The End");
+			tg.$loadMore.addClass("disabled");
+			tg.allTweetsLoaded = true;
+			return false;
+		} else {
+			tg.$loadMore.html("Load More");
+		}
+		
+		var html = ''
+				
+		//store all tweet html in one string and append at once
+		for (var i=0; i<data.tweetList.length; i++) {
+		
+			var text = data.tweetList[i]["tweet"]["text"];
+			var username = data.tweetList[i]["tweet"]["user"]["screen_name"];
+			var thumb = data.tweetList[i]["tweet"]["user"]["profile_image_url"];
+			var author_url = 'http://twitter.com/'+username;
+			var tweetDate = new Date(DDE.parseDate(data.tweetList[i]["tweet"]["created_at"]));
+			var tweetTime = DDE.getTheMonth(tweetDate) + ' '+tweetDate.getDate()+', '+DDE.getClockTime(tweetDate);
+			//var created_at = data["tweet"]["created_at"];
+			//Todo: create timestamp locally on client based on time of html insert
+			
+			//match urls in the tweetext and hyperlink
+			text = that.hyperlinkUrls(data.tweetList[i]["tweet"]);
+			
+			html += '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3><a href="'+author_url+'" target="_blank">'+username+'</a></h3> <span class="tweettext">'+text+'</span> <span class="tweettime">'+tweetTime+'</span></div></div>';
+			
+		}
+		
+		tg.tweetsHTML = html;
+		//tg.$tweetsContent.append(html);	
+		
+		//insert archived trending words
+		//data.trendsList = []
+		var html = ''
+		for (var i=0; i<data.trendsList.length; i++) {
+			var word = data.trendsList[i]["word"];
+			var count = data.trendsList[i]["count"];
+			html += '<div class="listitem"><h3>'+word+'</h3> <span class="trendcount">'+count+'</span> </div>';
+			
+		}
+		
+		tg.trendingWordsHTML = html;
+		//tg.$wordContent.append(html);
+		
+		//insert archived trending colors
+		//data.colorsList = []
+		var html = ''
+		for (var i=0; i<data.colorsList.length; i++) {
+			var color = data.colorsList[i]["color"];
+			var count = data.colorsList[i]["count"];
+			html += '<div class="listitem"><h3>'+color+'</h3> <span class="trendcount">'+count+'</span> </div>';
+		}
+		
+		tg.trendingColorsHTML = html;
+		
+		
+	},
+	
+	loadMoreData: function (globals, section) {
+		var that = this;
+		var tg = globals;
+		
+		tg.$loadMore.html("Loading...");
+		var designer = that.selectedNavItem;
+		var tabSection = section;
+		var rangeStart;
+		if (tabSection == 'tweets') {
+			rangeStart = tweetYvent.allEventsDesigners[designer].newTweets + tg.tweetsLoaded;
+		} else {
+			rangeStart = tweetYvent.allEventsDesigners[designer].newPhotos + tg.photosLoaded;
+		}
+		
+		console.log("rangeStart: "+rangeStart);
+		
+		//fetch designer db proxy
+		var xhr = $.ajax({
+			url: 'designer_db_request_proxy.php',
+			data: {"designers": designer, "section" : tabSection, "start": rangeStart},
+			dataType: "json",
+			success: function ( data ) {
+			
+				console.log(data);
+				
+				if (tabSection == 'tweets') {
+					that.buildTweetDOM(tg, data);
+					
+					if (data.tweetList.length == 0) { return false; }
+				
+					that.fancyDataTransition(tg);
+				}
+								
+				if (tabSection == 'photos') {
+				
+					if (data.urlList.length == 0) {
+						tg.$loadMore.html("The End");
+						tg.$loadMore.addClass("disabled");
+						tg.allPhotosLoaded = true;
+					} else {
+						tg.$loadMore.html("Load More");
+					}
+
+					that.fetchImgUrls(data.urlList);
+				}	
+								
+				//var finished = (new Date()).getTime() - start;	
+				//console.log("processing time fetching images: " + finished + " msec" );
 				
 				
 			},
@@ -2080,7 +2185,11 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 	
 	fetchImgUrls: function( urlList ) {
 	
-		if (urlList.length == 0) {return;}
+		var tg = tweetYvent.globals;
+	
+		tg.photosLoaded += urlList.length;
+		
+		if (urlList.length == 0) { return false; }
 		
 		var fetchImgProxy = function( request ) {
 			//var params = {"url":  url_test};
@@ -2114,13 +2223,15 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			
 			var author = data["user"]["name"];
 			var author_url = 'http://twitter.com/'+data["user"]["screen_name"];
+			var photo_date = new Date(DDE.parseDate(data["created_at"]));
+			var photoTime = DDE.getTheMonth(photo_date) + ' '+photo_date.getDate()+', '+DDE.getClockTime(photo_date);
 			
 			$(img).load(function(){
 			
 				var html = '<div class="listitem"><div class="photocontainer clearfix">';
 						html += '<img src="'+this.src+'" />';
 						
-						html += '<div class="caption">'+tweetStr+' &mdash;<a href="'+author_url+'">'+author+'</a></div>';
+						html += '<div class="caption">'+tweetStr+' &mdash;<a href="'+author_url+'" target="_blank">'+author+'</a>, <span class="photodate">'+photoTime+'</span></div>';
 						html += '</div>';
 					html+= '</div>';
 				
@@ -2171,7 +2282,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					break;
 			}
 		}; 
-		
+				
 		for(var i=0; i<urlList.length; i++) {
 			//console.log(DDE.externalLinks[i]);
 			//["img_urls"]
@@ -2286,8 +2397,8 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 	  		
 			//Firefox wants this to stop it from reseting the scrollTop after the style change
 			this.scrollTop = that.save;
-  				
-	  		
+			
+			
 		};
 		
 		$(that.scrollPane).bind(eventType, scrollPanel);
@@ -2350,6 +2461,8 @@ DDE.TweetYvent.prototype.MainView = function( parent, selector ) {
 		
 		this.makeTabs(tg);
 		
+		this.enableLoadMore(tg);
+		
 		if (this.selectedDesigner) tg.navView.loadMainViewDesigner(tg);
 		
 		};
@@ -2401,6 +2514,7 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			if (tg.mainScroll) that.resetMainScroll(tg);
 			
 			tg.detailTabVisible = "trends";
+			tg.$loadMore[0].style.display = 'none';
 			
 		});
 		
@@ -2414,8 +2528,19 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			tg.$photoTab.removeClass("selected");
 			tg.$tweetTab.addClass("selected");
 			
+			tg.$loadMore[0].style.display = 'block';
+			
 			if (tg.mainScroll) that.resetMainScroll(tg);			
 			tg.detailTabVisible = "tweets";
+			
+			if (tg.allTweetsLoaded) {
+				tg.$loadMore.addClass("disabled");
+				tg.$loadMore.html("The End");
+			} else {
+				tg.$loadMore.removeClass("disabled");
+				tg.$loadMore.html("Load More");
+			}
+						
 			
 		});
 		
@@ -2430,7 +2555,18 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 			
 			if (tg.mainScroll) that.resetMainScroll(tg);
 			
+			tg.$loadMore[0].style.display = 'block';
+			
 			tg.detailTabVisible = "photos";
+			
+			if (tg.allPhotosLoaded) {
+				tg.$loadMore.addClass("disabled");
+				tg.$loadMore.html("The End");
+			} else {
+				tg.$loadMore.removeClass("disabled");
+				tg.$loadMore.html("Load More");
+			}
+			
 			
 		});
 		
@@ -2468,6 +2604,24 @@ DDE.TweetYvent.prototype.MainView.prototype = {
 		if (tg.mainScroll._pos) tg.mainScroll._pos(0,0);
 		
 		tg.mainScroll.refresh();
+	},
+	
+	enableLoadMore: function ( globals ) {
+		var that = this;
+		var tg = globals;
+		
+		tg.$loadMore = $('#loadmore');
+		
+		if (tg.touch) {
+			new MBP.fastButton(tg.$loadMore[0], function(){
+				tg.navView.loadMoreData(tg, tg.detailTabVisible);
+			});
+
+		} else {
+			tg.$loadMore.click(function(e){
+				tg.navView.loadMoreData(tg, tg.detailTabVisible);
+			});
+		}
 	}
 	
 };

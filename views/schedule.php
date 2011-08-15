@@ -42,7 +42,7 @@
 				
 					<div id="scheduleview">
 				
-						<div id="all-designers-item" class="listitem <?php if ($designers == 'all' || $schedule == 'show') {echo "selected"; } ?>">All Designers<span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.png" width="13" height="22" /><![endif]--></span></div>
+						<div id="all-designers-item" class="listitem <?php if ($designers == 'all' || $schedule == 'show') {echo "selected"; } ?>">All Designers<span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.gif" width="13" height="22" /><![endif]--></span></div>
 					
 						<?php 
 						$index = 0;
@@ -66,9 +66,9 @@
 									
 									
 									if ($time_index == 0) {
-										echo '<b class="timegroup">'.date('g:i', $event['start_time']).' <span>'.date('A', $event['start_time']).'</span></b> <div class="itemcontent"><a class="listname" href="schedule/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount" style="background-color: '.$event['color'].';">'.$event['tweet_count'].'</span><span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.png" width="13" height="22" /><![endif]--></span></div>';
+										echo '<b class="timegroup">'.date('g:i', $event['start_time']).' <span>'.date('A', $event['start_time']).'</span></b> <div class="itemcontent"><a class="listname" href="schedule/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount" style="background-color: '.$event['color'].';">'.$event['tweet_count'].'</span><span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.gif" width="13" height="22" /><![endif]--></span></div>';
 									} else {
-										echo '<b>&nbsp;</b> <div class="itemcontent"><a class="listname" href="schedule/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount" style="background-color: '.$event['color'].';">'.$event['tweet_count'].'</span><span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.png" width="13" height="22" /><![endif]--></span></div>';
+										echo '<b>&nbsp;</b> <div class="itemcontent"><a class="listname" href="schedule/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount" style="background-color: '.$event['color'].';">'.$event['tweet_count'].'</span><span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.gif" width="13" height="22" /><![endif]--></span></div>';
 									}
 									
 									echo '</div>';
@@ -89,7 +89,7 @@
 					
 					<div id="designersview">
 					
-						<div id="all-designers-item-" class="listitem <?php if ($designers == 'all' || $schedule == 'show') {echo "selected"; } ?>">All Designers<span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.png" width="13" height="22" /><![endif]--></span></div>
+						<div id="all-designers-item-" class="listitem <?php if ($designers == 'all' || $schedule == 'show') {echo "selected"; } ?>">All Designers<span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.gif" width="13" height="22" /><![endif]--></span></div>
 						
 						<?php 
 						foreach ($alpha_list as $alpha=>$alpha_arr) { 
@@ -106,9 +106,9 @@
 								}
 								
 								if ($alpha_index == 0) {
-									echo '<div class="itemcontent first"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount">'.$event['tweet_count'].'</span><span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.png" width="13" height="22" /><![endif]--></span></div>';
+									echo '<div class="itemcontent first"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount">'.$event['tweet_count'].'</span><span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.gif" width="13" height="22" /><![endif]--></span></div>';
 								} else {
-									echo '<div class="itemcontent"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount">'.$event['tweet_count'].'</span><span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.png" width="13" height="22" /><![endif]--></span></div>';
+									echo '<div class="itemcontent"><a class="listname" href="designers/'.$event['keyword'].'/">'.$event['name'].'</a> <span class="tweetcount">'.$event['tweet_count'].'</span><span class="arrow"><!--[if IEMobile 7]><img src="img/m/nav-arrow-right1.5x.gif" width="13" height="22" /><![endif]--></span></div>';
 								}
 								
 								echo '</div>';

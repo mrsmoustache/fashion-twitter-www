@@ -4,6 +4,8 @@ include('_config.php');
 include('_global.php');
 //Build data lists and variables
 $designers = $_GET["designers"];
+$section = isset($_GET["section"]) ? $_GET["section"] : null;
+$start = isset($_GET["start"]) ? $_GET["start"] : null;
 $tweet_list = array();
 $url_list = array();
 $trends_list = array();
