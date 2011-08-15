@@ -750,8 +750,6 @@ iScroll.prototype = {
 			point = hasTouch ? e.touches[0] : e,
 			matrix, x, y;
 			
-		console.log("iscrollstart");
-
 		if (!that.enabled) return;
 
 		if (that.options.onBeforeScrollStart) that.options.onBeforeScrollStart.call(that, e);

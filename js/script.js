@@ -57,7 +57,7 @@ DDE.TweetYvent = function(){
 		connected: false,
 		RETRY_INTERVAL: 10000,
 		socketInterval: null,
-		nodeServer: "http://"+nodeDomain+":8124",
+		nodeServer: "http://"+nodeDomain+":"+nodePort,
 		maxRainPerEvent: 10,
 		cssAnimationOn: false,
 		lastBodyHeight: 0,
@@ -652,7 +652,7 @@ DDE.TweetYvent.prototype = {
 		
 		$.getScript (tg.nodeServer+"/socket.io/socket.io.js", function(){
 			
-			tg.socket = new io.Socket(nodeDomain, {"port": 8124});
+			tg.socket = new io.Socket(nodeDomain, {"port": nodePort});
 			
 			
 			

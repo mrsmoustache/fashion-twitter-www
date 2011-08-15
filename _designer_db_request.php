@@ -1,6 +1,6 @@
 <?php
 // open connection to MongoDB server
-	$conn = new Mongo($NODE_HOST);
+	$conn = new Mongo($MONGO_HOST);
 		
 	// access database
 	$db = $conn->{'tweet-event'};
@@ -27,11 +27,6 @@
 				
 		//get tweets with urls and images
 		
-		//db.marcjacobs.find({ $or : [ { 'entities.urls':{ $elemMatch :  { 'url' : /^http:\/\/(twitpic.)/i  }  }}, { 'entities.urls': { $elemMatch : { 'url': /^http:\/\/yfrog./i  }  }  }  ] }).sort({'created_at':-1}).limit(10); 
-		
-		//db.marcjacobs.find({'entities.urls':{ $elemMatch :  { 'url' : /^http:\/\/(twitpic.)/i  }  }}).sort({'created_at':-1}).limit(10);
-		
-		
 		if (!isset($section) || $section == 'photos') {
 		
 			$pattern = '/^http:\/\/(yfrog.|instagr.|lockerz.|twitpic.|pic.twitter.)/i';
@@ -45,7 +40,6 @@
 			
 			
 			$url_cursor = $collection->find( array( '$or' => $orArr )  )->skip($skip)->limit(10);
-			//$url_cursor = $collection->find( array( $url_link=>array('$size'=>1) ) )->sort(array('created_at'=>-1))->limit(20);
 			
 			foreach($url_cursor as $key=>$value) {
 				$urls_length = count($value["entities"]["urls"]);
@@ -92,8 +86,6 @@
 					$trends_list[] = array("count"=>$arr["counts"][$designers], "word"=>$arr["word"]);
 				}
 				
-				//$words_list[] = array("id"=>$key, "tweet"=>$value);
-				
 			}
 			
 			//get colors
@@ -106,8 +98,6 @@
 				if ($arr["counts"][$designers]) {
 					$colors_list[] = array("count"=>$arr["counts"][$designers], "color"=>$arr["color"]);
 				}
-				
-				//$words_list[] = array("id"=>$key, "tweet"=>$value);
 				
 			}
 		}
@@ -136,12 +126,6 @@
 			}
 			
 			//get tweets with urls and images
-			
-			//db.marcjacobs.find({ $or : [ { 'entities.urls':{ $elemMatch :  { 'url' : /^http:\/\/(twitpic.)/i  }  }}, { 'entities.urls': { $elemMatch : { 'url': /^http:\/\/yfrog./i  }  }  }  ] }).sort({'created_at':-1}).limit(10); 
-			
-			//db.marcjacobs.find({'entities.urls':{ $elemMatch :  { 'url' : /^http:\/\/(twitpic.)/i  }  }}).sort({'created_at':-1}).limit(10);
-			
-			
 			
 			$pattern = '/^http:\/\/(yfrog.|instagr.|lockerz.|twitpic.|pic.twitter.)/i';
 			$url_link = 'entities.urls';
@@ -199,8 +183,6 @@
 				$trends_list[] = array("count"=>$arr["counts"]["total"], "word"=>$arr["word"]);
 			}
 			
-			//$words_list[] = array("id"=>$key, "tweet"=>$value);
-			
 		}
 		
 		//get colors
@@ -213,8 +195,6 @@
 			if ($arr["counts"]["total"]) {
 				$colors_list[] = array("count"=>$arr["counts"]["total"], "color"=>$arr["color"]);
 			}
-			
-			//$words_list[] = array("id"=>$key, "tweet"=>$value);
 			
 		}
 

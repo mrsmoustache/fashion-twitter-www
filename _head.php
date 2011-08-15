@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <base href="<?php echo $WEB_ROOT; ?>" />
 
-<title>Tweet Event Map</title>
+<title>TweetYvent</title>
 <meta name="description" content="">
 <meta name="author" content="">
 

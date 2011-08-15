@@ -12,14 +12,14 @@
 			<div id="dayslist">
 				<h3>Days</h3>
 				<ul class="clearfix">
-					<li id="daylink1"><a href="schedule/#day1" class="clearfix"><span><b>1</b><b>0</b></span> <em>Thu</em></a></li>
-					<li id="daylink2"><a href="schedule/#day2" class="clearfix"><span><b>1</b><b>1</b></span> <em>Fri</em></a></li>
-					<li id="daylink3"><a href="schedule/#day3" class="clearfix"><span><b>1</b><b>2</b></span> <em>Sat</em></a></li>
-					<li id="daylink4"><a href="schedule/#day4" class="clearfix"><span><b>1</b><b>3</b></span> <em>Sun</em></a></li>
-					<li id="daylink5"><a href="schedule/#day5" class="clearfix"><span><b>1</b><b>4</b></span> <em>Mon</em></a></li>
-					<li id="daylink6"><a href="schedule/#day6" class="clearfix"><span><b>1</b><b>5</b></span> <em>Tue</em></a></li>
-					<li id="daylink7"><a href="schedule/#day7" class="clearfix"><span><b>1</b><b>6</b></span> <em>Wed</em></a></li>
-					<li id="daylink8"><a href="schedule/#day8" class="clearfix"><span><b>1</b><b>7</b></span> <em>Thu</em></a></li>
+					<li id="daylink1"><a href="schedule/#day1" class="clearfix"><span><b>0</b><b>8</b></span> <em>Thu</em></a></li>
+					<li id="daylink2"><a href="schedule/#day2" class="clearfix"><span><b>0</b><b>9</b></span> <em>Fri</em></a></li>
+					<li id="daylink3"><a href="schedule/#day3" class="clearfix"><span><b>1</b><b>0</b></span> <em>Sat</em></a></li>
+					<li id="daylink4"><a href="schedule/#day4" class="clearfix"><span><b>1</b><b>1</b></span> <em>Sun</em></a></li>
+					<li id="daylink5"><a href="schedule/#day5" class="clearfix"><span><b>1</b><b>2</b></span> <em>Mon</em></a></li>
+					<li id="daylink6"><a href="schedule/#day6" class="clearfix"><span><b>1</b><b>3</b></span> <em>Tue</em></a></li>
+					<li id="daylink7"><a href="schedule/#day7" class="clearfix"><span><b>1</b><b>4</b></span> <em>Wed</em></a></li>
+					<li id="daylink8"><a href="schedule/#day8" class="clearfix"><span><b>1</b><b>5</b></span> <em>Thu</em></a></li>
 				</ul>
 			</div>
 			
@@ -128,15 +128,6 @@
 			</div> <!-- end #schedulenav -->
 			
 		</div> <!-- end #contentnav -->
-		
-		<?php 
-		/*
-		echo "<pre>";
-		print_r($event_list);
-		print_r($time_slots);
-		echo "</pre>";
-		*/
-		?>
 		
 		<!-- temporary real-time tweets list -->
 		<ul></ul>

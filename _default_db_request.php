@@ -3,7 +3,7 @@
 try {
 
 	// open connection to MongoDB server
-	$conn = new Mongo($NODE_HOST);
+	$conn = new Mongo($MONGO_HOST);
 	
 	// access database
 	$db = $conn->{'tweet-event'};

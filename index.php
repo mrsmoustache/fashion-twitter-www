@@ -44,21 +44,6 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 
 <?php
 
-/*
-if (isset($schedule) && $schedule == "show" && !$daterange) {
-	include 'views/static_html/schedule.html';
-	//include 'views/schedule.php';
-} else if (isset($schedule) && $schedule == "long" && !$daterange) {
-	include 'views/schedule_long.php';
-
-} else if (isset($designers)) {
-	include 'views/designers.php';
-
-} else {
-	include 'views/main.php'; 
-}
-*/
-
 include 'views/main.php'; 
 
 ?>
