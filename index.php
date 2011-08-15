@@ -35,14 +35,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 	
 	<h1 class="clearfix"><span class="hashtag">#<span> </span></span><span class="logo1">New York</span> <span class="logo2">Fashion Week</span></h1>
 	
-	<div id="socialtop">
-		
-		
-		<a href="http://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-		<g:plusone size="medium" count="false"></g:plusone>
-		<img src="img/l/facebook.gif" />
-
-	</div>
+	<div id="socialtop"></div>
 	<div id="log">
 		<b>Real-time Disabled:  </b>
 		<span id="fps"></span>
@@ -72,14 +65,7 @@ include 'views/main.php';
 
 
 <footer id="footer" role="contentinfo" class="clearfix">
-	<div id="socialbottom">
-		
-		
-		<a href="http://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-		<g:plusone size="medium" count="false"></g:plusone>
-		<img src="img/l/facebook.gif" />
-
-	</div>
+	<div id="socialbottom"></div>
 </footer>
 
 <!-- Scripts & Analytics -->
