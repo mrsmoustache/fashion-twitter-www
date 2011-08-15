@@ -1035,10 +1035,10 @@ div.list .trendcount {
 }
 
 .tweets .tweettime {
-	font-size: .8em;
+	font-size: .7em;
 	color: #aaa;
 	position: absolute;
-	top: 0;
+	top: .25em;
 	right: 0;
 	line-height: .8em;
 }
@@ -1745,6 +1745,11 @@ h2.page-title {
 	height : auto;      
 	width : auto;
 	border : 0;
+}
+
+.tweets .tweettime {
+	font-size: .8em;
+	top: 0;
 }
 
 div.schedule {

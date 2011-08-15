@@ -922,7 +922,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			var thumb = data["tweet"]["user"]["profile_image_url"];
 			var author_url = 'http://twitter.com/'+username;
 			var tweetDate = new Date(DDE.parseDate(data["tweet"]["created_at"]));
-			var tweetTime = DDE.getTheMonth(tweetDate) + ' '+tweetDate.getDate()+', '+DDE.getClockTime(tweetDate);
+			var tweetTime = DDE.getTheMonth(tweetDate) + ' '+tweetDate.getDate()+' '+DDE.getClockTime(tweetDate);
 			
 			//match urls in the tweetext and hyperlink
 			text = this.hyperlinkUrls(data["tweet"]);
@@ -1366,7 +1366,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			var thumb = data.tweetList[i]["tweet"]["user"]["profile_image_url"];
 			var author_url = 'http://twitter.com/'+username;
 			var tweetDate = new Date(DDE.parseDate(data.tweetList[i]["tweet"]["created_at"]));
-			var tweetTime = DDE.getTheMonth(tweetDate) + ' '+tweetDate.getDate()+', '+DDE.getClockTime(tweetDate);
+			var tweetTime = DDE.getTheMonth(tweetDate) + ' '+tweetDate.getDate()+' '+DDE.getClockTime(tweetDate);
 			//var created_at = data["tweet"]["created_at"];
 			//Todo: create timestamp locally on client based on time of html insert
 			
@@ -1745,9 +1745,7 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 				arrow = this.children[1] ? this.children[1].children[2] : this.children[0].children[2];
 				name = 'itemCountRight'+this.id.replace(/-$/, '');
 			}
-			
-			console.log(that.selectedNavItem);
-			
+						
 			if (that.selectedNavItem == this.id.replace(/-$/, '') || (that.selectedNavItem == 'all' &&  this.id.replace(/-$/, '') == 'all-designers-item')) { return false; }
 			if (tg.touch && !tg.singleViewMode && tg.watchPos == tg.scheduleScroll.y) { 
 				tg.watchPos = null;
@@ -2430,8 +2428,6 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 		if (that.thumbHeight < 30) that.thumbHeight = 30;
 		if (that.scrollDistance == 0) that.thumb.style.display = "none";
 		else that.thumb.style.display = "block";
-		
-		console.log(that.thumbHeight);
 		
 		that.thumb.style.height = that.thumbHeight + "px";
 		that.distanceForThumb = that.panelHeight - that.thumbHeight;
