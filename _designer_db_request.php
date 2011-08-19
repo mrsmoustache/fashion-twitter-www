@@ -32,6 +32,8 @@
 			$pattern = '/^http:\/\/(yfrog.|instagr.|lockerz.|twitpic.|pic.twitter.)/i';
 			$url_link = 'entities.urls';
 			
+			//todo: write another $or array for $media_link = { 'entities.media' : {$exists: true} }
+			
 			$mongoRegExp = new MongoRegex($pattern);
 			
 			$elemMatch1 = array( $url_link => array( '$elemMatch' => array( 'url'=> $mongoRegExp )));

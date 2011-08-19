@@ -836,7 +836,7 @@ div.schedule .listitem {
 }
 
 div.schedule b.timegroup {
-	border-top: solid 1px #444;
+	border-top: solid 1px #ddd;
 }
 
 div.schedule b.timegroup span {
@@ -861,7 +861,7 @@ div.schedule .itemcontent.first {
 }
 
 div.schedule b.timegroup + .itemcontent {
-	border-top: solid 1px #444;
+	border-top: solid 1px #ddd;
 }
 
 #modules div.list .listitem {
@@ -1255,17 +1255,17 @@ a:link {
 -webkit-tap-highlight-color : rgb(52,158,219); }
 
 ::-webkit-selection { 
-background : rgb(23,119,175); 
+background : rgb(0,0,0); 
 color : rgb(250,250,250); 
 text-shadow : none; }
 
 ::-moz-selection { 
-background : rgb(23,119,175); 
+background : rgb(0,0,0); 
 color : rgb(250,250,250); 
 text-shadow : none; }
 
 ::selection { 
-background : rgb(23,119,175); 
+background : rgb(0,0,0); 
 color : rgb(250,250,250); 
 text-shadow : none; }
 
