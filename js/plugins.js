@@ -1622,16 +1622,16 @@ else window.iScroll = iScroll;
         prefixFromNow: null,
         suffixAgo: "ago",
         suffixFromNow: "from now",
-        seconds: "less than a minute",
-        minute: "about a minute",
+        seconds: "just now",
+        minute: "1 minute",
         minutes: "%d minutes",
-        hour: "about an hour",
-        hours: "about %d hours",
+        hour: "1 hour",
+        hours: "%d hours",
         day: "a day",
         days: "%d days",
-        month: "about a month",
+        month: "1 month",
         months: "%d months",
-        year: "about a year",
+        year: "1 year",
         years: "%d years",
         numbers: []
       }
@@ -1671,6 +1671,8 @@ else window.iScroll = iScroll;
         days < 365 && substitute($l.months, Math.floor(days / 30)) ||
         years < 2 && substitute($l.year, 1) ||
         substitute($l.years, Math.floor(years));
+		
+		if (words=="just now") suffix = '';
 
       return $.trim([prefix, words, suffix].join(" "));
     },

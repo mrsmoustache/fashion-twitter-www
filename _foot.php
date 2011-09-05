@@ -26,7 +26,7 @@ var nodePort = "<?php echo $NODE_PORT; ?>";
 <!-- <script src="js/libs/json2.js"></script> -->
 
 <!-- Scripts -->
-<script src="js/plugins.min.js"></script>
+<script src="js/plugins.min.js?v=2"></script>
 
 <script>
 
