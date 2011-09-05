@@ -93,7 +93,9 @@ if ((!isset($designers) && !isset($schedule)) || ( $designers == "all" || $sched
 							
 							
 							$created_at = date('M j g:i A', strtotime($arr["tweet"]["created_at"]));
-							echo '<div id="tweet'.$index.'" class="listitem clearfix"><div class="listthumb"><img src="'.$thumb.'" height="48" width="48" /></div><div class="listcontent"><h3><a href="'.$author_url.'" target="_blank">'.$author_name.'</a></h3> <span class="tweettext">'.$text.'</span> <span class="tweettime">'.$created_at.'</span></div></div>';
+							$isoDate = date('c', strtotime($arr["tweet"]["created_at"]));
+							
+							echo '<div id="tweet'.$index.'" class="listitem clearfix"><div class="listthumb"><img src="'.$thumb.'" height="48" width="48" /></div><div class="listcontent"><h3><a href="'.$author_url.'" target="_blank">'.$author_name.'</a></h3> <span class="tweettext">'.$text.'</span> <abbr class="tweettime timeago" title="'.$isoDate.'">'.$created_at.'</abbr></div></div>';
 							
 							$index++;
 							

@@ -930,20 +930,27 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			var thumb = data["tweet"]["user"]["profile_image_url"];
 			var author_url = 'http://twitter.com/'+username;
 			var tweetDate = new Date(DDE.parseDate(data["tweet"]["created_at"]));
-			var tweetTime = DDE.getTheMonth(tweetDate) + ' '+tweetDate.getDate()+' '+DDE.getClockTime(tweetDate);
+			var isoDate = DDE.ISODateString(tweetDate); 
+			var timeAgoDate = jQuery.timeago(tweetDate);
+			//var tweetTime = DDE.getTheMonth(tweetDate) + ' '+tweetDate.getDate()+' '+DDE.getClockTime(tweetDate);
+			var tweetTime = timeAgoDate;
 			
 			//match urls in the tweetext and hyperlink
 			text = this.hyperlinkUrls(data["tweet"]);
 			
 			//Todo: create timestamp locally on client based on time of html insert
 			
-			var html = '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3><a href="'+author_url+'" target="_blank">'+username+'</a></h3> <span class="tweettext">'+text+'</span> <span class="tweettime">'+tweetTime+'</span></div></div>';
+			var html = '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3><a href="'+author_url+'" target="_blank">'+username+'</a></h3> <span class="tweettext">'+text+'</span> <abbr class="timeago tweettime" title="'+isoDate+'">'+tweetTime+'</abbr></div></div>';
 												
 			tg.$tweetsContent.prepend(html);
 			
 			var tmpNode = tg.$tweetsContent[0].children[0];
+			var timeAgo = tmpNode.children[1].children[2];
+			$(timeAgo).timeago();
 			if (tmpNode) tmpNode.style.zoom = 1;
-			tmpNode = null;			
+			tmpNode = null;
+			
+						
 			
 			
 			//$("<li class='"+classStr+"' style='color: "+firstColor+";'> </li>").text("@" + data.tweet.user.screen_name + ": " + data.tweet.text).prependTo("#main ul");
@@ -1029,6 +1036,9 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 		}, delay);
 		
 		this.bindNavHovers(tg);
+		
+		//initialize live timeAgo dates
+		$('abbr.timeago').timeago();
 			
 	},
 	
@@ -1373,14 +1383,17 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			var thumb = data.tweetList[i]["tweet"]["user"]["profile_image_url"];
 			var author_url = 'http://twitter.com/'+username;
 			var tweetDate = new Date(DDE.parseDate(data.tweetList[i]["tweet"]["created_at"]));
-			var tweetTime = DDE.getTheMonth(tweetDate) + ' '+tweetDate.getDate()+' '+DDE.getClockTime(tweetDate);
+			var timeAgoDate = jQuery.timeago(tweetDate);
+			var isoDate = DDE.ISODateString(tweetDate); 
+			//var tweetTime = DDE.getTheMonth(tweetDate) + ' '+tweetDate.getDate()+' '+DDE.getClockTime(tweetDate);
+			var tweetTime = timeAgoDate;
 			//var created_at = data["tweet"]["created_at"];
 			//Todo: create timestamp locally on client based on time of html insert
 			
 			//match urls in the tweetext and hyperlink
 			text = that.hyperlinkUrls(data.tweetList[i]["tweet"]);
 			
-			html += '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3><a href="'+author_url+'" target="_blank">'+username+'</a></h3> <span class="tweettext">'+text+'</span> <span class="tweettime">'+tweetTime+'</span></div></div>';
+			html += '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3><a href="'+author_url+'" target="_blank">'+username+'</a></h3> <span class="tweettext">'+text+'</span> <abbr class="timeago tweettime" title="'+isoDate+'">'+tweetTime+'</abbr></div></div>';
 			
 		}
 		
@@ -1539,6 +1552,9 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 					tg.trendingWordsHTML = null;
 					tg.trendingColorsHTML = '';
 					tg.trendingColorsHTML = null;
+					
+					//initialize live timeAgo dates
+					$('abbr.timeago').timeago();
 					
 				}, stagger*count);
 				

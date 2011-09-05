@@ -66,10 +66,11 @@ vertical-align : baseline; }
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
 display : block; }
-
+/*
 abbr[title] { 
 border-bottom : 1px dotted; 
 cursor : help; }
+*/
 
 /* 1.ROOT */
 
