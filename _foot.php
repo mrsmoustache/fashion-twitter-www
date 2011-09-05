@@ -26,7 +26,7 @@ var nodePort = "<?php echo $NODE_PORT; ?>";
 <!-- <script src="js/libs/json2.js"></script> -->
 
 <!-- Scripts -->
-<script src="js/plugins.js"></script>
+<script src="js/plugins.min.js"></script>
 
 <script>
 
@@ -57,7 +57,7 @@ DDE.externalLinks = [];
 	
 
 </script>
-<script src="js/script.js?v=3"></script>
+<script src="js/script.min.js?v=3"></script>
 
 <!--  Place this tag after the last plusone tag -->
 <script type="text/javascript">
