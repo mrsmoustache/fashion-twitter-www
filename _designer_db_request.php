@@ -7,6 +7,8 @@
 	
 	//get the designers collection of tweets
 	if (isset($designers) && $designers != "all") {
+		
+		$start2 = microtime(true);
 	
 		$collection = $db->$designers;
 		
@@ -104,73 +106,80 @@
 			}
 		}
 		
+		$finished2 = round((microtime(true) - $start2)*1000);
+		error_log("single designer processing: ".$finished2."ms");
+		
 	} else {
 	
 		//for all designers we can only get the trend info and a random selection of recent tweets
 		
 		$tweets_collected = 0;
 		
-		for ($i=0; $tweets_collected<10; $i++) {
-			
-			$random_num = array_rand($designer_ids);
-			$random_designer = $designer_ids[$random_num];
-			$collection = $db->$random_designer;
-			
+		error_log("all designers start fetch");
+		$start = microtime(true);
 		
-			$tweets_cursor = $collection->find()->sort(array('created_at'=>-1))->limit(1);
+						
+		//$random_num = array_rand($designer_ids);
+		//$random_designer = $designer_ids[$random_num];
+		//$collection = $db->$random_designer;
+		$allCollection = "all-designers-item";
+		$collection = $db->$allCollection;
+		
+	
+		$tweets_cursor = $collection->find()->sort(array('$natural'=>-1))->limit(10);
+		
+		foreach ($tweets_cursor as $key=>$value) {
 			
-			foreach ($tweets_cursor as $key=>$value) {
+			$tweet_list[] = array("id"=>$key, "tweet"=>$value);
+			
+			$tweets_collected++;
+			
+		}
+		
+		//get tweets with urls and images
+		
+		$pattern = '/^http:\/\/(yfrog.|instagr.|lockerz.|twitpic.|pic.twitter.)/i';
+		$url_link = 'entities.urls';
+		
+		$mongoRegExp = new MongoRegex($pattern);
+		
+		$elemMatch1 = array( $url_link => array( '$elemMatch' => array( 'url'=> $mongoRegExp )));
+		$elemMatch2 = array( $url_link => array( '$elemMatch' => array( 'expanded_url'=> $mongoRegExp )));
+		$orArr = array( $elemMatch1, $elemMatch2  );
+		
+		
+		$url_cursor = $collection->find( array( '$or' => $orArr )  )->limit(10);
+		//$url_cursor = $collection->find( array( $url_link=>array('$size'=>1) ) )->sort(array('created_at'=>-1))->limit(20);
+		
+		foreach($url_cursor as $key=>$value) {
+			$urls_length = count($value["entities"]["urls"]);
+			$img_urls = array();
+			for ($i=0;$i<$urls_length;$i++) {
+				if (isset($value["entities"]["urls"][$i]["url"])) {
 				
-				$tweet_list[] = array("id"=>$key, "tweet"=>$value);
-				
-				$tweets_collected++;
-				
-			}
-			
-			//get tweets with urls and images
-			
-			$pattern = '/^http:\/\/(yfrog.|instagr.|lockerz.|twitpic.|pic.twitter.)/i';
-			$url_link = 'entities.urls';
-			
-			$mongoRegExp = new MongoRegex($pattern);
-			
-			$elemMatch1 = array( $url_link => array( '$elemMatch' => array( 'url'=> $mongoRegExp )));
-			$elemMatch2 = array( $url_link => array( '$elemMatch' => array( 'expanded_url'=> $mongoRegExp )));
-			$orArr = array( $elemMatch1, $elemMatch2  );
-			
-			
-			$url_cursor = $collection->find( array( '$or' => $orArr )  )->limit(2);
-			//$url_cursor = $collection->find( array( $url_link=>array('$size'=>1) ) )->sort(array('created_at'=>-1))->limit(20);
-			
-			foreach($url_cursor as $key=>$value) {
-				$urls_length = count($value["entities"]["urls"]);
-				$img_urls = array();
-				for ($i=0;$i<$urls_length;$i++) {
-					if (isset($value["entities"]["urls"][$i]["url"])) {
-					
-						if (isset($value["entities"]["urls"][$i]["expanded_url"])) {
-							$str = $value["entities"]["urls"][$i]["expanded_url"];
-							if (preg_match($pattern, $str)) {
-								$img_urls[] = $str;
-								
-							}
-						} else {
-							$str = $value["entities"]["urls"][$i]["url"];
-							if (preg_match($pattern, $str)) {
-								$img_urls[] = $str;
-								
-							}
+					if (isset($value["entities"]["urls"][$i]["expanded_url"])) {
+						$str = $value["entities"]["urls"][$i]["expanded_url"];
+						if (preg_match($pattern, $str)) {
+							$img_urls[] = $str;
+							
+						}
+					} else {
+						$str = $value["entities"]["urls"][$i]["url"];
+						if (preg_match($pattern, $str)) {
+							$img_urls[] = $str;
+							
 						}
 					}
 				}
-				
-				$img_count = count($img_urls);
-				if ($img_count > 0) {
-					$url_list[] = array("id"=>$key, "tweet"=>$value, "img_urls"=>$img_urls);
-				}
 			}
-
+			
+			$img_count = count($img_urls);
+			if ($img_count > 0) {
+				$url_list[] = array("id"=>$key, "tweet"=>$value, "img_urls"=>$img_urls);
+			}
 		}
+
+		
 				
 		//get the words for all
 		$words = $db->words;
@@ -199,6 +208,9 @@
 			}
 			
 		}
+		
+		$finished = round((microtime(true) - $start)*1000);
+		error_log("all designers processing: ".$finished."ms");
 
 	}
 

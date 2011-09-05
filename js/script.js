@@ -111,6 +111,8 @@ DDE.TweetYvent = function(){
 	
 	this.browserCheck = function(){
 		var tg = this.globals;
+		
+		console.log(navigator.userAgent);
 				
 		if (navigator.userAgent.match(/Blackberry/i)) {
 			if(navigator.userAgent.match(/\/6\./i)) {
@@ -131,6 +133,8 @@ DDE.TweetYvent = function(){
 		
 		if (navigator.userAgent.match(/webkit/i)) {
 			tg.Webkit = true;
+			if(navigator.userAgent.match(/533\./i)) tg.scrollFactor = 120;
+			else tg.scrollFactor = 2;
 		}
 		
 		if (navigator.userAgent.match(/chrome/i)) {
@@ -934,12 +938,11 @@ DDE.TweetYvent.prototype.NavView.prototype = {
 			//Todo: create timestamp locally on client based on time of html insert
 			
 			var html = '<div class="listitem clearfix"><div class="listthumb"><img src="'+thumb+'" height="48" width="48" /></div><div class="listcontent"><h3><a href="'+author_url+'" target="_blank">'+username+'</a></h3> <span class="tweettext">'+text+'</span> <span class="tweettime">'+tweetTime+'</span></div></div>';
-			
-			var tmpNode = tg.$tweetsContent[0].children[0];
-									
+												
 			tg.$tweetsContent.prepend(html);
 			
-			tmpNode.style.zoom = 1;
+			var tmpNode = tg.$tweetsContent[0].children[0];
+			if (tmpNode) tmpNode.style.zoom = 1;
 			tmpNode = null;			
 			
 			
@@ -2374,12 +2377,15 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 		var scrollPanel = function(e) {
 			e = e ? e : window.event;
   			var wheelData = e.detail ? -e.detail : e.wheelDelta;
-  			
+  			var max = 0, factor = 1;
   			if (tg.Webkit) {
+				
+				
   				if (tg.Chrome) {
-  					wheelData = wheelData/2;
+  					wheelData = wheelData/tg.scrollFactor;
   				} else {
-  					wheelData = wheelData/120;
+  					//wheelData = wheelData/120;
+					wheelData = wheelData/tg.scrollFactor;
   				}
   			} else if (tg.MSIE) {
   				wheelData = wheelData/3;
