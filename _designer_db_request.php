@@ -43,7 +43,7 @@
 			$orArr = array( $elemMatch1, $elemMatch2  );
 			
 			
-			$url_cursor = $collection->find( array( '$or' => $orArr )  )->sort(array('created_at'=>-1))->skip($skip)->limit(10);
+			$url_cursor = $collection->find( array( '$or' => $orArr )  )->skip($skip)->limit(10);
 			
 			foreach($url_cursor as $key=>$value) {
 				$urls_length = count($value["entities"]["urls"]);
@@ -148,7 +148,7 @@
 		$orArr = array( $elemMatch1, $elemMatch2  );
 		
 		
-		$url_cursor = $collection->find( array( '$or' => $orArr )  )->sort(array('$natural'=>-1))->limit(10);
+		$url_cursor = $collection->find( array( '$or' => $orArr )  )->limit(10);
 		//$url_cursor = $collection->find( array( $url_link=>array('$size'=>1) ) )->sort(array('created_at'=>-1))->limit(20);
 		
 		foreach($url_cursor as $key=>$value) {
