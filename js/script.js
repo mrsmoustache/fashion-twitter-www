@@ -2438,12 +2438,11 @@ DDE.TweetYvent.prototype.CustomScroll.prototype = {
 			that.y = that.save;
 			that.scrollPane.scrollTop = that.save;
 		}
-		
-		if(that.scrollPane.parentElement.offsetTop > 100 ) {
-			if (!tg.ie7) that.scrollPane.parentElement.style.paddingBottom = '145px';
+		if(that.scrollPane.parentNode.offsetTop > 100 ) {
+			if (!tg.ie7) that.scrollPane.parentNode.style.paddingBottom = '145px';
 			else DDE.setMaxHeight(tg.$modules[0], tg.lastWindowHeight - 250);
 		} else {
-			if (!tg.ie7) that.scrollPane.parentElement.style.paddingBottom = '100px';
+			if (!tg.ie7) that.scrollPane.parentNode.style.paddingBottom = '100px';
 			else DDE.setMaxHeight(tg.$modules[0], tg.lastWindowHeight - 210);
 		}
 		

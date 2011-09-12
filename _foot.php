@@ -57,7 +57,7 @@ DDE.externalLinks = [];
 	
 
 </script>
-<script src="js/script.min.js?v=3"></script>
+<script src="js/script.min.js?v=4"></script>
 
 <!--  Place this tag after the last plusone tag -->
 <script type="text/javascript">
